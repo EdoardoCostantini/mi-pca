@@ -13,13 +13,13 @@ genData <- function(parms, cond){
   Phi <- diag(cond$L)
   
   # Target Variables
-  Phi[parms$latentMap$target, ] <- .8
+  Phi[parms$latentMap$ta, ] <- parms$lv_cov_ta
   
   # MAR Predictors
-  Phi[parms$latentMap$aux_marpre, ] <- .8
+  Phi[parms$latentMap$mp, ] <- parms$lv_cov_mp
   
   # Other Predictors
-  Phi[parms$latentMap$aux_other, ] <- .8
+  Phi[parms$latentMap$ax, ] <- parms$lv_cov_ax
   
   # Fix diagonal
   diag(Phi) <- 1
@@ -70,11 +70,19 @@ genData <- function(parms, cond){
     x[i, ] <- t(parms$item_mean + Lambda %*% scs_lv[i, ] + scs_delta[i, ])
   }
 
+
+# Give meaningful names ---------------------------------------------------
+
+  colnames(x) <- paste0("z", 1:ncol(x))
+  colnames(scs_lv) <- paste0("lv", 1:ncol(scs_lv))
+  
 # Return Output -----------------------------------------------------------
   
-  return( list(dat    = x,
-               Phi    = Phi,
-               Theta  = Theta,
-               Lambda = Lambda,
-               scores_lv = scs_lv) )
+  return( 
+    list(dat_ob = x,
+         dat_lv = scs_lv,
+         Phi    = Phi,
+         Theta  = Theta,
+         Lambda = Lambda)
+  )
 }

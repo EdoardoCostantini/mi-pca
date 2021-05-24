@@ -4,22 +4,23 @@
 ### Created:  2021-05-20
 
 genData <- function(parms, cond){
-  ## Example Input
+
+# Example Input -----------------------------------------------------------
+
   # cond    <-  conds[6, ]
   
-  ## Body
 # Latent Variables Covariance matrix --------------------------------------
 
   Phi <- diag(cond$L)
   
   # Target Variables
-  Phi[parms$latentMap$ta, ] <- parms$lv_cov_ta
+  Phi[parms$varMap$ta, ] <- parms$lv_cov_ta
   
   # MAR Predictors
-  Phi[parms$latentMap$mp, ] <- parms$lv_cov_mp
+  Phi[parms$varMap$mp, ] <- parms$lv_cov_mp
   
   # Other Predictors
-  Phi[parms$latentMap$ax, ] <- parms$lv_cov_ax
+  Phi[parms$varMap$ax, ] <- parms$lv_cov_ax
   
   # Fix diagonal
   diag(Phi) <- 1

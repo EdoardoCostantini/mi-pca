@@ -61,3 +61,27 @@
   CFA_par[idx_error, "est"]
   diag(dat$Theta)
   
+
+# Correct discretization per condition ------------------------------------
+
+  rm(list=ls())
+  source("./init.R")
+  
+  store <- matrix(NA, nrow = nrow(conds), ncol = 3)
+  
+  for(i in 1:nrow(conds)){
+    dat <- genData(parms, conds[i, ])
+    dat_dis <- disData(dat$dat_ob, parms, conds[i, ])
+    
+    # Count variables
+    count <- apply(dat_dis[, -(1:(length(parms$varMap$ta)*parms$J))], 2, function(x){
+      length(unique(x))
+    })
+    store[i, ] <- c(num = mean(count %in% parms$N),
+                    ord = mean(count %in% parms$K),
+                    bin = mean(count %in% 2))
+  }
+  store
+  store[, 2:3] - conds[, c("n_ord", "n_bin")]
+  
+  

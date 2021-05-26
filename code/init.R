@@ -32,7 +32,7 @@
   
   # Data generation
   parms$N <- 1e3 # sample size
-  parms$L <- 18 # number of latent variables
+  parms$L <- 8 # number of latent variables
   parms$J <- 3 # number of measured items for latent variable
   parms$K <- 5 # number of categories for ordinal variables
   parms$P <- parms$L*parms$J # number of latent variables

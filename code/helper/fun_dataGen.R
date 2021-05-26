@@ -42,7 +42,6 @@ genData <- function(parms, cond){
   
   Theta <- diag(parms$P)
   for (i in 1:length(lambda)) {
-    # Theta[i, i] <- 1 - lambda[i]^2 * 1
     Theta[i, i] <- parms$item_var - lambda[i]^2 * Phi[1, 1]
   }
   

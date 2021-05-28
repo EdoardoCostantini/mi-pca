@@ -70,7 +70,6 @@ genData <- function(parms, cond){
     x[i, ] <- t(parms$item_mean + Lambda %*% scs_lv[i, ] + scs_delta[i, ])
   }
 
-
 # Give meaningful names ---------------------------------------------------
 
   colnames(x) <- paste0("z", 1:ncol(x))

@@ -7,11 +7,11 @@
 
 ## Generate Data
   dat_list <- genData(parms, conds[conds_list[i], ])
-  dat_disc <- disData(dat_list$dat_ob, parms, conds[conds_list[i], ])
+  # dat_disc <- disData(dat_list$dat_ob, parms, conds[conds_list[i], ])
   dat_disc <- apply(dat_list$dat_ob, 2, function(x){
-    as.numeric(arules::discretize(x, 
-                                  method = "interval", 
-                                  breaks = 5, 
+    as.numeric(arules::discretize(x,
+                                  method = "interval",
+                                  breaks = 5,
                                   ordered_result = TRUE))
   })
   
@@ -55,12 +55,6 @@
   idx_error <- (parms$L*parms$J+1):(2*parms$L*parms$J)
   idx_lvcov <- (2*parms$L*parms$J+1+parms$L):nrow(CFA_par_c)
 
-  # Error variance
-  obj <- cbind(CFA_par_c[idx_error, c(1:3)], 
-               disc = round(CFA_par_d[idx_error, "est"], 2),
-               cont = round(CFA_par_c[idx_error, "est"], 2),
-               ratio = round(CFA_par_d[idx_error, "est"] / CFA_par_c[idx_error, "est"], 2),
-               type = apply(dat_disc, 2, max))
   # Factor loadings
   obj <- cbind(CFA_par_c[idx_load, c(1:3)], 
                disc = round(CFA_par_d[idx_load, "est"], 2),
@@ -68,3 +62,9 @@
                ratio = round(CFA_par_d[idx_load, "est"] / CFA_par_c[idx_load, "est"], 2),
                type = apply(dat_disc, 2, max))
   
+  # Error variance
+  obj <- cbind(CFA_par_c[idx_error, c(1:3)], 
+               disc = round(CFA_par_d[idx_error, "est"], 2),
+               cont = round(CFA_par_c[idx_error, "est"], 2),
+               ratio = round(CFA_par_d[idx_error, "est"] / CFA_par_c[idx_error, "est"], 2),
+               type = apply(dat_disc, 2, max))

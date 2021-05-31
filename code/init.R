@@ -1,7 +1,7 @@
-### Title:    Defining Fixed Parameters
-### Project:  MI-PCA study
-### Author:   Edoardo Costantini
-### Created:  2021-05-12
+### Title:   Defining Fixed Parameters
+### Project: imputeHD-add
+### Author:  Edoardo Costantini
+### Created: 2021-05-12
 
 # Packages ----------------------------------------------------------------
 

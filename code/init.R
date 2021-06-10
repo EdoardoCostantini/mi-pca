@@ -78,8 +78,23 @@
   rownames(conds) <- 1:nrow(conds)
   
   # Print
-  conds
+  round(conds, 2)
   
   # Parallel Experiments: for the continuous and attenuated relationship
-  # Take to the extreme
-  # Directly find second der at each point and select max
+  # Alternative experimental factor
+  n_cate <- c(Inf, 10, 7, 5, 3, 2)
+  p_junk <- c(0, 1/3, 2/3, 1)
+
+  # Make Conditionsa
+  conds <- expand.grid(N  = parms$N,
+                       L  = parms$L,
+                       J  = parms$J,
+                       P  = parms$L * parms$J,
+                       pm = parms$pm,
+                       fl = parms$fl,
+                       p_junk = p_junk,
+                       K = n_cate,
+                       stringsAsFactors = FALSE)
+
+  # Print
+  round(conds, 2)

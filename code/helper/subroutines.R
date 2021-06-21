@@ -11,7 +11,8 @@
 data_step <- function(parms, cond){
 
   # Generate Continuous Data
-  dat_list <- genData(parms = parms, cond = cond, fl = parms$fl)
+  dat_list <- genData(parms = parms, cond = cond,
+                      fl_ta = parms$fl, fl_ax = parms$fl)
   dat_cont <- dat_list$dat_ob
 
   # Discretise it
@@ -48,10 +49,12 @@ data_step <- function(parms, cond){
                                   se = FALSE, zstat = FALSE,
                                   pvalue = FALSE, ci = FALSE,
                                   standardized = TRUE)
-  fl_atte <- mean(CFA_par_d[1:ncol(dat_disc), "est"])
+  fl_atte_ta <- mean(CFA_par_d[1:6, "est"])
+  fl_atte_ax <- mean(CFA_par_d[7:ncol(dat_disc), "est"])
 
   # Generate counterfactual continous data
-  dat_list_atte <- genData(parms = parms, cond = cond, fl = fl_atte)
+  dat_list_atte <- genData(parms = parms, cond = cond,
+                           fl_ta = fl_atte_ta, fl_ax = fl_atte_ax)
   dat_atte <- dat_list_atte$dat_ob
 
   return(

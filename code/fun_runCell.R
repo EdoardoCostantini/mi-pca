@@ -25,25 +25,7 @@ runCell <- function(cond, parms,
                      collapse = "-")
   
   ## Data
-  # Generate Continuous Data
-  dat_list <- genData(parms = parms, cond = cond)
-  dat_cont <- dat_list$dat_ob
-
-  # Discretise
-  index_keep_continuous <- 1:(max(parms$varMap$ta)*parms$J)
-  dat_disc <- apply(dat_cont[, -index_keep_continuous],
-                    2,
-                    function(j){
-                      as.numeric(cut(j, breaks = cond$K))
-                    })
-
-  dat_disc <- cbind(dat_cont[, index_keep_continuous], dat_disc)
-
-  # Generate Continuous Data w/ attenuated relationships
-  Sigma <- cor(dat_disc)
-  mu <- rep(0, ncol(dat_disc))
-  dat_disc_cont <- MASS::mvrnorm(parms$N, mu, Sigma)
-  head(dat_disc_cont)
+  dat_list <- data_step(parms = parms, cond = cond)
 
   ## Impose Missingness
   

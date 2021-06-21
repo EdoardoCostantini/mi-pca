@@ -4,11 +4,12 @@
 ### Created:  2021-05-20
 ### Modified: 2021-06-21
 
-genData <- function(parms, cond){
+genData <- function(parms, cond, fl){
 
 # Example Input -----------------------------------------------------------
 
   # cond    <-  conds[3, ]
+  # fl <- parms$fl
   
 # Latent Variables Covariance matrix --------------------------------------
 
@@ -35,8 +36,8 @@ genData <- function(parms, cond){
 # Factor loadings (random factor) -----------------------------------------
 
   lambda <- runif(parms$P, 
-                  min = parms$fl - .02, 
-                  max = parms$fl + .02)
+                  min = fl - .02,
+                  max = fl + .02)
   
 # Observed Items Error Covariance matrix ----------------------------------
 # Note: you are creating uncorrelated errors for the observed items

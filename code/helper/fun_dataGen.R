@@ -2,12 +2,13 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
+### Modified: 2021-06-21
 
 genData <- function(parms, cond){
 
 # Example Input -----------------------------------------------------------
 
-  # cond    <-  conds[6, ]
+  # cond    <-  conds[3, ]
   
 # Latent Variables Covariance matrix --------------------------------------
 

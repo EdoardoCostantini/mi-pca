@@ -84,6 +84,7 @@
   # Alternative experimental factor
   n_cate <- c(Inf, 10, 7, 5, 3, 2)
   p_junk <- c(0, 1/3, 2/3, 1)
+  n_pcs <- c(1, 5, parms$N*(1 - .4))
 
   # Make Conditionsa
   conds <- expand.grid(N  = parms$N,
@@ -92,8 +93,9 @@
                        P  = parms$L * parms$J,
                        pm = parms$pm,
                        fl = parms$fl,
-                       p_junk = p_junk,
                        K = n_cate,
+                       p_junk = p_junk,
+                       n_pcs = n_pcs,
                        stringsAsFactors = FALSE)
 
   # Print

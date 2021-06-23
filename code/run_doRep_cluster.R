@@ -4,7 +4,7 @@
 ### Notes:   Assumes ./code/cluster as wd (because that's how it's run on lisa)
 
 ## Make sure we have a clean environment:
-rm(list = ls(all = TRUE))
+rm(list = ls())
 
 ## Initialize the environment:
 source("./init.R")

@@ -53,50 +53,21 @@
   )
 
 # Experimental Conditions -------------------------------------------------
-
-  # Define Experimental Factor Values
-  n_ord <- c(0, 1/3, 2/3, 1)
-  n_bin <- c(0, 1/3, 2/3, 1)
-  p_junk <- c(0, 1/3, 2/3, 1)
-  
-  # Make Conditionsa
-  conds <- expand.grid(N  = parms$N,
-                       L  = parms$L,
-                       J  = parms$J,
-                       P  = parms$L * parms$J,
-                       pm = parms$pm, 
-                       fl = parms$fl,
-                       p_junk = p_junk,
-                       n_ord = n_ord,
-                       n_bin = n_bin,
-                       stringsAsFactors = FALSE)
-  
-  # Get rid of impossible combinations of n_ord and n_bin
-  conds <- conds[rowSums(conds[, c("n_ord", "n_bin")]) <= 1, ]
-  
-  # Overwrite rownames
-  rownames(conds) <- 1:nrow(conds)
-  
-  # Print
-  round(conds, 2)
   
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
-  n_cate <- c(10, 7, 5, 3, 2)
-  p_junk <- c(0, 1/3, 2/3, 1)
-  n_pcs <- c(1, 5, parms$N*(1 - .4))
+  K <- c(10, 7, 5, 3, 2) # number of categories
+  pj <- round(seq(0, 1, length.out = 4), 2) # proportion of junk variables
+  nPCs <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
 
   # Make Conditionsa
-  conds <- expand.grid(N  = parms$N,
-                       L  = parms$L,
-                       J  = parms$J,
-                       P  = parms$L * parms$J,
-                       pm = parms$pm,
-                       fl = parms$fl,
-                       K = n_cate,
-                       p_junk = p_junk,
-                       n_pcs = n_pcs,
+  conds <- expand.grid(K = K,
+                       pj = pj,
+                       nPCs = nPCs,
                        stringsAsFactors = FALSE)
 
-  # Print
-  round(conds, 2)
+  # Append Condition Tag
+  conds$tag <- sapply(1:nrow(conds), function(i) {
+    paste0(colnames(conds), conds[i, ], collapse = "_")
+  }
+  )

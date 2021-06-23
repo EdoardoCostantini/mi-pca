@@ -20,7 +20,7 @@ imposeNA <- function(dat_in, parms, cond, plot = FALSE){
   
   # Impose MAR
   for (i in 1:MAR_ta_n) {
-    nR <- simMissingness(pm    = cond$pm,
+    nR <- simMissingness(pm    = parms$pm,
                          data  = dat_in$dat_lv,
                          preds = parms$varMap$mp,
                          type  = "center",

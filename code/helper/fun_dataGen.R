@@ -14,7 +14,7 @@ genData <- function(parms, cond, fl_ta, fl_ax){
   
 # Latent Variables Covariance matrix --------------------------------------
 
-  Phi <- diag(cond$L)
+  Phi <- diag(parms$L)
   
   # Target Variables
   Phi[parms$varMap$ta, ] <- parms$lv_cov_ta
@@ -51,7 +51,7 @@ genData <- function(parms, cond, fl_ta, fl_ax){
 # Items Factor Complexity = 1 (simple measurement structure) --------------
 # Reference: Bollen1989 p234
   
-  Lambda <- matrix(nrow = parms$P, ncol = cond$L)
+  Lambda <- matrix(nrow = parms$P, ncol = parms$L)
   start <- 1
   for (j in 1:parms$L) {
     end <- (start + parms$J) - 1

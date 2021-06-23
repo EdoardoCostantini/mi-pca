@@ -57,6 +57,14 @@ dataStep <- function(parms, cond){
                            fl_ta = fl_atte_ta, fl_ax = fl_atte_ax)
   dat_atte <- dat_list_atte$dat_ob
 
+  # Cast to data frames
+  dat_cont <- as.data.frame(dat_cont)
+  dat_fact <- as.data.frame(lapply(as.data.frame(dat_disc[, -index_keep_continuous]),
+                                   factor, ordered = TRUE))
+  dat_disc <- cbind(dat_cont[, index_keep_continuous], dat_fact)
+  dat_atte <- as.data.frame(dat_atte)
+
+  # Function Output
   return(
     list(dat = list(cont = dat_cont,
                     disc = dat_disc,

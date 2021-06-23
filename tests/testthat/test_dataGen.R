@@ -1,7 +1,8 @@
 ### Title:    Test File for the data generation context
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
-### Created:  2021-06-23
+### Created:  2021-05-25
+### Modified: 2021-06-23
 
   context('- test function genData()')
 

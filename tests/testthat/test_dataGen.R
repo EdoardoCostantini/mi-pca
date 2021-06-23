@@ -1,34 +1,28 @@
 ### Title:    Test File for the data generation context
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
-### Created:  2021-05-25
+### Created:  2021-06-23
 
-  context('Data Generation')
+  context('- test function genData()')
 
-# Correct discretization per condition ------------------------------------
-  
-  store <- conds[0, c("n_ord", "n_bin")]
-  
-  for(i in 1:nrow(conds)){
-    dat <- genData(parms, conds[i, ])
-    dat_dis <- disData(dat$dat_ob, parms, conds[i, ])
-    
-    # Count variables
-    count <- apply(dat_dis[, -(1:(length(parms$varMap$ta)*parms$J))], 
-                   2, 
-                   function(x){
-      length(unique(x))
-    })
-    store[i, ] <- c(ord = mean(count %in% parms$K),
-                    bin = mean(count %in% 2))
+# Correct return of objects -----------------------------------------------
+
+  expect_list <- rep(NA, nrow(conds))
+  expect_data_matrix <- rep(NA, nrow(conds))
+
+  for (i in 1:nrow(conds)){
+    dat_list <- genData(parms = parms, cond = conds[i, ],
+                        fl_ta = parms$fl, fl_ax = parms$fl)
+    expect_list[i] <- is.list(dat_list) & !is.atomic(dat_list)
+    expect_data_matrix[i] <- all(sapply(dat_list, is.matrix))
   }
-  
-  prop_achived <- store
-  prop_target  <- conds[, c("n_ord", "n_bin")]
-  
-  # Test
-  test_that("Correct Proportion of Discretized Variables", {
-    expect_equal(prop_achived, prop_target)
+
+  # Tests
+  test_that("Output is a list", {
+    expect_equal(all(expect_list), TRUE)
+  })
+  test_that("Datasets generated are matrices", {
+    expect_equal(all(expect_data_matrix), TRUE)
   })
 
 # Factor Loadings Generated and recovered ---------------------------------
@@ -36,8 +30,9 @@
   
   # Example Condition
   cond <-  conds[1, ]
-  
-  dat <- genData(parms, cond)
+
+  dat <- genData(parms = parms, cond = cond,
+                 fl_ta = parms$fl, fl_ax = parms$fl)
   
   # Define CFA model
   ids_items <- split(x = colnames(dat$dat_ob), 
@@ -55,7 +50,7 @@
   CFA_model <- paste(lv_models, collapse = "\n")
   
   # Fit CFA
-    fit <- cfa(CFA_model, data = dat$dat_ob, std.lv = TRUE)
+  fit <- cfa(CFA_model, data = dat$dat_ob, std.lv = TRUE)
   
   # Compare
   CFA_par <- parameterEstimates(fit, 

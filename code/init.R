@@ -1,7 +1,7 @@
 ### Title:   Defining Fixed Parameters
 ### Project: imputeHD-add
 ### Author:  Edoardo Costantini
-### Created: 2021-05-12
+### Created: 2021-06-23
 
 # Packages ----------------------------------------------------------------
 
@@ -18,9 +18,9 @@
 
   # Support Functions
   source("./helper/fun_dataGen.R")
-  source("./helper/fun_discretize.R")
   source("./helper/simMissingness.R")
   source("./helper/functions.R")
+  source("./helper/subroutines.R")
   
   # Imputation Functions
   source("./fun_impute/fun_PCA_impute.R")
@@ -82,7 +82,7 @@
   
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
-  n_cate <- c(Inf, 10, 7, 5, 3, 2)
+  n_cate <- c(10, 7, 5, 3, 2)
   p_junk <- c(0, 1/3, 2/3, 1)
   n_pcs <- c(1, 5, parms$N*(1 - .4))
 

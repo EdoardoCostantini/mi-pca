@@ -20,5 +20,5 @@
 
   test_result <- lapply(test_files, function(x){
     test_file(paste0(test_folder, x),
-              reporter = CheckReporter)
+              reporter = TapReporter)
   })

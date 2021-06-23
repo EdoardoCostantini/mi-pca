@@ -2,13 +2,13 @@
 ### Project:  Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-06-21
-### Modified: 2020-06-21
+### Modified: 2020-06-23
 ### Note:     This script contains functions of level-2 (contain functions
 ###           of level-1)
 
 # Subroutine to generate all data for a condition -------------------------
 
-data_step <- function(parms, cond){
+dataStep <- function(parms, cond){
 
   # Generate Continuous Data
   dat_list <- genData(parms = parms, cond = cond,

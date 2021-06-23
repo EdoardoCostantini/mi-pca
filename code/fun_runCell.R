@@ -2,6 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-12
+### Modified: 2020-06-23
 ### Note:     A "cell" is a cycle through the set of conditions.
 ###           The function in this script generates 1 data set, performs 
 ###           imputations for every condition in the set.
@@ -25,7 +26,7 @@ runCell <- function(cond, parms,
                      collapse = "-")
   
   ## Data
-  dat_list <- data_step(parms = parms, cond = cond)
+  dat_list <- dataStep(parms = parms, cond = cond)
 
   ## Impose Missingness
   

@@ -4,14 +4,12 @@
 ### Created:  2021-05-20
 ### Modified: 2021-06-21
 
-genData <- function(parms, cond, fl_ta, fl_ax){
+genData <- function(parms, cond){
 
 # Example Input -----------------------------------------------------------
 
-  # cond    <-  conds[3, ]
-  # fl_ta <- parms$fl
-  # fl_ax <- parms$fl
-  
+  # cond    <-  conds[56, ]
+
 # Latent Variables Covariance matrix --------------------------------------
 
   Phi <- diag(parms$L)
@@ -22,8 +20,11 @@ genData <- function(parms, cond, fl_ta, fl_ax){
   # MAR Predictors
   Phi[parms$varMap$mp, ] <- parms$lv_cov_mp
   
-  # Other Predictors
-  Phi[parms$varMap$ax, ] <- parms$lv_cov_ax
+  # Other Predictors (junk and no junk)
+  nauxiliaries <- length(parms$varMap$ax)
+  index_junk_aux <- parms$varMap$ax[1:(nauxiliaries * cond$pj)]
+  Phi[parms$varMap$ax[-index_junk_aux], ] <- parms$lv_cov_ax # no junk
+  Phi[parms$varMap$ax[index_junk_aux], ] <- parms$lv_cov_junk # junk
   
   # Fix diagonal
   diag(Phi) <- 1
@@ -36,9 +37,7 @@ genData <- function(parms, cond, fl_ta, fl_ax){
   
 # Factor loadings (random factor) -----------------------------------------
 
-  lambda_ta  <- fl_ta + runif(1:6, min = -.02, max = .02)
-  lambda_aux <- fl_ax + runif(7:parms$P, min = -.02, max = .02)
-  lambda <- c(lambda_ta, lambda_aux)
+  lambda <- parms$fl + runif(parms$P, min = -parms$fl_bound, max = parms$fl_bound)
   
 # Observed Items Error Covariance matrix ----------------------------------
 # Note: you are creating uncorrelated errors for the observed items
@@ -68,20 +67,34 @@ genData <- function(parms, cond, fl_ta, fl_ax){
     
 # Compute Observed Scores -------------------------------------------------
 
-  x <- matrix(nrow = parms$N, ncol = parms$P)
+  x <- data.frame(matrix(nrow = parms$N, ncol = parms$P))
   for(i in 1:parms$N){
     x[i, ] <- t(parms$item_mean + Lambda %*% scs_lv[i, ] + scs_delta[i, ])
   }
 
+# Discretize if required --------------------------------------------------
+
+  index_continuous <- 1:(max(parms$varMap$ta)*parms$J)
+  index_discrete <- (1:parms$P)[-index_continuous]
+  x_disc <- data.frame(matrix(nrow = parms$N,
+                              ncol = length(index_discrete)))
+  for(j in seq_along(index_discrete)){
+    x_disc[, j] <- factor(cut(x[, j],
+                              breaks = cond$K),
+                          labels = 1:cond$K)
+  }
+
+  x_out <- cbind(x[, index_continuous], as.data.frame(x_disc))
+
 # Give meaningful names ---------------------------------------------------
 
-  colnames(x) <- paste0("z", 1:ncol(x))
+  colnames(x_out) <- paste0("z", 1:ncol(x_out))
   colnames(scs_lv) <- paste0("lv", 1:ncol(scs_lv))
   
 # Return Output -----------------------------------------------------------
   
   return( 
-    list(dat_ob = x,
+    list(dat_ob = x_out,
          dat_lv = scs_lv,
          Phi    = Phi,
          Theta  = Theta,

@@ -37,18 +37,20 @@
   parms$P <- parms$L*parms$J # number of latent variables
   parms$pm <- .2 # proportion of missings level
   parms$fl <- .8 # factor loadings level
+  parms$fl_bound <- 0 # factor loadings level
   parms$lv_mean   <- 0 # true latent mean
   parms$lv_var    <- 1 # true latent variance
   parms$lv_cov_ta <- .8 # true latent cov for target variables
   parms$lv_cov_mp <- .8 # for mar predictors
-  parms$lv_cov_junk <- .1 # for mar predictors
+  parms$lv_cov_ax <- .8 # for good auxiliary
+  parms$lv_cov_junk <- .1 # for junk auxiliary
   parms$item_mean <- 0 # true item mean
   parms$item_var  <- 1 # true item variance
   
   # Map variables
   parms$varMap <- list(ta = 1:2, # TArget of analysis
-                       mp = 3:4, # Mar Predictors
-                       ax = 5:parms$L # Auxiliary variables
+                       mp = 3, # Mar Predictors
+                       ax = 4:parms$L # Auxiliary variables
   )
 
 # Experimental Conditions -------------------------------------------------

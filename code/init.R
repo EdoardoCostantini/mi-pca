@@ -34,7 +34,6 @@
   parms$N <- 1e3 # sample size
   parms$L <- 8 # number of latent variables
   parms$J <- 3 # number of measured items for latent variable
-  parms$K <- 5 # number of categories for ordinal variables
   parms$P <- parms$L*parms$J # number of latent variables
   parms$pm <- .2 # proportion of missings level
   parms$fl <- .8 # factor loadings level
@@ -42,14 +41,14 @@
   parms$lv_var    <- 1 # true latent variance
   parms$lv_cov_ta <- .8 # true latent cov for target variables
   parms$lv_cov_mp <- .8 # for mar predictors
-  parms$lv_cov_ax <- .8 # for auxiliary set
-  parms$item_mean <- 5 # true item mean
+  parms$lv_cov_junk <- .1 # for mar predictors
+  parms$item_mean <- 0 # true item mean
   parms$item_var  <- 1 # true item variance
   
   # Map variables
-  parms$varMap <- list(ta = 1:2,  # TArget of analysis
-                       mp = 3:5, # Mar Predictors
-                       ax = 6:parms$L # Auxiliary variables
+  parms$varMap <- list(ta = 1:2, # TArget of analysis
+                       mp = 3:4, # Mar Predictors
+                       ax = 5:parms$L # Auxiliary variables
   )
 
 # Experimental Conditions -------------------------------------------------

@@ -57,13 +57,17 @@
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
   K <- c(10, 7, 5, 3, 2) # number of categories
-  pj <- round(seq(0, 1, length.out = 4), 2) # proportion of junk variables
-  nPCs <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
+  D <- seq(1, 0, length.out = 5)
+  interval <- c(TRUE, FALSE)
+  pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
+  npcs <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
 
   # Make Conditionsa
   conds <- expand.grid(K = K,
+                       D = D,
+                       interval = interval,
                        pj = pj,
-                       nPCs = nPCs,
+                       npcs = npcs,
                        stringsAsFactors = FALSE)
 
   # Append Condition Tag

@@ -26,7 +26,10 @@ runCell <- function(cond, parms,
                      collapse = "-")
   
   ## Data
-  dat_list <- dataStep(parms = parms, cond = cond)
+  dat_list <- genData(parms = parms,
+                      cond = cond,
+                      fl_ta = parms$fl,
+                      fl_ax = parms$fl)
 
   ## Impose Missingness
   

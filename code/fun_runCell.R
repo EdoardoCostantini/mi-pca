@@ -25,7 +25,7 @@ runCell <- function(cond, parms,
 
   ## Impose Missingness
   dat_miss <- imposeNA(dat_list, parms = parms)
-  
+
 # Imputation --------------------------------------------------------------
 
   ## Method 1
@@ -37,8 +37,11 @@ runCell <- function(cond, parms,
 # Analyze and pool --------------------------------------------------------
 
   ## Analysis 1: Means, variances, covariances
-  
+  lm(z1 ~ z2 + z3 + z4 + z5 + z6, data = dat_miss)
+  lm(z1 ~ z2 + z3 + z4 + z5 + z6, data = dat_list$dat_ob)
+
   ## Analysis 2: CFA parms
+  CFA()
   
   ## Analysis 3: Time
 

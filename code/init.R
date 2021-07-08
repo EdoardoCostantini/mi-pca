@@ -33,7 +33,7 @@
   
   # Data generation
   parms$N <- 1e3 # sample size
-  parms$L <- 8 # number of latent variables
+  parms$L <- 9 # number of latent variables
   parms$J <- 3 # number of measured items for latent variable
   parms$P <- parms$L*parms$J # number of latent variables
   parms$pm <- .2 # proportion of missings level
@@ -51,7 +51,8 @@
   # Map variables
   parms$varMap <- list(ta = 1:2, # TArget of analysis
                        mp = 3, # Mar Predictors
-                       ax = 4:parms$L # Auxiliary variables
+                       ax = 4:parms$L, # Auxiliary variables
+                       disc_pool = 2:parms$P
   )
 
 # Experimental Conditions -------------------------------------------------

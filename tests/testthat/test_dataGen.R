@@ -19,8 +19,9 @@
     dat_list <- genData(parms = parms, cond = conds[i, ])
 
     # Discreteness
-    nauxiliaries <- parms$P-(length(parms$varMap$ta) * parms$J)
-    ratio <- sum(sapply(dat_list$dat_ob, is.factor))/nauxiliaries
+    disc_pool_size <- length(parms$varMap$disc_pool)
+    disc_preds_num <- sum(sapply(dat_list$dat_ob, is.factor))
+    ratio <- disc_preds_num/disc_pool_size
     expect_discrete[i] <- abs(conds[i, "D"] - ratio) < .1
 
     # Object Types

@@ -22,9 +22,9 @@ genData <- function(parms, cond){
   
   # Other Predictors (junk and no junk)
   nauxiliaries <- length(parms$varMap$ax)
-  index_junk_aux <- parms$varMap$ax[1:(nauxiliaries * cond$pj)]
-  Phi[parms$varMap$ax[-index_junk_aux], ] <- parms$lv_cov_ax # no junk
-  Phi[parms$varMap$ax[index_junk_aux], ] <- parms$lv_cov_junk # junk
+  index_junk_aux <- tail(parms$varMap$ax, nauxiliaries * cond$pj)
+  Phi[-index_junk_aux, ] <- parms$lv_cov_ax # not junk
+  Phi[index_junk_aux, ] <- parms$lv_cov_junk # junk
   
   # Fix diagonal
   diag(Phi) <- 1

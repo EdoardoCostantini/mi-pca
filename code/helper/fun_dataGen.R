@@ -74,27 +74,27 @@ genData <- function(parms, cond){
 
 # Discretize if required --------------------------------------------------
 
-  index_continuous <- 1:(max(parms$varMap$ta)*parms$J)
-  index_discrete <- (1:parms$P)[-index_continuous]
-  x_disc <- data.frame(matrix(nrow = parms$N,
-                              ncol = length(index_discrete)))
-  for(j in seq_along(index_discrete)){
+  index_ta_obs <- 1:(length(parms$varMap$ta)*parms$J)
+  numbe_not_ta <- parms$P-length(index_ta_obs)
+  index_discrete <- tail(1:parms$P, numbe_not_ta * cond$D)
+  x_disc <- data.frame(matrix(nrow = nrow(x),
+                              ncol = ncol(x)))
+  for(j in index_discrete){
     x_disc[, j] <- cut(x[, j],
                        breaks = cond$K,
                        labels = 1:cond$K)
   }
-
-  x_out <- cbind(x[, index_continuous], as.data.frame(x_disc))
+  x_disc[, -index_discrete] <- x[, -index_discrete]
 
 # Give meaningful names ---------------------------------------------------
 
-  colnames(x_out) <- paste0("z", 1:ncol(x_out))
+  colnames(x_disc) <- paste0("z", 1:ncol(x_disc))
   colnames(scs_lv) <- paste0("lv", 1:ncol(scs_lv))
   
 # Return Output -----------------------------------------------------------
   
   return( 
-    list(dat_ob = x_out,
+    list(dat_ob = x_disc,
          dat_lv = scs_lv,
          Phi    = Phi,
          Theta  = Theta,

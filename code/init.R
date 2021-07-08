@@ -19,6 +19,7 @@
 
   # Support Functions
   source("./helper/fun_dataGen.R")
+  source("./helper/fun_imposeNA.R")
   source("./helper/simMissingness.R")
   source("./helper/functions.R")
   source("./helper/subroutines.R")

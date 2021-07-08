@@ -2,9 +2,9 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-12
-### Modified: 2020-06-23
+### Modified: 2020-07-08
 ### Note:     A "cell" is a cycle through the set of conditions.
-###           The function in this script generates 1 data set, performs 
+###           The function in this script generates 1 data set, performs
 ###           imputations for every condition in the set.
 
 runCell <- function(cond, parms, 
@@ -20,18 +20,11 @@ runCell <- function(cond, parms,
 
 # Data Generation ---------------------------------------------------------
 
-  ## Condition Tag
-  cond_tag <- paste0(names(cond), 
-                     sub("\\.", "", as.character(round(cond, 2))),
-                     collapse = "-")
-  
   ## Data
-  dat_list <- genData(parms = parms,
-                      cond = cond,
-                      fl_ta = parms$fl,
-                      fl_ax = parms$fl)
+  dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness
+  dat_miss <- imposeNA(dat_list, parms = parms)
   
 # Imputation --------------------------------------------------------------
 

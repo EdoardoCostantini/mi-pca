@@ -2,29 +2,47 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-25
-### Modified: 2021-06-23
+### Modified: 2021-07-08
 
   context('- test function genData()')
 
-# Correct return of objects -----------------------------------------------
+# Correct proportion of discrete vars -------------------------------------
+  set.seed(2134)
 
+  # Expectation Storing Objects
+  expect_discrete <- rep(NA, nrow(conds))
   expect_list <- rep(NA, nrow(conds))
-  expect_data_matrix <- rep(NA, nrow(conds))
+  expect_df_observed <- rep(NA, nrow(conds))
+  expect_matrix_rest <- rep(NA, nrow(conds))
 
   for (i in 1:nrow(conds)){
-    dat_list <- genData(parms = parms, cond = conds[i, ],
-                        fl_ta = parms$fl, fl_ax = parms$fl)
+    dat_list <- genData(parms = parms, cond = conds[i, ])
+
+    # Discreteness
+    nauxiliaries <- parms$P-(length(parms$varMap$ta) * parms$J)
+    ratio <- sum(sapply(dat_list$dat_ob, is.factor))/nauxiliaries
+    expect_discrete[i] <- abs(conds[i, "D"] - ratio) < .1
+
+    # Object Types
     expect_list[i] <- is.list(dat_list) & !is.atomic(dat_list)
-    expect_data_matrix[i] <- all(sapply(dat_list, is.matrix))
+    expect_df_observed[i] <- is.data.frame(dat_list$dat_ob)
+    expect_matrix_rest[i] <- all(sapply(dat_list[-1], is.matrix))
   }
 
   # Tests
+  test_that("Correct Proportion of discrete variables in all conditions", {
+    expect_equal(all(expect_discrete), TRUE)
+  })
   test_that("Output is a list", {
     expect_equal(all(expect_list), TRUE)
   })
-  test_that("Datasets generated are matrices", {
-    expect_equal(all(expect_data_matrix), TRUE)
+  test_that("Data set observed items is data.frame", {
+    expect_equal(all(expect_matrix_rest), TRUE)
   })
+  test_that("Other objects are matrices", {
+    expect_equal(all(expect_matrix_rest), TRUE)
+  })
+
 
 # Factor Loadings Generated and recovered ---------------------------------
 # Checks the CFA estimates return the true values

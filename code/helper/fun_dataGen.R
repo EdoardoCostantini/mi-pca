@@ -79,9 +79,9 @@ genData <- function(parms, cond){
   x_disc <- data.frame(matrix(nrow = parms$N,
                               ncol = length(index_discrete)))
   for(j in seq_along(index_discrete)){
-    x_disc[, j] <- factor(cut(x[, j],
-                              breaks = cond$K),
-                          labels = 1:cond$K)
+    x_disc[, j] <- cut(x[, j],
+                       breaks = cond$K,
+                       labels = 1:cond$K)
   }
 
   x_out <- cbind(x[, index_continuous], as.data.frame(x_disc))

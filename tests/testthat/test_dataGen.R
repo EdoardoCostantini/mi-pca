@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-25
-### Modified: 2021-07-08
+### Modified: 2021-07-09
 
   context('- test function genData()')
 
@@ -10,6 +10,7 @@
   set.seed(2134)
 
   # Expectation Storing Objects
+  expect_not_NA <- rep(NA, nrow(conds))
   expect_discrete <- rep(NA, nrow(conds))
   expect_list <- rep(NA, nrow(conds))
   expect_df_observed <- rep(NA, nrow(conds))
@@ -17,6 +18,9 @@
 
   for (i in 1:nrow(conds)){
     dat_list <- genData(parms = parms, cond = conds[i, ])
+
+    # Is not NA
+    expect_not_NA[i] <- any(!is.na(dat_list$dat_ob))
 
     # Discreteness
     disc_pool_size <- length(parms$varMap$disc_pool)
@@ -31,6 +35,9 @@
   }
 
   # Tests
+  test_that("Data is not empty", {
+    expect_equal(all(expect_not_NA), TRUE)
+  })
   test_that("Correct Proportion of discrete variables in all conditions", {
     expect_equal(all(expect_discrete), TRUE)
   })

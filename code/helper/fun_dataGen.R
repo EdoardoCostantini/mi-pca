@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
-### Modified: 2021-07-08
+### Modified: 2021-07-09
 
 genData <- function(parms, cond){
 
@@ -83,17 +83,17 @@ genData <- function(parms, cond){
                        breaks = cond$K,
                        labels = 1:cond$K)
   }
-  x_disc[, -index_discrete] <- x[, -index_discrete]
+  x[, index_discrete] <- x_disc[, index_discrete]
 
 # Give meaningful names ---------------------------------------------------
 
-  colnames(x_disc) <- paste0("z", 1:ncol(x_disc))
+  colnames(x) <- paste0("z", 1:ncol(x))
   colnames(scs_lv) <- paste0("lv", 1:ncol(scs_lv))
   
 # Return Output -----------------------------------------------------------
   
   return( 
-    list(dat_ob = x_disc,
+    list(dat_ob = x,
          dat_lv = scs_lv,
          Phi    = Phi,
          Theta  = Theta,

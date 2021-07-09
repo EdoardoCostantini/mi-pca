@@ -14,7 +14,7 @@ runCell <- function(cond, parms,
 # Example Internals -------------------------------------------------------
   
   # set.seed(1234)
-  # cond    = conds[6, ]
+  # cond    = conds[9, ]
   # cluster = FALSE 
   # if you are running on lisa you want to store differently
 
@@ -36,14 +36,37 @@ runCell <- function(cond, parms,
   
 # Analyze and pool --------------------------------------------------------
 
-  ## Analysis 1: Means, variances, covariances
-  lm(z1 ~ z2 + z3 + z4 + z5 + z6, data = dat_miss)
-  lm(z1 ~ z2 + z3 + z4 + z5 + z6, data = dat_list$dat_ob)
-
-  ## Analysis 2: CFA parms
-  CFA()
-  
-  ## Analysis 3: Time
+  ## Analysis: CFA Fit parms
+  dats <- list(full = dat_list$dat_ob,
+               omit = na.omit(dat_miss))
+  if(cond$K >= 5){
+    # Fit CFA model on Categorical (scaled) data
+    fits <- lapply(dats, function(x) {
+      cfa(parms$CFA_model,
+          data = scale(sapply(x, as.numeric)),
+          std.lv = TRUE)
+    })
+    ests <- lapply(fits, function(x){
+      parameterEstimates(x,
+                         se = TRUE, ci = TRUE,
+                         zstat = FALSE, pvalue = FALSE,
+                         standardized = FALSE)
+    })
+  } else {
+    # Fit CFA model on Categorical (scaled) data
+    fits <- lapply(dats, function(x) {
+      cfa(parms$CFA_model,
+          data = x,
+          ordered = names(which(sapply(x, is.factor))), # Treat as ordered
+          std.lv = TRUE)
+    })
+    ests <- lapply(fits, function(x){
+      parameterEstimates(x,
+                         se = TRUE, ci = TRUE,
+                         zstat = FALSE, pvalue = FALSE,
+                         standardized = FALSE)
+    })
+  }
 
 # Store Output ------------------------------------------------------------
 

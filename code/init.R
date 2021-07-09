@@ -56,6 +56,18 @@
                        disc_pool = 2:parms$P
   )
 
+  # CFA model
+  lv_items <- split(x = paste0("z", 1:(length(parms$varMap$ta)*parms$J)),
+                    f = rep(parms$varMap$ta, each = parms$J))
+  lv_models <- sapply(1:length(lv_items), function(it){
+    paste0("l", it,
+           " =~ ",
+           paste0(lv_items[[it]], collapse = " + ")
+    )
+  }
+  )
+  parms$CFA_model <- paste(lv_models, collapse = "\n")
+
 # Experimental Conditions -------------------------------------------------
   
   # Parallel Experiments: for the continuous and attenuated relationship

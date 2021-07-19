@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-28
-### Modified: 2021-07-08
+### Modified: 2021-07-19
 
 imposeNA <- function(dat_in, parms){
   ## Description
@@ -21,7 +21,7 @@ imposeNA <- function(dat_in, parms){
   
   # Impose MAR
   for (i in 1:MAR_ta_n) {
-    MAR_type <- sample(c("high", "low", "center", "tails"), 1)
+    MAR_type <- "high"
     nR <- simMissingness(pm    = parms$pm,
                          data  = dat_in$dat_lv,
                          preds = parms$varMap$mp,

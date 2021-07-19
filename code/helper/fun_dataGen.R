@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
-### Modified: 2021-07-09
+### Modified: 2021-07-19
 
 genData <- function(parms, cond){
 
@@ -74,8 +74,10 @@ genData <- function(parms, cond){
 
 # Discretize if required --------------------------------------------------
 
-  index_discrete <- tail(parms$varMap$disc_pool,
-                         length(parms$varMap$disc_pool) * cond$D)
+  index_discrete <- c(ta = tail(parms$varMap_items$ta,
+                                length(parms$varMap_items$ta) * cond$D),
+                      ax = tail(parms$varMap_items$ax,
+                                length(parms$varMap_items$ax) * cond$D))
   x_disc <- data.frame(matrix(nrow = nrow(x),
                               ncol = ncol(x)))
   for(j in index_discrete){

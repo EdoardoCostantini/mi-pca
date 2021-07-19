@@ -37,7 +37,7 @@
   # Data generation
   parms$N <- 1e3 # sample size
   parms$L <- 9 # number of latent variables
-  parms$J <- 3 # number of measured items for latent variable
+  parms$J <- 4 # number of measured items for latent variable
   parms$P <- parms$L*parms$J # number of latent variables
   parms$pm <- .2 # proportion of missings level
   parms$fl <- .8 # factor loadings level
@@ -52,10 +52,13 @@
   parms$item_var  <- 1 # true item variance
   
   # Map variables
-  parms$varMap <- list(ta = 1:2, # TArget of analysis
-                       mp = 3, # Mar Predictors
-                       ax = 4:parms$L, # Auxiliary variables
-                       disc_pool = 2:parms$P
+  parms$varMap <- list(ta = 1, # TArget of analysis
+                       mp = 2, # Mar Predictors
+                       ax = 3:parms$L, # Auxiliary variables
+  )
+  parms$varMap_items <- list(
+    ta = 1:(max(parms$varMap$ta)*parms$J),
+    ax = (max(parms$varMap$ta)*parms$J+1):parms$P
   )
 
   # CFA model

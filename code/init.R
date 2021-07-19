@@ -54,12 +54,12 @@
   # Map variables
   parms$varMap <- list(ta = 1, # TArget of analysis
                        mp = 2, # Mar Predictors
-                       ax = 3:parms$L, # Auxiliary variables
+                       ax = 3:parms$L # Auxiliary variables
   )
-  parms$varMap_items <- list(
-    ta = 1:(max(parms$varMap$ta)*parms$J),
-    ax = (max(parms$varMap$ta)*parms$J+1):parms$P
-  )
+  ta <- 1:(max(parms$varMap$ta)*parms$J)
+  mp <- (max(ta)+1):(max(ta)+(parms$J*length(parms$varMap$mp)))
+  ax <- (max(mp)+1):parms$P
+  parms$varMap_items <- list(ta = ta, mp = mp, ax = ax)
 
   # CFA model
   lv_items <- split(x = paste0("z", 1:(length(parms$varMap$ta)*parms$J)),

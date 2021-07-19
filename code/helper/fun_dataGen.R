@@ -76,6 +76,8 @@ genData <- function(parms, cond){
 
   index_discrete <- c(ta = tail(parms$varMap_items$ta,
                                 length(parms$varMap_items$ta) * cond$D),
+                      mp = tail(parms$varMap_items$mp,
+                                length(parms$varMap_items$mp) * cond$D),
                       ax = tail(parms$varMap_items$ax,
                                 length(parms$varMap_items$ax) * cond$D))
   x_disc <- data.frame(matrix(nrow = nrow(x),

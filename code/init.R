@@ -9,7 +9,8 @@
   pack_list <- c("parallel",
                  "MASS",
                  "lavaan",
-                 "mice")
+                 "mice",
+                 "FactoMineR")
   
   lapply(pack_list, library, character.only = TRUE, verbose = FALSE)
 
@@ -68,6 +69,10 @@
   }
   )
   parms$CFA_model <- paste(lv_models, collapse = "\n")
+
+  # Imputation Routine
+  parms$mice_ndt <- 2
+  parms$mice_iters <- 5
 
 # Experimental Conditions -------------------------------------------------
   

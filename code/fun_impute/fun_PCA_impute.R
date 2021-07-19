@@ -29,6 +29,7 @@ imputePCA <- function(Z, target, cond, parms){
 
       # Data
       p <- ncol(Z) # number of variables
+      O = as.data.frame(!is.na(Z)) # matrix index of observed values
       usable_min <- min(colSums(O)) # smallest observed sample size
 
       if(sum(is.na(Z[, -target])) > 0){

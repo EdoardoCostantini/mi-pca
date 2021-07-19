@@ -19,8 +19,7 @@ imputePCA <- function(Z, target, cond, parms){
   # For internals
   ## Data
   # Z <- imposeNA(genData(parms = parms, cond = cond), parms = parms)
-  # O = as.data.frame(!is.na(Z)) # matrix index of observed values
-  # target = 1:(length(parms$varMap$ta) * parms$J)
+  # target = parms$varMap_items$ta
 
   ## body:
     tryCatch({
@@ -28,7 +27,6 @@ imputePCA <- function(Z, target, cond, parms){
       start_time <- Sys.time()
 
       # Data
-      p <- ncol(Z) # number of variables
       O = as.data.frame(!is.na(Z)) # matrix index of observed values
       usable_min <- min(colSums(O)) # smallest observed sample size
 

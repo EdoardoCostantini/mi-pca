@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-12
-### Modified: 2020-07-08
+### Modified: 2020-07-19
 ### Note:     A "cell" is a cycle through the set of conditions.
 ###           The function in this script generates 1 data set, performs
 ###           imputations for every condition in the set.
@@ -28,36 +28,44 @@ runCell <- function(cond, parms,
 
 # Imputation --------------------------------------------------------------
 
-  ## Method 1
-  
-  ## Method 2
-  
-  ## Convergence
+  imp_out <- imputePCA(dat_miss, target = parms$varMap_items$ta,
+                       cond = cond, parms = parms)
   
 # Analyze and pool --------------------------------------------------------
 
-  ## Analysis: CFA Fit parms
-  dats <- list(full = dat_list$dat_ob,
-               omit = na.omit(dat_miss))
-  if(cond$K >= 5){
+  ## Factor Loadings ##
+
+  cfa(parms$CFA_model,
+      data = imp_out$dats$`1`,
+      std.lv = TRUE)
+
+  # Pool paramters
+  CFA_est <- sapply(semR_fit_mi[lapply(semR_fit_mi, length) != 0],
+                    sem_pool_EST_f)
+  CFA_ci  <- sapply(semR_fit_mi[lapply(semR_fit_mi, length) != 0],
+                    sem_pool_CI_f)
+  CFA_fmi <- sapply(semR_fit_mi[lapply(semR_fit_mi, length) != 0],
+                    .fmi_compute)
+
+  ## Analysis on original and CC
+    imp_no_dats <- list(orig = dat_list$dat_ob,
+                        omit = na.omit(dat_miss))
+
     # Fit CFA model on Categorical (scaled) data
-    fits <- lapply(dats, function(x) {
-      cfa(parms$CFA_model,
-          data = scale(sapply(x, as.numeric)),
-          std.lv = TRUE)
-    })
-    ests <- lapply(fits, function(x){
-      parameterEstimates(x,
-                         se = TRUE, ci = TRUE,
-                         zstat = FALSE, pvalue = FALSE,
-                         standardized = FALSE)
-    })
-  } else {
-    # Fit CFA model on Categorical (scaled) data
-    fits <- lapply(dats, function(x) {
+    fits <- lapply(imp_no_dats, function(x) {
+      x <- imp_no_dats[[1]]
+      head(x)
+      # Treat as categorical data?
+      if(cond$K >= 5){
+        order_status <- NULL
+      } else {
+        factor_names <- names(which(sapply(x, is.factor))) # identify facotrs
+        factor_index <- which(names(x) %in% factor_names) # their index
+        order_status <- factor_names[factor_index %in% parms$varMap_items$ta] # only in ta
+      }
       cfa(parms$CFA_model,
           data = x,
-          ordered = names(which(sapply(x, is.factor))), # Treat as ordered
+          ordered = order_status,
           std.lv = TRUE)
     })
     ests <- lapply(fits, function(x){
@@ -66,7 +74,6 @@ runCell <- function(cond, parms,
                          zstat = FALSE, pvalue = FALSE,
                          standardized = FALSE)
     })
-  }
 
 # Store Output ------------------------------------------------------------
 

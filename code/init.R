@@ -8,7 +8,8 @@
 
   pack_list <- c("parallel",
                  "MASS",
-                 "lavaan")
+                 "lavaan",
+                 "mice")
   
   lapply(pack_list, library, character.only = TRUE, verbose = FALSE)
 

@@ -63,7 +63,7 @@ genData <- function(parms, cond){
 # Sample Scores -----------------------------------------------------------
   
   scs_lv    <- mvrnorm(parms$N, rep(parms$lv_mean, parms$L), Phi)
-  scs_delta <- mvrnorm(parms$N, rep(parms$item_mean, parms$P), Theta)
+  scs_delta <- mvrnorm(parms$N, rep(0, parms$P), Theta)
     
 # Compute Observed Scores -------------------------------------------------
 

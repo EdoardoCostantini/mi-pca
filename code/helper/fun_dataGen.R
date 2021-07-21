@@ -44,7 +44,7 @@ genData <- function(parms, cond){
   
   Theta <- diag(parms$P)
   for (i in 1:length(lambda)) {
-    Theta[i, i] <- parms$item_var - lambda[i]^2 * Phi[1, 1]
+    Theta[i, i] <- 1 - lambda[i]^2 * Phi[1, 1]
   }
   
 # Items Factor Complexity = 1 (simple measurement structure) --------------
@@ -69,8 +69,14 @@ genData <- function(parms, cond){
 
   x <- data.frame(matrix(nrow = parms$N, ncol = parms$P))
   for(i in 1:parms$N){
-    x[i, ] <- t(parms$item_mean + Lambda %*% scs_lv[i, ] + scs_delta[i, ])
+    x[i, ] <- t(Lambda %*% scs_lv[i, ] + scs_delta[i, ])
   }
+
+# Rescale Observed Scores -------------------------------------------------
+
+  x_center <- x + parms$item_mean
+  x_scaled <- sapply(x_center, function(x) x*sqrt(parms$item_var))
+  x <- as.data.frame(x_scaled)
 
 # Discretize if required --------------------------------------------------
 

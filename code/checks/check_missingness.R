@@ -9,46 +9,22 @@
 
   ## Initialize the environment:
   source("./init.R")
+  source("./helper/fun_ampute.R")
 
   ## Select a condition
   cond <- conds[446, ]
 
-# Correlation btw mar latent and missing items stays the same -------------
+# MAR Predictors ----------------------------------------------------------
 
   ## Gen fully observed data
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness Univariate based
-  dat_miss_uni <- imposeNA(dat_list, parms = parms)
-  head(dat_miss_uni)
-
-  ## Impose Missingness Multivariate based
-  dat_miss_mul <- ampute_step(dat_list, parms = parms)
-  head(dat_miss_mul)
-
-  ## Compare proportions
-  # Per variable missing cases
-  colMeans(is.na(dat_miss_uni))
-  colMeans(is.na(dat_miss_mul))
-
-  # Total number of missing values
-  sum(is.na(dat_miss_uni))
-  sum(is.na(dat_miss_mul))
-
-  # Total number of rows with missing values
-  parms$N - nrow(na.omit(dat_miss_uni))
-  parms$N - nrow(na.omit(dat_miss_mul))
-
-  # Coverages
-  md.pairs(dat_miss_uni[, 1:4])$rr
-  md.pairs(dat_miss_mul[, 1:4])$rr
-
-  ## Does the missing data on variable z1 to z4 depend z5 to z8?
-  dat_miss <- dat_miss_uni
-  dat_miss <- dat_miss_mul
+  dat_miss <- imposeNA(dat_list, parms = parms)
   head(dat_miss)
+
   var_miss <- "z1"
-  MAR_pred <- c("z2", "z5", "z7", "z10", "z11")[5]
+  MAR_pred <- c("z2", "z5", "z7", "z10", "z11")[2]
 
   densityplot(~ dat_miss[, MAR_pred],
               groups =  factor(is.na(dat_miss[, var_miss]),
@@ -59,32 +35,6 @@
                             " depend on ", MAR_pred, "?"),
               xlab = MAR_pred,
               auto.key = TRUE)
-
-  # Compare Bias
-  mids_uni <- mice(dat_miss_uni[, 1:10],
-                     maxit = 50,
-                     printFlag = FALSE,
-                   seed = 123)
-
-  mids_mul <- mice(dat_miss_mul[, 1:10],
-                     maxit = 50,
-                     printFlag = FALSE,
-                   seed = 123)
-
-  colMeans(dat_miss, na.rm = T)
-  cor(na.omit(dat_miss))[1:10, 1:5]
-  cor(dat_list$dat_ob)[1:10, 1:5]
-
-  # FMI for some model
-  fit1 <- with(mids_uni, lm(z1 ~ 1))
-  est1 <- pool(fit1)
-  est1$pooled[, c("estimate", "riv", "fmi")]
-
-  fit2 <- with(mids_mul, lm(z1 ~ 1))
-  est2 <- pool(fit2)
-  est2$pooled[, c("estimate", "riv", "fmi")]
-
-  lm(z1 ~ 1, dat_in$dat_ob)
 
 # Effect of including excluding MAR predictors in mice --------------------
 
@@ -122,9 +72,9 @@
 
 # Effect of imposing miss with ampute vs univariate strategy --------------
 
+  # Simulation: monitor differences in bias, riv, and FMI
   rm(list = ls())
   source("./init.R")
-  source("../helper/fun_ampute.R")
   cond <- conds[446, ]
 
   set.seed(1234)
@@ -156,3 +106,31 @@
 
   colMeans(store_uni)
   colMeans(store_mul)
+
+  # Monitor difference in coverage, sample size, pm
+  dat_list <- genData(parms = parms, cond = cond)
+
+  ## Impose Missingness Univariate based
+  dat_miss_uni <- imposeNA(dat_list, parms = parms)
+  head(dat_miss_uni)
+
+  ## Impose Missingness Multivariate based
+  dat_miss_mul <- ampute_step(dat_list, parms = parms)
+  head(dat_miss_mul)
+
+  ## Compare proportions
+  # Per variable missing cases
+  colMeans(is.na(dat_miss_uni))
+  colMeans(is.na(dat_miss_mul))
+
+  # Total number of missing values
+  sum(is.na(dat_miss_uni))
+  sum(is.na(dat_miss_mul))
+
+  # Total number of rows with missing values
+  parms$N - nrow(na.omit(dat_miss_uni))
+  parms$N - nrow(na.omit(dat_miss_mul))
+
+  # Coverages
+  md.pairs(dat_miss_uni[, 1:4])$rr
+  md.pairs(dat_miss_mul[, 1:4])$rr

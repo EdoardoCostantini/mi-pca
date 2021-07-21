@@ -39,17 +39,17 @@
   parms$L <- 9 # number of latent variables
   parms$J <- 4 # number of measured items for latent variable
   parms$P <- parms$L*parms$J # number of latent variables
-  parms$pm <- .5 # proportion of missings level
+  parms$pm <- .3 # proportion of missings level
   parms$fl <- .8 # factor loadings level
   parms$fl_bound <- 0 # factor loadings level
   parms$lv_mean   <- 0 # true latent mean
   parms$lv_var    <- 1 # true latent variance
-  parms$lv_cov_ta <- .8 # true latent cov for target variables
-  parms$lv_cov_mp <- .8 # for mar predictors
-  parms$lv_cov_ax <- .8 # for good auxiliary
+  parms$lv_cov_ta <- .7 # true latent cov for target variables
+  parms$lv_cov_mp <- .7 # for mar predictors
+  parms$lv_cov_ax <- .7 # for good auxiliary
   parms$lv_cov_junk <- .1 # for junk auxiliary
-  parms$item_mean <- 0 # true item mean
-  parms$item_var  <- 1 # true item variance
+  parms$item_mean <- 5 # 5 # true item mean
+  parms$item_var  <- (2.5)^2 # true item variance
   
   # Map variables
   parms$varMap <- list(ta = 1, # TArget of analysis
@@ -60,6 +60,13 @@
   mp <- (max(ta)+1):(max(ta)+(parms$J*length(parms$varMap$mp)))
   ax <- (max(mp)+1):parms$P
   parms$varMap_items <- list(ta = ta, mp = mp, ax = ax)
+
+  # Create missing data patterns (only needed if you end up suing ampute)
+  myMatrix <- matrix(rep(c(0, 1), length(parms$varMap_items$ta)), ncol = 2, byrow = TRUE)
+  parms$patts <- do.call(expand.grid,
+                         split(myMatrix,
+                               rep(1:nrow(myMatrix), ncol(myMatrix))))
+  parms$patts <- parms$patts[-c(1, nrow(parms$patts)), ]
 
   # CFA model
   lv_items <- split(x = paste0("z", 1:(length(parms$varMap$ta)*parms$J)),

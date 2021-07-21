@@ -42,6 +42,7 @@
 
   store_yeMAR <- NULL
   store_noMAR <- NULL
+  store_CC <- NULL
 
   for (i in 1:1e2){
     print(i)
@@ -50,7 +51,6 @@
 
     ## Impose Missingness Univariate based
     dat_miss_uni <- imposeNA(dat_list, parms = parms)
-    head(dat_miss_uni)
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -63,18 +63,18 @@
     ## Extract results (item 1 mean)
     yeMAR <- pool(with(mids_uni, lm(z1 ~ 1)))$pooled[, c("estimate", "riv", "fmi")]
     noMAR <- pool(with(mids_uni_noMAR, lm(z1 ~ 1)))$pooled[, c("estimate", "riv", "fmi")]
+    store_CC[i] <- mean(dat_miss_uni$z1, na.rm = TRUE)
     store_yeMAR <- rbind(store_yeMAR, yeMAR)
     store_noMAR <- rbind(store_noMAR, noMAR)
   }
 
   colMeans(store_yeMAR)
   colMeans(store_noMAR)
+  mean(store_CC)
 
 # Effect of imposing miss with ampute vs univariate strategy --------------
 
   # Simulation: monitor differences in bias, riv, and FMI
-  rm(list = ls())
-  source("./init.R")
   cond <- conds[446, ]
 
   set.seed(1234)
@@ -110,27 +110,17 @@
   # Monitor difference in coverage, sample size, pm
   dat_list <- genData(parms = parms, cond = cond)
 
-  ## Impose Missingness Univariate based
-  dat_miss_uni <- imposeNA(dat_list, parms = parms)
-  head(dat_miss_uni)
+  dat_miss_uni <- imposeNA(dat_list, parms = parms) # univariate miss
+  dat_miss_mul <- ampute_step(dat_list, parms = parms) # multivariate miss
 
-  ## Impose Missingness Multivariate based
-  dat_miss_mul <- ampute_step(dat_list, parms = parms)
-  head(dat_miss_mul)
-
-  ## Compare proportions
-  # Per variable missing cases
-  colMeans(is.na(dat_miss_uni))
+  colMeans(is.na(dat_miss_uni)) # Per variable missing cases
   colMeans(is.na(dat_miss_mul))
 
-  # Total number of missing values
-  sum(is.na(dat_miss_uni))
+  sum(is.na(dat_miss_uni)) # Total number of missing values
   sum(is.na(dat_miss_mul))
 
-  # Total number of rows with missing values
-  parms$N - nrow(na.omit(dat_miss_uni))
+  parms$N - nrow(na.omit(dat_miss_uni)) # Total number of rows with missing values
   parms$N - nrow(na.omit(dat_miss_mul))
 
-  # Coverages
-  md.pairs(dat_miss_uni[, 1:4])$rr
+  md.pairs(dat_miss_uni[, 1:4])$rr # Coverages
   md.pairs(dat_miss_mul[, 1:4])$rr

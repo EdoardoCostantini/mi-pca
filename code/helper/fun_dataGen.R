@@ -74,9 +74,9 @@ genData <- function(parms, cond){
 
 # Rescale Observed Scores -------------------------------------------------
 
-  x_center <- x + parms$item_mean
-  x_scaled <- sapply(x_center, function(x) x*sqrt(parms$item_var))
-  x <- as.data.frame(x_scaled)
+  x_scaled <- sapply(x, function(x) x*sqrt(parms$item_var))
+  x_center <- x_scaled + parms$item_mean
+  x <- as.data.frame(x_center)
 
 # Discretize if required --------------------------------------------------
 

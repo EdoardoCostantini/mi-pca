@@ -84,6 +84,9 @@
   parms$mice_ndt <- 2
   parms$mice_iters <- 5
 
+  # Storing Objects
+  parms$outDir <- "../output/"
+
 # Experimental Conditions -------------------------------------------------
   
   # Parallel Experiments: for the continuous and attenuated relationship

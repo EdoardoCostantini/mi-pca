@@ -2,45 +2,54 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-07-20
-### Modified: 2021-07-20
+### Modified: 2021-07-21
 
-ampute_step <- function(dat_in, parms){
+ampute_step <- function(miss_target, miss_preds, parms){
   ## Description
-  # Adds Matrix Design missingness to the MAR
+  # Uses the mice::ampute() function to impose missing values on
+  # miss_target based on miss_preds.
+  # It returns the variables in miss_target with missing values imposed.
   ## Example Inputs
   # cond <- conds[1, ]
-  # dat_in <- genData(parms = parms, cond = cond)
-  # plot = TRUE
+  # dat_start <- genData(parms = parms, cond = cond)
+  # miss_target <- dat_start$dat_ob[, parms$varMap_items$ta]
+  # miss_preds <- dat_start$dat_ob[, parms$varMap_items$mp]
   
 # MAR ---------------------------------------------------------------------
 
   # Define dataset
-  dat_init <- cbind(dat_in$dat_ob[, parms$varMap_items$ta],
-                    lv = dat_in$dat_lv[, parms$varMap$ta])
+  dat_init <- cbind(miss_target,
+                    miss_preds)
 
-  patts <- cbind(parms$patts,
-                 lv = matrix(1,
-                             nrow = nrow(parms$patts),
-                             ncol = length(parms$varMap$ta)))
-  patts <- patts[sample(1:nrow(patts), 5), ]
+  # Define possible patterns
+  space <- matrix(rep(c(0, 1), length(parms$varMap_items$ta)),
+                  ncol = 2, byrow = TRUE,
+                  dimnames = list(NULL, c("obs", "mis")))
+  patts_all <- do.call(expand.grid,
+                       split(space,
+                             rep(1:nrow(space), ncol(space)))
+  )
+  patts_mis <- patts_all[-c(nrow(patts_all)), ]
+  patts_sel <- patts_mis[sample(1:nrow(patts_mis), 5), ]
+  patts_ful <- cbind(patts_sel, pred = matrix(
+    1,
+    nrow = nrow(patts_sel),
+    ncol = ncol(miss_preds)
+  )
+  )
 
-  mar_weights_v <- c(rep(0, (ncol(patts)-length(parms$varMap$ta))),
-                     rep(1, length(parms$varMap$ta)))
-  mar_weights <- matrix(rep(mar_weights_v, nrow(patts)),
-                        ncol = ncol(patts), byrow = TRUE)
+  pred_weights_v <- c(rep(0, ncol(miss_target)), rep(1, ncol(miss_preds)))
+  pred_weights <- matrix(rep(pred_weights_v, nrow(patts_ful)),
+                        ncol = ncol(patts_ful), byrow = TRUE)
 
   # Impose miss
   ampute_out <- ampute(dat_init,
-                       prop = .5,
-                       patterns = patts,
-                       weights = mar_weights,
+                       prop = parms$pm,
+                       patterns = patts_ful,
+                       weights = pred_weights,
                        mech = "MAR")
   dat_miss <- ampute_out$amp
 
-  # Restructure original data
-  dat_out <- cbind(dat_miss[, parms$varMap_items$ta],
-                   dat_in$dat_ob[, -parms$varMap_items$ta])
-
   # Result
-  return( dat_out )
+  return( dat_miss )
 }

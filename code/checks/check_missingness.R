@@ -89,7 +89,7 @@
 
     ## Impose Missingness
     dat_miss_uni <- imposeNA(dat_list, parms = parms)
-    dat_miss_mul <- ampute_step(dat_list, parms = parms)
+    dat_miss_mul <- amputeStep(dat_list, parms = parms)
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -111,7 +111,7 @@
   dat_list <- genData(parms = parms, cond = cond)
 
   dat_miss_uni <- imposeNA(dat_list, parms = parms) # univariate miss
-  dat_miss_mul <- ampute_step(dat_list, parms = parms) # multivariate miss
+  dat_miss_mul <- amputeStep(dat_list, parms = parms) # multivariate miss
 
   colMeans(is.na(dat_miss_uni)) # Per variable missing cases
   colMeans(is.na(dat_miss_mul))

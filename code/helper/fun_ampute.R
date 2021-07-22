@@ -4,7 +4,7 @@
 ### Created:  2021-07-20
 ### Modified: 2021-07-21
 
-ampute_step <- function(miss_target, miss_preds, parms){
+amputeStep <- function(miss_target, miss_preds, parms){
   ## Description
   # Uses the mice::ampute() function to impose missing values on
   # miss_target based on miss_preds.

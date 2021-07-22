@@ -4,7 +4,7 @@
 ### Created:  2021-07-20
 ### Modified: 2021-07-21
 
-amputeStep <- function(miss_target, miss_preds, parms){
+amputeStep <- function(miss_target, miss_preds, parms, seed = NULL){
   ## Description
   # Uses the mice::ampute() function to impose missing values on
   # miss_target based on miss_preds.
@@ -30,6 +30,9 @@ amputeStep <- function(miss_target, miss_preds, parms){
                              rep(1:nrow(space), ncol(space)))
   )
   patts_mis <- patts_all[-c(nrow(patts_all)), ]
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
   patts_sel <- patts_mis[sample(1:nrow(patts_mis), 5), ]
   patts_ful <- cbind(patts_sel, pred = matrix(
     1,

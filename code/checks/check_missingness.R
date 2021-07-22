@@ -72,6 +72,59 @@
   colMeans(store_noMAR)
   mean(store_CC)
 
+# latent variable vs observed items as MAR predictors in mice -------------
+
+  set.seed(1234)
+
+  store_lv <- NULL
+  store_it <- NULL
+  store_CC <- NULL
+
+  for (i in 1:5e2){
+    print(i)
+    ## Gen fully observed data
+    dat_list <- genData(parms = parms, cond = cond)
+
+    ## Impose Missingness based on latent variable
+    dat_miss_lv <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+                              miss_preds = dat_list$dat_lv[, parms$varMap$mp,
+                                                             drop = FALSE],
+                              parms = parms)
+    dat_miss_lv <- cbind(dat_miss_lv[, parms$varMap_items$ta],
+                          dat_list$dat_ob[, -parms$varMap_items$ta])
+
+    ## Impose Missingness based on observed items
+    dat_miss_it <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+                              miss_preds = dat_list$dat_ob[, parms$varMap_items$mp,
+                                                             drop = FALSE],
+                              parms = parms)
+    dat_miss_it <- cbind(dat_miss_it[, parms$varMap_items$ta],
+                          dat_list$dat_ob[, -parms$varMap_items$ta])
+
+    ## Impute with and witout MAR predictors
+    mids_lv <- mice(dat_miss_lv[, 1:8],
+                    maxit = 25,
+                    printFlag = FALSE)
+    mids_it <- mice(dat_miss_it[, 1:8],
+                    maxit = 25,
+                    printFlag = FALSE)
+
+    ## Extract results (item 1 mean)
+    pool_lv <- pool(with(mids_lv, lm(z1 ~ 1)))$pooled[, c("estimate", "riv", "fmi")]
+    pool_it <- pool(with(mids_it, lm(z1 ~ 1)))$pooled[, c("estimate", "riv", "fmi")]
+
+    ## Store
+    store_CC <- rbind(store_CC,
+                      c(lv = mean(dat_miss_lv$z1, na.rm = TRUE),
+                        it = mean(dat_miss_it$z1, na.rm = TRUE)))
+    store_lv <- rbind(store_lv, pool_lv)
+    store_it <- rbind(store_it, pool_it)
+  }
+
+  colMeans(store_lv)
+  colMeans(store_it)
+  colMeans(store_CC)
+
 # Effect of imposing miss with ampute vs univariate strategy --------------
 
   # Simulation: monitor differences in bias, riv, and FMI
@@ -89,7 +142,11 @@
 
     ## Impose Missingness
     dat_miss_uni <- imposeNA(dat_list, parms = parms)
-    dat_miss_mul <- amputeStep(dat_list, parms = parms)
+    dat_miss_mul <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+                               miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
+                               parms = parms)
+    dat_miss_mul <- cbind(dat_miss_mul[, parms$varMap_items$ta],
+                          dat_list$dat_ob[, -parms$varMap_items$ta])
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -111,7 +168,9 @@
   dat_list <- genData(parms = parms, cond = cond)
 
   dat_miss_uni <- imposeNA(dat_list, parms = parms) # univariate miss
-  dat_miss_mul <- amputeStep(dat_list, parms = parms) # multivariate miss
+  dat_miss_mul <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+                             miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
+                             parms = parms) # multivariate miss
 
   colMeans(is.na(dat_miss_uni)) # Per variable missing cases
   colMeans(is.na(dat_miss_mul))

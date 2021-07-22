@@ -40,7 +40,7 @@
   parms$J <- 4 # number of measured items for latent variable
   parms$P <- parms$L*parms$J # number of latent variables
   parms$pm <- .3 # proportion of missings level
-  parms$fl <- .8 # factor loadings level
+  parms$fl <- .55 # factor loadings level
   parms$fl_bound <- 0 # factor loadings level
   parms$lv_mean   <- 0 # true latent mean
   parms$lv_var    <- 1 # true latent variance

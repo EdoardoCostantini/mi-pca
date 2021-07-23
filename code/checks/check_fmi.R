@@ -21,7 +21,7 @@
   colMeans(dat_list$dat_ob)
 
   ## Impose Missingness
-  dat_miss <- imposeNA(dat_list, parms = parms)
+  dat_miss <- amputePerVar(dat_list, parms = parms)
 
   ## Set up imputation
   dry_run <- mice(dat_miss, maxit = 0)

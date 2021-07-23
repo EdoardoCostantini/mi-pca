@@ -20,7 +20,7 @@
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness Univariate based
-  dat_miss <- imposeNA(dat_list, parms = parms)
+  dat_miss <- amputePerVar(dat_list, parms = parms)
   head(dat_miss)
 
   var_miss <- "z1"
@@ -50,7 +50,7 @@
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness Univariate based
-    dat_miss_uni <- imposeNA(dat_list, parms = parms)
+    dat_miss_uni <- amputePerVar(dat_list, parms = parms)
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -141,7 +141,7 @@
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness
-    dat_miss_uni <- imposeNA(dat_list, parms = parms)
+    dat_miss_uni <- amputePerVar(dat_list, parms = parms)
     dat_miss_mul <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                                miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
                                parms = parms)
@@ -167,7 +167,7 @@
   # Monitor difference in coverage, sample size, pm
   dat_list <- genData(parms = parms, cond = cond)
 
-  dat_miss_uni <- imposeNA(dat_list, parms = parms) # univariate miss
+  dat_miss_uni <- amputePerVar(dat_list, parms = parms) # univariate miss
   dat_miss_mul <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                              miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
                              parms = parms) # multivariate miss

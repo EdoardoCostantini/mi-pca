@@ -20,7 +20,7 @@ runCell <- function(cond, parms, rp) {
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness
-  dat_miss <- imposeNA(dat_list, parms = parms)
+  dat_miss <- amputePerVar(dat_list, parms = parms)
 
 # Imputation --------------------------------------------------------------
 

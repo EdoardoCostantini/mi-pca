@@ -18,7 +18,7 @@ imputePCA <- function(Z, target, cond, parms){
   
   # For internals
   ## Data
-  # Z <- imposeNA(genData(parms = parms, cond = cond), parms = parms)
+  # Z <- amputePerVar(genData(parms = parms, cond = cond), parms = parms)
   # target = parms$varMap_items$ta
 
   ## body:

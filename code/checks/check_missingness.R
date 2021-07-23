@@ -12,7 +12,7 @@
   source("./helper/fun_amputeMultivariate.R")
 
   ## Select a condition
-  cond <- conds[446, ]
+  cond <- conds[46, ]
 
 # MAR Predictors ----------------------------------------------------------
 
@@ -20,11 +20,14 @@
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness Univariate based
-  dat_miss <- amputePerVar(dat_list, parms = parms)
-  head(dat_miss)
+  target_miss <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
+                              preds = dat_list$dat_ob[, parms$varMap_items$mp],
+                              pm = parms$pm,
+                              type = "high")
+  dat_miss <- cbind(target_miss, dat_list$dat_ob[, -parms$varMap_items$ta])
 
   var_miss <- "z1"
-  MAR_pred <- c("z2", "z5", "z7", "z10", "z11")[2]
+  MAR_pred <- colnames(dat_miss)[10]
 
   densityplot(~ dat_miss[, MAR_pred],
               groups =  factor(is.na(dat_miss[, var_miss]),
@@ -44,13 +47,17 @@
   store_noMAR <- NULL
   store_CC <- NULL
 
-  for (i in 1:1e2){
+  for (i in 1:1e3){
     print(i)
     ## Gen fully observed data
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness Univariate based
-    dat_miss_uni <- amputePerVar(dat_list, parms = parms)
+    target_miss <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
+                                preds = dat_list$dat_ob[, parms$varMap_items$mp],
+                                pm = parms$pm,
+                                type = "high")
+    dat_miss_uni <- cbind(target_miss, dat_list$dat_ob[, -parms$varMap_items$ta])
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -68,9 +75,10 @@
     store_noMAR <- rbind(store_noMAR, noMAR)
   }
 
-  colMeans(store_yeMAR)
-  colMeans(store_noMAR)
-  mean(store_CC)
+  saveRDS(list(rbind(yeMAR = colMeans(store_yeMAR),
+                     noMAR = colMeans(store_noMAR)),
+               mean(store_CC)),
+          file = "../output/checks/mar_preds.rds")
 
 # latent variable vs observed items as MAR predictors in mice -------------
 
@@ -80,26 +88,26 @@
   store_it <- NULL
   store_CC <- NULL
 
-  for (i in 1:5e2){
+  for (i in 1:1e3){
     print(i)
     ## Gen fully observed data
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness based on latent variable
-    dat_miss_lv <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
-                              miss_preds = dat_list$dat_lv[, parms$varMap$mp,
+    target_miss_lv <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
+                                   preds = dat_list$dat_lv[, parms$varMap$mp,
                                                              drop = FALSE],
-                              parms = parms)
-    dat_miss_lv <- cbind(dat_miss_lv[, parms$varMap_items$ta],
-                          dat_list$dat_ob[, -parms$varMap_items$ta])
+                                   pm = parms$pm,
+                                   type = "high")
+    dat_miss_lv <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$varMap_items$ta])
 
     ## Impose Missingness based on observed items
-    dat_miss_it <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
-                              miss_preds = dat_list$dat_ob[, parms$varMap_items$mp,
+    target_miss_it <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
+                                   preds = dat_list$dat_ob[, parms$varMap_items$mp,
                                                              drop = FALSE],
-                              parms = parms)
-    dat_miss_it <- cbind(dat_miss_it[, parms$varMap_items$ta],
-                          dat_list$dat_ob[, -parms$varMap_items$ta])
+                                   pm = parms$pm,
+                                   type = "high")
+    dat_miss_it <- cbind(target_miss_it, dat_list$dat_ob[, -parms$varMap_items$ta])
 
     ## Impute with and witout MAR predictors
     mids_lv <- mice(dat_miss_lv[, 1:8],
@@ -125,26 +133,38 @@
   colMeans(store_it)
   colMeans(store_CC)
 
+saveRDS(list(rbind(lv = colMeans(store_lv),
+                   it = colMeans(store_it)),
+             mean(store_CC)),
+        file = "../output/checks/mar_preds_lv_vs_it.rds")
+
 # Effect of imposing miss with ampute vs univariate strategy --------------
 
   # Simulation: monitor differences in bias, riv, and FMI
-  cond <- conds[446, ]
+  cond <- conds[46, ]
 
   set.seed(1234)
 
   store_uni <- NULL
   store_mul <- NULL
 
-  for (i in 1:1e2){
+  for (i in 1:2){
     print(i)
     ## Gen fully observed data
     dat_list <- genData(parms = parms, cond = cond)
 
-    ## Impose Missingness
-    dat_miss_uni <- amputePerVar(dat_list, parms = parms)
+    ## Impose Missingness w/ univariate strategy
+    target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
+                                   preds = dat_list$dat_ob[, parms$varMap_items$mp,
+                                                             drop = FALSE],
+                                   pm = parms$pm,
+                                   type = "high")
+    dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$varMap_items$ta])
+
+    ## Impose Missingness w/ multivariate strategy
     dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
-                               miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
-                               parms = parms)
+                                       miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
+                                       parms = parms)
     dat_miss_mul <- cbind(dat_miss_mul[, parms$varMap_items$ta],
                           dat_list$dat_ob[, -parms$varMap_items$ta])
 
@@ -161,13 +181,19 @@
     store_mul <- rbind(store_mul, mul)
   }
 
-  colMeans(store_uni)
-  colMeans(store_mul)
+  saveRDS(rbind(uni = colMeans(store_uni),
+                mul = colMeans(store_mul)),
+          file = "../output/checks/mar_uni_vs_mul.rds")
 
   # Monitor difference in coverage, sample size, pm
   dat_list <- genData(parms = parms, cond = cond)
 
-  dat_miss_uni <- amputePerVar(dat_list, parms = parms) # univariate miss
+  target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
+                                  preds = dat_list$dat_ob[, parms$varMap_items$mp,
+                                                            drop = FALSE],
+                                  pm = parms$pm,
+                                  type = "high")
+  dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$varMap_items$ta])
   dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                              miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
                              parms = parms) # multivariate miss
@@ -183,3 +209,114 @@
 
   md.pairs(dat_miss_uni[, 1:4])$rr # Coverages
   md.pairs(dat_miss_mul[, 1:4])$rr
+
+# MAR strength ------------------------------------------------------------
+# Using R2 like statistics for the logistics missingness models
+
+  # Data Generated as in study
+  dat_list <- genData(parms = parms, cond = cond)
+
+  ## Impose Missingness w/ univariate strategy
+  X_items <- dat_list$dat_ob[, parms$varMap_items$mp, drop = FALSE]
+  X_lv <- dat_list$dat_lv[, parms$varMap$mp, drop = FALSE]
+
+  set.seed(123)
+  nR <- simMissingness(pm    = .5,
+                       data  = X_items,
+                       type  = "high",
+                       beta = rep(1, ncol(X_items)))
+  yX <- cbind(nR, X_items)
+
+  glm_fit <- glm(nR ~ ., data = yX, family = "binomial")
+  nullmod <- glm(nR ~ 1, family = "binomial")
+  prob <- predict(glm_fit, type = c("response"))
+  roc_out <- roc(nR ~ prob, data = yX, plot = FALSE, print.auc = TRUE)
+  pR2 <- 1-logLik(glm_fit)/logLik(nullmod) # McFadden's Psuedo R2
+  round(c(auc = as.numeric(roc_out$auc),
+          pR2 = as.numeric(pR2)), 3)
+
+  # Data generated by me, miss impose with simMissingness()
+  N <- 1e3
+  p <- 3
+  x <- MASS::mvrnorm(N, rep(0, p), diag(p))
+  b <- rep(5, p)
+  a <- 0
+
+  std <- c(no = 1, yes = 2)[2] # do you want to see differences?
+  if(std == 1){
+    lin_pred <- a + x %*% b # effect
+  } else {
+    lin_pred <- scale(a + x %*% b)
+  }
+
+  pi_x <- exp(lin_pred) / (1 + exp(lin_pred))
+  y <- rbinom(N, 1, pi_x)
+  glm_fit <- glm(y ~ x, family = "binomial")
+  nullmod <- glm(y ~ 1, family = "binomial")
+  prob <- predict(glm_fit, type = c("response"))
+  roc_out <- roc(y ~ prob, plot = FALSE, print.auc = TRUE)
+  pR2 <- 1-logLik(glm_fit)/logLik(nullmod) # McFadden's Psuedo R2
+  round(c(auc = as.numeric(roc_out$auc),
+          pR2 = as.numeric(pR2)), 3)
+  # plot(roc_out, print.auc = TRUE)
+  par(mfrow = c(1, 2))
+  plot(sort(lin_pred), sort(pi_x), type = "l",
+       main = c("Raw", "Standardized")[std],
+       ylab = "Probability", xlab = "Linear combination of predictors")
+
+  # Data generated by me, miss impose with simMissingness()
+  patts <- weights <- c(0, 0, 1)
+
+  x_ampute <- ampute(
+    data = x,
+    patterns = patts,
+    weights = weights,
+    type = c("RIGHT")
+  )
+
+  glm_fit <- glm(is.na(V1) ~ V3, x_ampute$amp, family = "binomial")
+  nullmod <- glm(is.na(V1) ~ 1, x_ampute$amp, family = "binomial")
+  prob <- predict(glm_fit, type = c("response"))
+  roc_out <- roc(is.na(x_ampute$amp$V1) ~ prob, plot = FALSE, print.auc = TRUE)
+  pR2 <- 1-logLik(glm_fit)/logLik(nullmod) # McFadden's Psuedo R2
+  round(c(auc = as.numeric(roc_out$auc),
+          pR2 = as.numeric(pR2)), 3)
+
+  # Boys Data, miss impose with ampute()
+  compl_boys <- cc(boys)[1:3]
+
+  # Perform amputation with default settings
+  mads_boys <- ampute(data = compl_boys)
+  mads_boys$amp
+
+  # Change default matrices as desired
+  my_patterns <- mads_boys$patterns
+  my_patterns[, 3] <- 1
+  my_patterns[2, 1] <- 0
+  my_patterns[3, 2] <- 0
+
+  my_weights <- mads_boys$weights
+  my_weights[, 1] <- 0
+  my_weights[, 2] <- 0
+  my_weights[, 3] <- 1
+
+  # Rerun amputation
+  my_mads_boys <- ampute(
+    data = compl_boys,
+    patterns = my_patterns,
+    weights = my_weights,
+    type = c("RIGHT")
+  )
+  miss_dat <- my_mads_boys$amp
+
+  y <- is.na(miss_dat$age)
+  x <- miss_dat$wgt
+
+  glm_fit <- glm(is.na(V1) ~ V3, x_ampute$amp, family = "binomial")
+  nullmod <- glm(is.na(V1) ~ 1, x_ampute$amp, family = "binomial")
+  prob <- predict(glm_fit, type = c("response"))
+  roc_out <- roc(is.na(x_ampute$amp$V1) ~ prob, plot = FALSE, print.auc = TRUE)
+  pR2 <- 1-logLik(glm_fit)/logLik(nullmod) # McFadden's Psuedo R2
+  round(c(auc = as.numeric(roc_out$auc),
+          pR2 = as.numeric(pR2)), 3)
+

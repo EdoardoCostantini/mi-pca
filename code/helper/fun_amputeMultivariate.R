@@ -2,9 +2,9 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-07-20
-### Modified: 2021-07-21
+### Modified: 2021-07-22
 
-amputeStep <- function(miss_target, miss_preds, parms, seed = NULL){
+amputeMultivariate <- function(miss_target, miss_preds, parms, seed = NULL){
   ## Description
   # Uses the mice::ampute() function to impose missing values on
   # miss_target based on miss_preds.

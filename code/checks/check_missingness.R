@@ -2,14 +2,14 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-07-20
-### Modified: 2021-07-21
+### Modified: 2021-07-23
 
   ## Make sure we have a clean environment:
   rm(list = ls())
 
   ## Initialize the environment:
   source("./init.R")
-  source("./helper/fun_ampute.R")
+  source("./helper/fun_amputeMultivariate.R")
 
   ## Select a condition
   cond <- conds[446, ]
@@ -86,7 +86,7 @@
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness based on latent variable
-    dat_miss_lv <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+    dat_miss_lv <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                               miss_preds = dat_list$dat_lv[, parms$varMap$mp,
                                                              drop = FALSE],
                               parms = parms)
@@ -94,7 +94,7 @@
                           dat_list$dat_ob[, -parms$varMap_items$ta])
 
     ## Impose Missingness based on observed items
-    dat_miss_it <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+    dat_miss_it <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                               miss_preds = dat_list$dat_ob[, parms$varMap_items$mp,
                                                              drop = FALSE],
                               parms = parms)
@@ -142,7 +142,7 @@
 
     ## Impose Missingness
     dat_miss_uni <- amputePerVar(dat_list, parms = parms)
-    dat_miss_mul <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+    dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                                miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
                                parms = parms)
     dat_miss_mul <- cbind(dat_miss_mul[, parms$varMap_items$ta],
@@ -168,7 +168,7 @@
   dat_list <- genData(parms = parms, cond = cond)
 
   dat_miss_uni <- amputePerVar(dat_list, parms = parms) # univariate miss
-  dat_miss_mul <- amputeStep(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+  dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
                              miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
                              parms = parms) # multivariate miss
 

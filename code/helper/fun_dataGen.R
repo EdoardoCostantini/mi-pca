@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
-### Modified: 2021-07-20
+### Modified: 2021-07-23
 
 genData <- function(parms, cond){
 
@@ -105,8 +105,8 @@ genData <- function(parms, cond){
 # Return Output -----------------------------------------------------------
   
   return( 
-    list(dat_ob = x,
-         dat_lv = scs_lv,
+    list(dat_ob = as.data.frame(x),
+         dat_lv = as.data.frame(scs_lv),
          Phi    = Phi,
          Theta  = Theta,
          Lambda = Lambda)

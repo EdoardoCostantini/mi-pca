@@ -75,10 +75,12 @@
     store_noMAR <- rbind(store_noMAR, noMAR)
   }
 
+  file_name <- "../output/checks/mar_preds.rds"
   saveRDS(list(rbind(yeMAR = colMeans(store_yeMAR),
                      noMAR = colMeans(store_noMAR)),
                mean(store_CC)),
-          file = "../output/checks/mar_preds.rds")
+          file = file_name)
+  readRDS(file_name)
 
 # latent variable vs observed items as MAR predictors in mice -------------
 
@@ -133,10 +135,12 @@
   colMeans(store_it)
   colMeans(store_CC)
 
-saveRDS(list(rbind(lv = colMeans(store_lv),
-                   it = colMeans(store_it)),
-             mean(store_CC)),
-        file = "../output/checks/mar_preds_lv_vs_it.rds")
+  file_name <- "../output/checks/mar_preds_lv_vs_it.rds"
+  saveRDS(list(rbind(lv = colMeans(store_lv),
+                     it = colMeans(store_it)),
+               mean(store_CC)),
+          file = "../output/checks/mar_preds_lv_vs_it.rds")
+  readRDS(file_name)
 
 # Effect of imposing miss with ampute vs univariate strategy --------------
 
@@ -148,22 +152,23 @@ saveRDS(list(rbind(lv = colMeans(store_lv),
   store_uni <- NULL
   store_mul <- NULL
 
-  for (i in 1:2){
+  for (i in 1:1e3){
     print(i)
     ## Gen fully observed data
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness w/ univariate strategy
     target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                                   preds = dat_list$dat_ob[, parms$varMap_items$mp,
-                                                             drop = FALSE],
-                                   pm = parms$pm,
-                                   type = "high")
+                                    preds = dat_list$dat_ob[, parms$varMap_items$mp,
+                                                              drop = FALSE],
+                                    pm = parms$pm,
+                                    type = "high")
     dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$varMap_items$ta])
 
     ## Impose Missingness w/ multivariate strategy
     dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
-                                       miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
+                                       miss_preds = dat_list$dat_ob[, parms$varMap_items$mp,
+                                                              drop = FALSE],
                                        parms = parms)
     dat_miss_mul <- cbind(dat_miss_mul[, parms$varMap_items$ta],
                           dat_list$dat_ob[, -parms$varMap_items$ta])
@@ -181,9 +186,11 @@ saveRDS(list(rbind(lv = colMeans(store_lv),
     store_mul <- rbind(store_mul, mul)
   }
 
+  file_name <- "../output/checks/mar_uni_vs_mul.rds"
   saveRDS(rbind(uni = colMeans(store_uni),
                 mul = colMeans(store_mul)),
-          file = "../output/checks/mar_uni_vs_mul.rds")
+          file = file_name)
+  readRDS(file_name)
 
   # Monitor difference in coverage, sample size, pm
   dat_list <- genData(parms = parms, cond = cond)
@@ -215,7 +222,7 @@ saveRDS(list(rbind(lv = colMeans(store_lv),
 
   # Data Generated as in study
   dat_list <- genData(parms = parms, cond = cond)
-
+  library(pROC)
   ## Impose Missingness w/ univariate strategy
   X_items <- dat_list$dat_ob[, parms$varMap_items$mp, drop = FALSE]
   X_lv <- dat_list$dat_lv[, parms$varMap$mp, drop = FALSE]

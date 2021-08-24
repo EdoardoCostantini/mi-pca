@@ -1,8 +1,8 @@
-### Title:    Defining Fixed Parameters
-### Project:  imputeHD-add
-### Author:   Edoardo Costantini
-### Created:  2021-06-23
-### Modified: 2021-06-21
+# Project:   mipca_compare
+# Objective: initialization script
+# Author:    Edoardo Costantini
+# Created:   2021-06-23
+# Modified:  2021-08-24
 
 # Packages ----------------------------------------------------------------
 
@@ -16,18 +16,20 @@
 
 # Load Functions ----------------------------------------------------------
 
-  # Simulation
-  # source("./subroutines.R")
+  # Subroutines
+  all_subs <- paste0("./subroutines/",
+                     list.files("./subroutines/"))
+  lapply(all_subs, source)
 
-  # Support Functions
-  source("./helper/fun_dataGen.R")
-  source("./helper/fun_amputePerVar.R")
-  source("./helper/simMissingness.R")
-  source("./helper/functions.R")
-  source("./helper/subroutines.R")
-  
-  # Imputation Functions
-  source("./fun_impute/fun_PCA_impute.R")
+  # Functions
+  all_funs <- paste0("./functions/",
+                     list.files("./functions/"))
+  lapply(all_funs, source)
+
+  # Helper
+  all_help <- paste0("./helper/",
+                     list.files("./helper/"))
+  lapply(all_help, source)
 
 # Fixed Parameters --------------------------------------------------------
 
@@ -52,25 +54,25 @@
   parms$item_var  <- (2.5)^2 # true item variance
   
   # Map variables
-  parms$varMap <- list(ta = 1, # TArget of analysis
+  parms$vmap_lv <- list(ta = 1, # TArget of analysis
                        mp = 2, # Mar Predictors
                        ax = 3:parms$L # Auxiliary variables
   )
-  ta <- 1:(max(parms$varMap$ta)*parms$J)
-  mp <- (max(ta)+1):(max(ta)+(parms$J*length(parms$varMap$mp)))
+  ta <- 1:(max(parms$vmap_lv$ta)*parms$J)
+  mp <- (max(ta)+1):(max(ta)+(parms$J*length(parms$vmap_lv$mp)))
   ax <- (max(mp)+1):parms$P
-  parms$varMap_items <- list(ta = ta, mp = mp, ax = ax)
+  parms$vmap_it <- list(ta = ta, mp = mp, ax = ax)
 
   # Create missing data patterns (only needed if you end up suing ampute)
-  myMatrix <- matrix(rep(c(0, 1), length(parms$varMap_items$ta)), ncol = 2, byrow = TRUE)
+  myMatrix <- matrix(rep(c(0, 1), length(parms$vmap_it$ta)), ncol = 2, byrow = TRUE)
   parms$patts <- do.call(expand.grid,
                          split(myMatrix,
                                rep(1:nrow(myMatrix), ncol(myMatrix))))
   parms$patts <- parms$patts[-c(1, nrow(parms$patts)), ]
 
   # CFA model
-  lv_items <- split(x = paste0("z", 1:(length(parms$varMap$ta)*parms$J)),
-                    f = rep(parms$varMap$ta, each = parms$J))
+  lv_items <- split(x = paste0("z", 1:(length(parms$vmap_lv$ta)*parms$J)),
+                    f = rep(parms$vmap_lv$ta, each = parms$J))
   lv_models <- sapply(1:length(lv_items), function(it){
     paste0("l", it,
            " =~ ",

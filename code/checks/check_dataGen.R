@@ -17,12 +17,12 @@ store_cors_ob <- NULL
 for (i in 1:25){
   print(i)
   dat_list <- genData(parms = parms, cond = conds[i, ])
-  dat_ob_numeric <- sapply(dat_list$dat_ob[, parms$varMap_items$mp], as.numeric)
-  cor4mar <- cor(cbind(dat_list$dat_ob[, parms$varMap_items$ta],
-                       lv_mp = dat_list$dat_lv[, parms$varMap$mp],
+  dat_ob_numeric <- sapply(dat_list$dat_ob[, parms$vmap_it$mp], as.numeric)
+  cor4mar <- cor(cbind(dat_list$dat_ob[, parms$vmap_it$ta],
+                       lv_mp = dat_list$dat_lv[, parms$vmap_lv$mp],
                        ob_mp = dat_ob_numeric))
-  store_cors_lv <- rbind(store_cors_lv, cor4mar[parms$varMap_items$ta, "lv_mp"])
-  store_cors_ob[[i]] <- cor4mar[parms$varMap_items$ta,
+  store_cors_lv <- rbind(store_cors_lv, cor4mar[parms$vmap_it$ta, "lv_mp"])
+  store_cors_ob[[i]] <- cor4mar[parms$vmap_it$ta,
                                 grep("ob", colnames(cor4mar))]
 }
 
@@ -66,9 +66,9 @@ store_cors_ob[to_check]
       Xy <- dat_list$dat_ob
 
       # Define CFA model
-      n_items <- length(c(parms$varMap$ta, parms$varMap$mp))
+      n_items <- length(c(parms$vmap_lv$ta, parms$vmap_lv$mp))
       lv_items <- split(x = paste0("z", 1:(n_items*parms$J)),
-                        f = rep(c(parms$varMap$ta, parms$varMap$mp),
+                        f = rep(c(parms$vmap_lv$ta, parms$vmap_lv$mp),
                                 each = parms$J))
       lv_models <- sapply(1:length(lv_items), function(it){
         paste0("l", it,

@@ -16,7 +16,7 @@ dataStep <- function(parms, cond){
   dat_cont <- dat_list$dat_ob
 
   # Discretise it
-  index_keep_continuous <- 1:(max(parms$varMap$ta)*parms$J)
+  index_keep_continuous <- 1:(max(parms$vmap_lv$ta)*parms$J)
   dat_disc <- apply(dat_cont[, -index_keep_continuous],
                     2,
                     function(j){

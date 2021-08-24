@@ -20,11 +20,11 @@
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness Univariate based
-  target_miss <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                              preds = dat_list$dat_ob[, parms$varMap_items$mp],
+  target_miss <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                              preds = dat_list$dat_ob[, parms$vmap_it$mp],
                               pm = parms$pm,
                               type = "high")
-  dat_miss <- cbind(target_miss, dat_list$dat_ob[, -parms$varMap_items$ta])
+  dat_miss <- cbind(target_miss, dat_list$dat_ob[, -parms$vmap_it$ta])
 
   var_miss <- "z1"
   MAR_pred <- colnames(dat_miss)[10]
@@ -53,11 +53,11 @@
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness Univariate based
-    target_miss <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                                preds = dat_list$dat_ob[, parms$varMap_items$mp],
+    target_miss <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                                preds = dat_list$dat_ob[, parms$vmap_it$mp],
                                 pm = parms$pm,
                                 type = "high")
-    dat_miss_uni <- cbind(target_miss, dat_list$dat_ob[, -parms$varMap_items$ta])
+    dat_miss_uni <- cbind(target_miss, dat_list$dat_ob[, -parms$vmap_it$ta])
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -96,20 +96,20 @@
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness based on latent variable
-    target_miss_lv <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                                   preds = dat_list$dat_lv[, parms$varMap$mp,
+    target_miss_lv <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                                   preds = dat_list$dat_lv[, parms$vmap_lv$mp,
                                                              drop = FALSE],
                                    pm = parms$pm,
                                    type = "high")
-    dat_miss_lv <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$varMap_items$ta])
+    dat_miss_lv <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$vmap_it$ta])
 
     ## Impose Missingness based on observed items
-    target_miss_it <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                                   preds = dat_list$dat_ob[, parms$varMap_items$mp,
+    target_miss_it <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                                   preds = dat_list$dat_ob[, parms$vmap_it$mp,
                                                              drop = FALSE],
                                    pm = parms$pm,
                                    type = "high")
-    dat_miss_it <- cbind(target_miss_it, dat_list$dat_ob[, -parms$varMap_items$ta])
+    dat_miss_it <- cbind(target_miss_it, dat_list$dat_ob[, -parms$vmap_it$ta])
 
     ## Impute with and witout MAR predictors
     mids_lv <- mice(dat_miss_lv[, 1:8],
@@ -158,20 +158,20 @@
     dat_list <- genData(parms = parms, cond = cond)
 
     ## Impose Missingness w/ univariate strategy
-    target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                                    preds = dat_list$dat_ob[, parms$varMap_items$mp,
+    target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                                    preds = dat_list$dat_ob[, parms$vmap_it$mp,
                                                               drop = FALSE],
                                     pm = parms$pm,
                                     type = "high")
-    dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$varMap_items$ta])
+    dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$vmap_it$ta])
 
     ## Impose Missingness w/ multivariate strategy
-    dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
-                                       miss_preds = dat_list$dat_ob[, parms$varMap_items$mp,
+    dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$vmap_it$ta],
+                                       miss_preds = dat_list$dat_ob[, parms$vmap_it$mp,
                                                               drop = FALSE],
                                        parms = parms)
-    dat_miss_mul <- cbind(dat_miss_mul[, parms$varMap_items$ta],
-                          dat_list$dat_ob[, -parms$varMap_items$ta])
+    dat_miss_mul <- cbind(dat_miss_mul[, parms$vmap_it$ta],
+                          dat_list$dat_ob[, -parms$vmap_it$ta])
 
     ## Impute with and witout MAR predictors
     mids_uni <- mice(dat_miss_uni[, 1:8],
@@ -195,13 +195,13 @@
   # Monitor difference in coverage, sample size, pm
   dat_list <- genData(parms = parms, cond = cond)
 
-  target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$varMap_items$ta],
-                                  preds = dat_list$dat_ob[, parms$varMap_items$mp,
+  target_miss_uni <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                                  preds = dat_list$dat_ob[, parms$vmap_it$mp,
                                                             drop = FALSE],
                                   pm = parms$pm,
                                   type = "high")
-  dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$varMap_items$ta])
-  dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$varMap_items$ta],
+  dat_miss_uni <- cbind(target_miss_uni, dat_list$dat_ob[, -parms$vmap_it$ta])
+  dat_miss_mul <- amputeMultivariate(miss_target = dat_list$dat_ob[, parms$vmap_it$ta],
                              miss_preds = dat_list$dat_lv[, 2, drop = FALSE],
                              parms = parms) # multivariate miss
 
@@ -224,8 +224,8 @@
   dat_list <- genData(parms = parms, cond = cond)
   library(pROC)
   ## Impose Missingness w/ univariate strategy
-  X_items <- dat_list$dat_ob[, parms$varMap_items$mp, drop = FALSE]
-  X_lv <- dat_list$dat_lv[, parms$varMap$mp, drop = FALSE]
+  X_items <- dat_list$dat_ob[, parms$vmap_it$mp, drop = FALSE]
+  X_lv <- dat_list$dat_lv[, parms$vmap_lv$mp, drop = FALSE]
 
   set.seed(123)
   nR <- simMissingness(pm    = .5,

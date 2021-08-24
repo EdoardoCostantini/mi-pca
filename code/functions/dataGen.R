@@ -15,14 +15,14 @@ genData <- function(parms, cond){
   Phi <- diag(parms$L)
   
   # Target Variables
-  Phi[parms$varMap$ta, ] <- parms$lv_cov_ta
+  Phi[parms$vmap_lv$ta, ] <- parms$lv_cov_ta
   
   # MAR Predictors
-  Phi[parms$varMap$mp, ] <- parms$lv_cov_mp
+  Phi[parms$vmap_lv$mp, ] <- parms$lv_cov_mp
   
   # Other Predictors (junk and no junk)
-  nauxiliaries <- length(parms$varMap$ax)
-  index_junk_aux <- tail(parms$varMap$ax, nauxiliaries * cond$pj)
+  nauxiliaries <- length(parms$vmap_lv$ax)
+  index_junk_aux <- tail(parms$vmap_lv$ax, nauxiliaries * cond$pj)
   Phi[-index_junk_aux, ] <- parms$lv_cov_ax # not junk
   Phi[index_junk_aux, ] <- parms$lv_cov_junk # junk
   
@@ -81,12 +81,12 @@ genData <- function(parms, cond){
 # Discretize if required --------------------------------------------------
 
   index_discrete <- c(
-    # ta = tail(parms$varMap_items$ta,
-    #           length(parms$varMap_items$ta) * cond$D),
-    mp = tail(parms$varMap_items$mp,
-              length(parms$varMap_items$mp) * cond$D),
-    ax = tail(parms$varMap_items$ax,
-              length(parms$varMap_items$ax) * cond$D)
+    # ta = tail(parms$vmap_it$ta,
+    #           length(parms$vmap_it$ta) * cond$D),
+    mp = tail(parms$vmap_it$mp,
+              length(parms$vmap_it$mp) * cond$D),
+    ax = tail(parms$vmap_it$ax,
+              length(parms$vmap_it$ax) * cond$D)
   )
   x_disc <- data.frame(matrix(nrow = nrow(x),
                               ncol = ncol(x)))

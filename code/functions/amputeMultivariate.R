@@ -12,8 +12,8 @@ amputeMultivariate <- function(miss_target, miss_preds, parms, seed = NULL){
   ## Example Inputs
   # cond <- conds[1, ]
   # dat_start <- genData(parms = parms, cond = cond)
-  # miss_target <- dat_start$dat_ob[, parms$varMap_items$ta]
-  # miss_preds <- dat_start$dat_ob[, parms$varMap_items$mp]
+  # miss_target <- dat_start$dat_ob[, parms$vmap_it$ta]
+  # miss_preds <- dat_start$dat_ob[, parms$vmap_it$mp]
   
 # MAR ---------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ amputeMultivariate <- function(miss_target, miss_preds, parms, seed = NULL){
                     miss_preds)
 
   # Define possible patterns
-  space <- matrix(rep(c(0, 1), length(parms$varMap_items$ta)),
+  space <- matrix(rep(c(0, 1), length(parms$vmap_it$ta)),
                   ncol = 2, byrow = TRUE,
                   dimnames = list(NULL, c("obs", "mis")))
   patts_all <- do.call(expand.grid,

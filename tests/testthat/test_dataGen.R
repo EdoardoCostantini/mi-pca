@@ -23,7 +23,7 @@
     expect_not_NA[i] <- any(!is.na(dat_list$dat_ob))
 
     # Discreteness
-    disc_pool_size <- length(parms$varMap$disc_pool)
+    disc_pool_size <- length(parms$vmap_lv$disc_pool)
     disc_preds_num <- sum(sapply(dat_list$dat_ob, is.factor))
     ratio <- disc_preds_num/disc_pool_size
     expect_discrete[i] <- abs(conds[i, "D"] - ratio) < .1

@@ -12,9 +12,9 @@ amputePerVar <- function(targets, preds, pm = .5, type = "high"){
   ## Example Inputs
   # cond <- conds[1, ]
   # dat_list <- genData(parms = parms, cond = cond)
-  # targets = dat_list$dat_ob[, parms$varMap_items$ta]
-  # preds = dat_list$dat_ob[, parms$varMap_items$mp]
-  # preds = dat_list$dat_lv[, parms$varMap$mp,
+  # targets = dat_list$dat_ob[, parms$vmap_it$ta]
+  # preds = dat_list$dat_ob[, parms$vmap_it$mp]
+  # preds = dat_list$dat_lv[, parms$vmap_lv$mp,
   #                           drop = FALSE]
   # pm = parms$pm
   # type = "high"
@@ -22,7 +22,7 @@ amputePerVar <- function(targets, preds, pm = .5, type = "high"){
   ## Body
   preds_object <- model.matrix(~ ., as.data.frame(preds))[, -1, drop = FALSE]
 
-  for (i in parms$varMap_items$ta) {
+  for (i in parms$vmap_it$ta) {
     nR <- simMissingness(pm    = pm,
                          data  = preds_object,
                          type  = type)

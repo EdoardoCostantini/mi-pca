@@ -1,11 +1,11 @@
-### Title:    Subroutine runCell
-### Project:  MI-PCA study
-### Author:   Edoardo Costantini
-### Created:  2021-05-12
-### Modified: 2021-07-21
-### Note:     A "cell" is a cycle through the set of conditions.
-###           The function in this script generates 1 data set, performs
-###           imputations for every condition in the set.
+# Project:   mipca_compare
+# Objective: subroutine runCell to run a single condition for a single rep
+# Author:    Edoardo Costantini
+# Created:   2021-05-12
+# Modified:  2021-08-24
+# Note:      A "cell" is a cycle through the set of conditions.
+#            The function in this script generates 1 data set, performs
+#            imputations for every condition in the set.
 
 runCell <- function(cond, parms, rp) {
 
@@ -20,11 +20,16 @@ runCell <- function(cond, parms, rp) {
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness
-  dat_miss <- amputePerVar(dat_list, parms = parms)
+  preds <- dat_list$dat_ob[, parms$vmap_it$mp, drop = FALSE]
+  target_miss_lv <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+                                 preds = preds,
+                                 pm = parms$pm,
+                                 type = "high")
+  dat_miss_lv <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$vmap_it$ta])
 
 # Imputation --------------------------------------------------------------
 
-  imp_out <- imputePCA(dat_miss, target = parms$varMap_items$ta,
+  imp_out <- imputePCA(dat_miss, target = parms$vmap_it$ta,
                        cond = cond, parms = parms)
 
 # Analyze and pool --------------------------------------------------------
@@ -32,19 +37,19 @@ runCell <- function(cond, parms, rp) {
   ## Mean, variance, covariance
   # MI data
   mi_sat_fits <- miFitSat(mi_data = imp_out$dats,
-                       model = satModWrite(names(imp_out$dats[[1]][,
-                                                   parms$varMap_items$ta]))
+                          model = satModWrite(names(imp_out$dats[[1]][,
+                                                      parms$vmap_it$ta]))
   )
   mi_sat_pool <- miPool(mi_fits = mi_sat_fits,
-                     m = parms$mice_ndt,
-                     N = parms$N)
+                        m = parms$mice_ndt,
+                        N = parms$N)
 
   # Original data and complete case analysis
   sd_data <- list(orig = dat_list$dat_ob,
                   omit = na.omit(dat_miss))
   sd_sat_fits <- miFitSat(mi_data = sd_data,
                           model = satModWrite(names(imp_out$dats[[1]][,
-                                                      parms$varMap_items$ta]))
+                                                      parms$vmap_it$ta]))
   )
   sd_sat_ests <- lapply(sd_sat_fits, function(x) {
     est_all <- parameterEstimates(x, standardized = TRUE)
@@ -89,10 +94,9 @@ runCell <- function(cond, parms, rp) {
 # Store Output ------------------------------------------------------------
   
   ## Store Results
-  saveRDS(output,
-          file = paste0(parms$outDir, "id_"
-                        rp, "_",
-                        cond_tag,
+  saveRDS(res,
+          file = paste0(fs$outDir,
+                        "rep_", rp, "_", cond$tag,
                         ".rds")
   )
 

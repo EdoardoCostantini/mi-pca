@@ -1,9 +1,9 @@
 ### Title:    Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-05-19
-### Modified: 2021-07-19
+### Modified: 2021-08-25
 
-imputePCA <- function(Z, target, cond, parms){
+imputePCA <- function(Z, imp_target, pcs_target, parms){
   
   ## Input: 
   # @Z: dataset w/ missing values,
@@ -18,77 +18,71 @@ imputePCA <- function(Z, target, cond, parms){
   
   # For internals
   ## Data
-  # Z <- amputePerVar(genData(parms = parms, cond = cond), parms = parms)
-  # target = parms$vmap_it$ta
+  # Z = dat_miss
+  # imp_target = parms$vmap_it$ta
+  # pcs_target = c(parms$vmap_it$mp, parms$vmap_it$ax)
+  # criterion = c("first", "half")[2]
 
   ## body:
     tryCatch({
 
       start_time <- Sys.time()
 
-      # Data
-      O = as.data.frame(!is.na(Z)) # matrix index of observed values
-      usable_min <- min(colSums(O)) # smallest observed sample size
-
-      if(sum(is.na(Z[, -target])) > 0){
-        # Fill in cases when ZDA has missing values
-        print("PCA Impute: Filling in auxiliary NAs")
-
+      ## Single Imputation Run
+      if(any(imp_target %in% pcs_target)){
         pMat     <- quickpred(Z, mincor = .3)
         ZDA_mids <- mice(Z,
                          m               = 1,
                          maxit           = 100,
                          predictorMatrix = pMat,
-                         printFlag       = TRUE,
-                         ridge           = cond$ridge,
+                         printFlag       = FALSE,
                          method          = "pmm")
 
-        Z_out <- complete(ZDA_mids)
-
-        # Define Single Imputed data as the auxiliary set
-        Z[, -target] <- Z_out[, -target]
-
-        # Define dataset for output
-        Z_out <- Z
-
+        Z_tpca <- complete(ZDA_mids)
       } else {
-        Z_out <- Z # Need it for output consistency
+        Z_tpca <- Z
       }
 
-      # If there are categorical variables, then use FAMD
-      if("factor" %in% sapply(Z, class)){
+      # Data
+      O <-  as.data.frame(!is.na(Z)) # matrix index of observed values
+      usable_min <- min(colSums(O)) # smallest observed sample size
+      Z_PC <- model.matrix(~ ., Z_tpca[, pcs_target])[, -1]
 
-        res.famd <- FAMD(Z[, -target], graph = FALSE, ncp = ncol(Z))
-        Z_pca <- res.famd$ind$coord[, 1:cond$npcs, drop = FALSE]
+      # Clean model matrix
+      emptyvars <- names(which(apply(Z_PC, 2, var) == 0))
+      Z_PC_clean <- Z_PC[, !colnames(Z_PC) %in% emptyvars]
 
-      } else {
+      # Extract PCs
+      pcaOut <- prcomp(Z_PC_clean, scale = TRUE, retx = TRUE)
 
-        Z_PC <- model.matrix(~ ., Z[, -target])[, -1]
+      ## Compute and store the cumulative proportion of variance explained by
+      ## the component scores:
+      rSquared <- cumsum(pcaOut$sdev^2) / sum(pcaOut$sdev^2)
 
-        # Clean model matrix
-        emptyvars <- names(which(apply(Z_PC, 2, var) == 0))
-        Z_PC_clean <- Z_PC[, !colnames(Z_PC) %in% emptyvars]
-
-        # Extract PCs
-        pcaOut <- prcomp(Z_PC_clean, scale = TRUE, retx = TRUE)
-
-        ## Compute and store the cumulative proportion of variance explained by
-        ## the component scores:
-        rSquared <- cumsum(pcaOut$sdev^2) / sum(pcaOut$sdev^2)
-
-        ## Extract the principal component scores:
-        Z_pca <- pcaOut$x[, rSquared <= parms$PCA_pcthresh]
-
+      ## Extract the principal component scores:
+      if(criterion == "first"){
+        Z_pca <- pcaOut$x[, 1, drop = FALSE]
+      }
+      if(criterion == "half"){
+        Z_pca <- pcaOut$x[, rSquared <= .5]
       }
 
-      ## Define Imputation methods
-      Z_input <- cbind(Z[, target], Z_pca)
+      ## Define input data for imputation
+      Z_input <- cbind(Z[, imp_target], Z_pca)
+
+      ## Define predictor matrix
+      pred_mat <- make.predictorMatrix(Z_input)
+      if(any(imp_target %in% pcs_target)){
+        # If we have included the imp_target variables that are pcs_target,
+        # then we do not want to use them again in the imputaion
+        pred_mat[, imp_target] <- 0
+      }
 
       ## Impute
-      print("PCA Impute: Performing Multiple Imputation")
       imp_PCA_mids <- mice::mice(Z_input,
                                  m      = parms$mice_ndt,
-                                 maxit  = parms$mice_iters)
+                                 maxit  = parms$mice_iters,
+                                 predictorMatrix = pred_mat)
 
       # Store results
       print("PCA Impute: Storing Results")
@@ -97,7 +91,7 @@ imputePCA <- function(Z, target, cond, parms){
       # Fill into orignal datasets the imputations (get rid of PCs)
       imp_PCA_dats <- lapply(imp_PCA_PC_dats, function(x){
         df_temp <- Z
-        df_temp[, target] <- x[, target]
+        df_temp[, imp_target] <- x[, imp_target]
         return(df_temp)
       })
 

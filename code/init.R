@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-08-24
+# Modified:  2021-08-25
 
 # Packages ----------------------------------------------------------------
 
@@ -39,7 +39,7 @@
   # Data generation
   parms$N <- 1e3 # sample size
   parms$L <- 9 # number of latent variables
-  parms$J <- 4 # number of measured items for latent variable
+  parms$J <- 3 # number of measured items for latent variable
   parms$P <- parms$L*parms$J # number of latent variables
   parms$pm <- .3 # proportion of missings level
   parms$fl <- .55 # factor loadings level
@@ -94,17 +94,19 @@
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
   K <- c(10, 7, 5, 3, 2) # number of categories
-  D <- seq(1, 0, length.out = 5)
+  D <- 1 # seq(1, 0, length.out = 5)
   interval <- c(TRUE, FALSE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
-  npcs <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
+  npc <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
+  tpc <- c("all", "not_target")
 
   # Make Conditionsa
   conds <- expand.grid(K = K,
                        D = D,
                        interval = interval,
                        pj = pj,
-                       npcs = npcs,
+                       npc = npc,
+                       tpc = tpc,
                        stringsAsFactors = FALSE)
 
   # Append Condition Tag

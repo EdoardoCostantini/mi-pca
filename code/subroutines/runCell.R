@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-08-24
+# Modified:  2021-08-25
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -20,17 +20,25 @@ runCell <- function(cond, parms, rp) {
   dat_list <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness
-  preds <- dat_list$dat_ob[, parms$vmap_it$mp, drop = FALSE]
-  target_miss_lv <- amputePerVar(targets = dat_list$dat_ob[, parms$vmap_it$ta],
+  preds   <- dat_list$dat_ob[, parms$vmap_it$mp, drop = FALSE]
+  targets <- dat_list$dat_ob[, parms$vmap_it$ta, drop = FALSE]
+  target_miss_lv <- amputePerVar(targets = targets,
                                  preds = preds,
                                  pm = parms$pm,
                                  type = "high")
-  dat_miss_lv <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$vmap_it$ta])
+  dat_miss <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$vmap_it$ta])
 
 # Imputation --------------------------------------------------------------
 
-  imp_out <- imputePCA(dat_miss, target = parms$vmap_it$ta,
-                       cond = cond, parms = parms)
+  if(cond$tpc == "all"){
+    pcs_target <- unlist(parms$vmap_it, use.names = FALSE)
+  } else {
+    pcs_target <- c(parms$vmap_it$mp, parms$vmap_it$ax)
+  }
+  imp_out <- imputePCA(dat_miss,
+                       imp_target = parms$vmap_it$ta,
+                       pcs_target = c(parms$vmap_it$mp, parms$vmap_it$ax),
+                       parms = parms)
 
 # Analyze and pool --------------------------------------------------------
 

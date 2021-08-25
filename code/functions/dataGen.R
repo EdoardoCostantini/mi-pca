@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
-### Modified: 2021-07-23
+### Modified: 2021-08-25
 
 genData <- function(parms, cond){
 
@@ -83,8 +83,8 @@ genData <- function(parms, cond){
   index_discrete <- c(
     # ta = tail(parms$vmap_it$ta,
     #           length(parms$vmap_it$ta) * cond$D),
-    mp = tail(parms$vmap_it$mp,
-              length(parms$vmap_it$mp) * cond$D),
+    # mp = tail(parms$vmap_it$mp,
+    #           length(parms$vmap_it$mp) * cond$D),
     ax = tail(parms$vmap_it$ax,
               length(parms$vmap_it$ax) * cond$D)
   )

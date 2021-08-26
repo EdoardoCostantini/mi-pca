@@ -38,49 +38,20 @@
   
   # Data generation
   parms$N <- 1e3 # sample size
-  parms$L <- 9 # number of latent variables
-  parms$J <- 3 # number of measured items for latent variable
-  parms$P <- parms$L*parms$J # number of latent variables
+  parms$P <- 10 # number of variables
   parms$pm <- .3 # proportion of missings level
-  parms$fl <- .55 # factor loadings level
-  parms$fl_bound <- 0 # factor loadings level
-  parms$lv_mean   <- 0 # true latent mean
-  parms$lv_var    <- 1 # true latent variance
-  parms$lv_cov_ta <- .7 # true latent cov for target variables
-  parms$lv_cov_mp <- .7 # for mar predictors
-  parms$lv_cov_ax <- .7 # for good auxiliary
-  parms$lv_cov_junk <- .1 # for junk auxiliary
+  parms$cov_ta <- .7 # true latent cov for target variables
+  parms$cov_mp <- .7 # for mar predictors
+  parms$cov_ax <- .7 # for good auxiliary
+  parms$cov_junk <- .1 # for junk auxiliary
   parms$item_mean <- 5 # 5 # true item mean
   parms$item_var  <- (2.5)^2 # true item variance
   
   # Map variables
-  parms$vmap_lv <- list(ta = 1, # TArget of analysis
-                       mp = 2, # Mar Predictors
-                       ax = 3:parms$L # Auxiliary variables
+  parms$vmap <- list(ta = 8:parms$P, # TArget of analysis
+                     mp = 5:7, # Mar Predictors
+                     ax = 1:4 # Auxiliary variables
   )
-  ta <- 1:(max(parms$vmap_lv$ta)*parms$J)
-  mp <- (max(ta)+1):(max(ta)+(parms$J*length(parms$vmap_lv$mp)))
-  ax <- (max(mp)+1):parms$P
-  parms$vmap_it <- list(ta = ta, mp = mp, ax = ax)
-
-  # Create missing data patterns (only needed if you end up suing ampute)
-  myMatrix <- matrix(rep(c(0, 1), length(parms$vmap_it$ta)), ncol = 2, byrow = TRUE)
-  parms$patts <- do.call(expand.grid,
-                         split(myMatrix,
-                               rep(1:nrow(myMatrix), ncol(myMatrix))))
-  parms$patts <- parms$patts[-c(1, nrow(parms$patts)), ]
-
-  # CFA model
-  lv_items <- split(x = paste0("z", 1:(length(parms$vmap_lv$ta)*parms$J)),
-                    f = rep(parms$vmap_lv$ta, each = parms$J))
-  lv_models <- sapply(1:length(lv_items), function(it){
-    paste0("l", it,
-           " =~ ",
-           paste0(lv_items[[it]], collapse = " + ")
-    )
-  }
-  )
-  parms$CFA_model <- paste(lv_models, collapse = "\n")
 
   # Imputation Routine
   parms$mice_ndt <- 2

@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-08-25
+# Modified:  2021-08-26
 
 # Packages ----------------------------------------------------------------
 
@@ -98,7 +98,7 @@
   interval <- c(TRUE, FALSE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
-  tpc <- c("all", "not_target")
+  fpc <- c("all", "imp", "vbv") # nature of PC
 
   # Make Conditionsa
   conds <- expand.grid(K = K,
@@ -106,7 +106,7 @@
                        interval = interval,
                        pj = pj,
                        npc = npc,
-                       tpc = tpc,
+                       fpc = fpc,
                        stringsAsFactors = FALSE)
 
   # Append Condition Tag

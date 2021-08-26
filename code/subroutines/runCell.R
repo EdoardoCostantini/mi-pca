@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-08-25
+# Modified:  2021-08-26
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -30,7 +30,7 @@ runCell <- function(cond, parms, rp) {
 
 # Imputation --------------------------------------------------------------
 
-  if(cond$tpc == "all"){
+  if(cond$fpc == "all"){
     pcs_target <- unlist(parms$vmap_it, use.names = FALSE)
   } else {
     pcs_target <- c(parms$vmap_it$mp, parms$vmap_it$ax)

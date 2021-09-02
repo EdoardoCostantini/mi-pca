@@ -11,20 +11,19 @@ rm(list = ls())
 source("./init.R")
 
 # Correlation btw mar latent and missing items stays the same -------------
-store_cors_lv <- NULL
-store_cors_ob <- NULL
+store_cors <- matrix(nrow = nrow(conds), ncol = 3)
 
-for (i in 1:25){
+for (i in 1:nrow(conds)){
   print(i)
   dat_list <- genData(parms = parms, cond = conds[i, ])
-  dat_ob_numeric <- sapply(dat_list$dat_ob[, parms$vmap_it$mp], as.numeric)
-  cor4mar <- cor(cbind(dat_list$dat_ob[, parms$vmap_it$ta],
-                       lv_mp = dat_list$dat_lv[, parms$vmap_lv$mp],
-                       ob_mp = dat_ob_numeric))
-  store_cors_lv <- rbind(store_cors_lv, cor4mar[parms$vmap_it$ta, "lv_mp"])
-  store_cors_ob[[i]] <- cor4mar[parms$vmap_it$ta,
-                                grep("ob", colnames(cor4mar))]
+  cormat <- round(cor(dat_list), 3)
+  ta_cor <- cormat[parms$vmap$ta, parms$vmap$ta][upper.tri(diag(length(parms$vmap$ta)))]
+  mp_cor <- cormat[parms$vmap$mp, parms$vmap$mp][upper.tri(diag(length(parms$vmap$mp)))]
+  ax_cor <- cormat[parms$vmap$ax, parms$vmap$ax][upper.tri(diag(length(parms$vmap$ax)))]
+  store_cors[i, ] <- sapply(list(ta_cor, mp_cor, ax_cor), mean)
 }
+
+round(store_cors, 1)
 
 # What conditions to check
 to_check <- c(4, 9, 14, 19, 24)

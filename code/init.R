@@ -10,7 +10,9 @@
                  "MASS",
                  "lavaan",
                  "mice",
-                 "FactoMineR")
+                 "FactoMineR",
+                 "OrdNor",
+                 "BinNor")
   
   lapply(pack_list, library, character.only = TRUE, verbose = FALSE)
 
@@ -38,7 +40,7 @@
   
   # Data generation
   parms$N <- 1e3 # sample size
-  parms$P <- 10 # number of variables
+  parms$P <- 100 # number of variables
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
   parms$cov_mp <- .7 # for mar predictors
@@ -48,9 +50,9 @@
   parms$item_var  <- (2.5)^2 # true item variance
   
   # Map variables
-  parms$vmap <- list(ta = 8:parms$P, # TArget of analysis
-                     mp = 5:7, # Mar Predictors
-                     ax = 1:4 # Auxiliary variables
+  parms$vmap <- list(ta = (parms$P-3):parms$P, # TArget of analysis
+                     mp = (parms$P-7):(parms$P-4), # Mar Predictors
+                     ax = 1:(parms$P-8) # Auxiliary variables
   )
 
   # Imputation Routine
@@ -66,7 +68,7 @@
   # Alternative experimental factor
   K <- c(10, 7, 5, 3, 2) # number of categories
   D <- 1 # seq(1, 0, length.out = 5)
-  interval <- c(TRUE, FALSE)
+  interval <- c(TRUE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
   fpc <- c("all", "imp", "vbv") # nature of PC
@@ -76,8 +78,8 @@
                        D = D,
                        interval = interval,
                        pj = pj,
-                       npc = npc,
-                       fpc = fpc,
+                       # npc = npc,
+                       # fpc = fpc,
                        stringsAsFactors = FALSE)
 
   # Append Condition Tag

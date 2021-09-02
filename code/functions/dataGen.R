@@ -23,8 +23,12 @@ genData <- function(parms, cond){
   # Other Predictors (junk and no junk)
   nauxiliaries <- length(parms$vmap$ax)
   index_junk_aux <- head(parms$vmap$ax, nauxiliaries * cond$pj)
-  Phi[, -index_junk_aux] <- parms$cov_ax # not junk
-  Phi[, index_junk_aux] <- parms$cov_junk # junk
+  if(length(index_junk_aux) == 0){
+    Phi[-c(parms$vmap$ta, parms$vmap$mp), ] <- parms$cov_ax
+  } else {
+    Phi[, -index_junk_aux] <- parms$cov_ax # not junk
+    Phi[, index_junk_aux] <- parms$cov_junk # junk
+  }
   
   # Fix diagonal
   diag(Phi) <- 1
@@ -44,28 +48,50 @@ genData <- function(parms, cond){
   n_cont <- parms$P-n_ordi
 
   # Define marginals
-  marginal <- round(pnorm(seq(-2, 2, length.out = cond$K-1)), 4)
-
+  quantiles <- seq(-2, 2, length.out = 1e3) # from a normal distribution
+  chunk_size <- 1e3/cond$K # size of chunks
+  quntiles_groups <- split(quantiles,
+                           ceiling(seq_along(quantiles)/chunk_size))
+  bounds <- sapply(quntiles_groups, min)[-1]
+  marginal <- round(pnorm(bounds), 4)
   marginal_list <- as.list(
     as.data.frame(
       matrix(rep(marginal, (cond$K - 1) * n_ordi),
              nrow = (cond$K - 1), ncol = n_ordi)
     )
   )
+  # min(abs(unlist(valid.limits(marginal_list, n_ordi,n_cont))))
 
-  # Using package for correction of matrix
-  cmat <- OrdNor::cmat.star(marginal_list, Phi,
-                            no.ord = n_ordi,
-                            no.norm = n_cont)
+  if(cond$K > 2){
 
-  # Obtain Sample
-  x <- genOrdNor(n = n,
-                 plist = marginal_list,
-                 cmat.star = cmat,
-                 no.ord = n_ordi,
-                 mean.vec = rep(0, n_norm),
-                 sd.vec = rep(1, n_norm),
-                 no.norm = n_norm)
+    # Using package for correction of matrix
+    cmat <- OrdNor::cmat.star(marginal_list, Phi,
+                              no.ord = n_ordi,
+                              no.norm = n_cont)
+
+    # Obtain Sample
+    x <- genOrdNor(n = parms$N,
+                   plist = marginal_list,
+                   cmat.star = cmat,
+                   no.ord = n_ordi,
+                   mean.vec = rep(0, n_cont),
+                   sd.vec = rep(1, n_cont),
+                   no.norm = n_cont)
+  } else {
+    sigma.star <- compute.sigma.star(no.bin = n_ordi,
+                                     no.nor = n_cont,
+                                     prop.vec.bin = unlist(marginal_list),
+                                     corr.mat = Phi)
+
+    x <- jointly.generate.binary.normal(parms$N,
+                                        no.bin = n_ordi,
+                                        no.nor = n_cont,
+                                        prop.vec.bin = unlist(marginal_list),
+                                        mean.vec.nor = rep(0, n_cont),
+                                        var.nor = rep(1, n_cont),
+                                        sigma_star = sigma.star$sigma_star,
+                                        continue.with.warning = TRUE)
+  }
 
 # Rescale Observed Scores -------------------------------------------------
 
@@ -76,7 +102,6 @@ genData <- function(parms, cond){
 # Give meaningful names ---------------------------------------------------
 
   colnames(x) <- paste0("z", 1:ncol(x))
-  colnames(scs_lv) <- paste0("lv", 1:ncol(scs_lv))
   
 # Return Output -----------------------------------------------------------
   

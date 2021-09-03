@@ -40,7 +40,7 @@
   
   # Data generation
   parms$N <- 1e3 # sample size
-  parms$P <- 100 # number of variables
+  parms$P <- 10 # number of variables
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
   parms$cov_mp <- .7 # for mar predictors

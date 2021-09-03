@@ -16,17 +16,16 @@ runCell <- function(cond, parms, rp) {
 
 # Data Generation ---------------------------------------------------------
 
-  ## Data
-  dat_list <- genData(parms = parms, cond = cond)
+  dat <- genData(parms = parms, cond = conds[i, ])
 
   ## Impose Missingness
-  preds   <- dat_list$dat_ob[, parms$vmap_it$mp, drop = FALSE]
-  targets <- dat_list$dat_ob[, parms$vmap_it$ta, drop = FALSE]
-  target_miss_lv <- amputePerVar(targets = targets,
-                                 preds = preds,
-                                 pm = parms$pm,
-                                 type = "high")
-  dat_miss <- cbind(target_miss_lv, dat_list$dat_ob[, -parms$vmap_it$ta])
+  preds   <- dat[, parms$vmap$mp, drop = FALSE]
+  targets <- dat[, parms$vmap$ta, drop = FALSE]
+  target_miss <- amputePerVar(targets = targets,
+                              preds = preds,
+                              pm = parms$pm,
+                              type = "high")
+  dat_miss <- cbind(dat[, -parms$vmap$ta], target_miss)
 
 # Imputation --------------------------------------------------------------
 
@@ -53,7 +52,7 @@ runCell <- function(cond, parms, rp) {
                         N = parms$N)
 
   # Original data and complete case analysis
-  sd_data <- list(orig = dat_list$dat_ob,
+  sd_data <- list(orig = dat$dat_ob,
                   omit = na.omit(dat_miss))
   sd_sat_fits <- miFitSat(mi_data = sd_data,
                           model = satModWrite(names(imp_out$dats[[1]][,

@@ -98,6 +98,12 @@ genData <- function(parms, cond){
   x_scaled <- apply(x[, parms$vmap$ta], 2, function(j) j*sqrt(parms$item_var))
   x_center <- x_scaled + parms$item_mean
   x[, parms$vmap$ta] <- x_center
+  x <- data.frame(x)
+
+# Transform into factors ordinal items -------------------------------------------------
+
+  index_factor <- sapply(x, function (j) {length(unique(j)) <= 10})
+  x[, index_factor] <- data.frame(lapply(x[, index_factor], function (j) {factor(j, ordered = TRUE)}))
 
 # Give meaningful names ---------------------------------------------------
 

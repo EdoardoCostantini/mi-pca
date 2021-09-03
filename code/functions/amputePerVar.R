@@ -22,7 +22,7 @@ amputePerVar <- function(targets, preds, pm = .5, type = "high"){
   ## Body
   preds_object <- model.matrix(~ ., as.data.frame(preds))[, -1, drop = FALSE]
 
-  for (i in parms$vmap_it$ta) {
+  for (i in seq_along(parms$vmap$ta)) {
     nR <- simMissingness(pm    = pm,
                          data  = preds_object,
                          type  = type)

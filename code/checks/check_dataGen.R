@@ -29,3 +29,37 @@ round(store_cors, 1)
 dat_list <- genData(parms = parms, cond = conds[13, ])
 par(mfrow = c(4,3))
 apply(dat_list, 2, function (x) plot(density(x)))
+
+# MAR effect ---------------------------------------------------------------
+
+  library(lattice)
+
+  ## Data
+  plots_nomar <- list()
+  plots_mar <- list()
+
+  for(i in 6:10){
+    dat_list <- genData(parms = parms, cond = conds[i, ])
+    cor(dat_list)[, parms$vmap$mp, drop = FALSE]
+
+    ## Impose Missingness
+    preds   <- dat_list[, parms$vmap$mp, drop = FALSE]
+    targets <- dat_list[, parms$vmap$ta, drop = FALSE]
+    target_miss <- amputePerVar(targets = targets,
+                                preds = preds,
+                                pm = parms$pm,
+                                type = "high")
+    dat_miss <- cbind(dat_list[, -parms$vmap$ta], target_miss)
+
+    # Imputation --------------------------------------------------------------
+    plots_nomar[[i-5]] <- densityplot(~ z1, data = data.frame(dat_miss),
+                                      groups =  is.na(z10),
+                                      par.settings = list(superpose.line = list(col = c("blue","red"))),
+                                      auto.key = TRUE)
+    plots_mar[[i-5]] <- densityplot(~ z5, data = data.frame(dat_miss),
+                                    groups =  is.na(z10),
+                                    par.settings = list(superpose.line = list(col = c("blue","red"))),
+                                    auto.key = TRUE)
+  }
+  plots_nomar
+  plots_mar

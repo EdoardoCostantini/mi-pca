@@ -16,7 +16,7 @@ runCell <- function(cond, parms, rp) {
 
 # Data Generation ---------------------------------------------------------
 
-  dat <- genData(parms = parms, cond = conds[i, ])
+  dat <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness
   preds   <- dat[, parms$vmap$mp, drop = FALSE]
@@ -30,14 +30,16 @@ runCell <- function(cond, parms, rp) {
 # Imputation --------------------------------------------------------------
 
   if(cond$fpc == "all"){
-    pcs_target <- unlist(parms$vmap_it, use.names = FALSE)
-  } else {
-    pcs_target <- c(parms$vmap_it$mp, parms$vmap_it$ax)
+    pcs_target <- unlist(parms$vmap, use.names = FALSE)
+  }
+  if(cond$fpc == "imp") {
+    pcs_target <- c(parms$vmap$mp, parms$vmap$ax)
   }
   imp_out <- imputePCA(dat_miss,
-                       imp_target = parms$vmap_it$ta,
-                       pcs_target = c(parms$vmap_it$mp, parms$vmap_it$ax),
+                       imp_target = parms$vmap$ta,
+                       pcs_target = pcs_target,
                        parms = parms)
+  out <- mice(dat_miss, method = "pcr.boot")
 
 # Analyze and pool --------------------------------------------------------
 

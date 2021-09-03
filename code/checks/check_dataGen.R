@@ -10,6 +10,13 @@ rm(list = ls())
 ## Initialize the environment:
 source("./init.R")
 
+# Simpler version of conditions
+conds <- expand.grid(K = K,
+                       D = D,
+                       interval = interval,
+                       pj = pj,
+                       stringsAsFactors = FALSE)
+
 # Correlations as expected ------------------------------------------------
 store_cors <- matrix(nrow = nrow(conds), ncol = 3)
 
@@ -28,7 +35,7 @@ round(store_cors, 1)
 # Categorical distributions ------------------------------------------------
 dat_list <- genData(parms = parms, cond = conds[13, ])
 par(mfrow = c(4,3))
-apply(dat_list, 2, function (x) plot(density(x)))
+apply(dat_list, 2, function (x) plot(density(as.numeric(x))))
 
 # MAR effect ---------------------------------------------------------------
 

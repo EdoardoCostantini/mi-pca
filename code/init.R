@@ -78,8 +78,8 @@
                        D = D,
                        interval = interval,
                        pj = pj,
-                       # npc = npc,
-                       # fpc = fpc,
+                       npc = npc,
+                       fpc = fpc,
                        stringsAsFactors = FALSE)
 
   # Append Condition Tag

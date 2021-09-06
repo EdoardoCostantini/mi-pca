@@ -71,7 +71,7 @@
   interval <- c(TRUE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
-  fpc <- c("all", "imp", "vbv") # nature of PC
+  fpc <- c("all", "imp", "uni") # nature of PC
 
   # Make Conditionsa
   conds <- expand.grid(K = K,

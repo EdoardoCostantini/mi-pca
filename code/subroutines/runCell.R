@@ -19,27 +19,35 @@ runCell <- function(cond, parms, rp) {
   dat <- genData(parms = parms, cond = cond)
 
   ## Impose Missingness
-  preds   <- dat[, parms$vmap$mp, drop = FALSE]
-  targets <- dat[, parms$vmap$ta, drop = FALSE]
+  preds   <- dat$cont[, parms$vmap$mp, drop = FALSE]
+  targets <- dat$ordi[, parms$vmap$ta, drop = FALSE]
   target_miss <- amputePerVar(targets = targets,
                               preds = preds,
                               pm = parms$pm,
                               type = "high")
-  dat_miss <- cbind(dat[, -parms$vmap$ta], target_miss)
+  dat_miss <- cbind(dat$ordi[, -parms$vmap$ta], target_miss)
 
 # Imputation --------------------------------------------------------------
 
   if(cond$fpc == "all"){
-    pcs_target <- unlist(parms$vmap, use.names = FALSE)
+    imputePCA <- imputePCA(dat_miss,
+                           imp_target = parms$vmap$ta,
+                           pcs_target = unlist(parms$vmap, use.names = FALSE),
+                           ncfs = cond$npc,
+                           parms = parms)
+    mids_out <- imputePCA$mids
   }
   if(cond$fpc == "imp") {
-    pcs_target <- c(parms$vmap$mp, parms$vmap$ax)
+    imputePCA <- imputePCA(dat_miss,
+                           imp_target = parms$vmap$ta,
+                           pcs_target = c(parms$vmap$mp, parms$vmap$ax),
+                           ncfs = cond$npc,
+                           parms = parms)
+    mids_out <- imputePCA$mids
   }
-  imp_out <- imputePCA(dat_miss,
-                       imp_target = parms$vmap$ta,
-                       pcs_target = pcs_target,
-                       parms = parms)
-  out <- mice(dat_miss, method = "pcr.boot")
+  if(cond$fpc == "uni") {
+    mids_out <- mice(sapply(dat_miss, as.numeric), method = "pcr.boot")
+  }
 
 # Analyze and pool --------------------------------------------------------
 

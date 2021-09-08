@@ -46,7 +46,9 @@ runCell <- function(cond, parms, rp) {
     mids_out <- imputePCA$mids
   }
   if(cond$fpc == "uni") {
-    mids_out <- mice(sapply(dat_miss, as.numeric), method = "pcr.boot")
+    mids_out <- mice(sapply(dat_miss, as.numeric),
+                     method = "pcr.mixed",
+                     npcs = 1)
   }
 
 # Analyze and pool --------------------------------------------------------

@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-08-26
+# Modified:  2021-09-20
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -30,20 +30,20 @@ runCell <- function(cond, parms, rp) {
 # Imputation --------------------------------------------------------------
 
   if(cond$fpc == "all"){
-    imputePCA <- imputePCA(dat_miss,
-                           imp_target = parms$vmap$ta,
-                           pcs_target = unlist(parms$vmap, use.names = FALSE),
-                           ncfs = cond$npc,
-                           parms = parms)
-    mids_out <- imputePCA$mids
+    pca_out <- imputePCA(dat_miss,
+                         imp_target = parms$vmap$ta,
+                         pcs_target = unlist(parms$vmap, use.names = FALSE),
+                         ncfs = cond$npc,
+                         parms = parms)
+    mids_out <- pca_out$mids
   }
   if(cond$fpc == "imp") {
-    imputePCA <- imputePCA(dat_miss,
-                           imp_target = parms$vmap$ta,
-                           pcs_target = c(parms$vmap$mp, parms$vmap$ax),
-                           ncfs = cond$npc,
-                           parms = parms)
-    mids_out <- imputePCA$mids
+    pca_out <- imputePCA(dat_miss,
+                         imp_target = parms$vmap$ta,
+                         pcs_target = c(parms$vmap$mp, parms$vmap$ax),
+                         ncfs = cond$npc,
+                         parms = parms)
+    mids_out <- pca_out$mids
   }
   if(cond$fpc == "uni") {
     mids_out <- mice(sapply(dat_miss, as.numeric),

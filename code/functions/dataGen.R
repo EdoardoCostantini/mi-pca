@@ -50,21 +50,23 @@ genData <- function(parms, cond){
 
   # Discretise it
   x_ordi <- x_cont
-  index_discrete <- c(
-    # ta = tail(parms$vmap_it$ta,
-    #           length(parms$vmap_it$ta) * cond$D),
-    mp = tail(parms$vmap$mp,
-              length(parms$vmap$mp) * cond$D),
-    ax = tail(parms$vmap$ax,
-              length(parms$vmap$ax) * cond$D)
-  )
-  for(j in index_discrete){
-    x_ordi[, j] <- cut(x_cont[, j],
-                       breaks = cond$K,
-                       labels = 1:cond$K,
-                       ordered_result = TRUE)
+  if(cond$K != Inf){
+    index_discrete <- c(
+      # ta = tail(parms$vmap_it$ta,
+      #           length(parms$vmap_it$ta) * cond$D),
+      mp = tail(parms$vmap$mp,
+                length(parms$vmap$mp) * cond$D),
+      ax = tail(parms$vmap$ax,
+                length(parms$vmap$ax) * cond$D)
+    )
+    for(j in index_discrete){
+      x_ordi[, j] <- cut(x_cont[, j],
+                         breaks = cond$K,
+                         labels = 1:cond$K,
+                         ordered_result = TRUE)
+    }
   }
-  
+
 # Return Output -----------------------------------------------------------
 
   return(

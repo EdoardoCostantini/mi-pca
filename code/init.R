@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-08-26
+# Modified:  2021-09-20
 
 # Packages ----------------------------------------------------------------
 
@@ -66,7 +66,7 @@
   
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
-  K <- c(10, 7, 5, 3, 2) # number of categories
+  K <- c(Inf, 7, 5, 3, 2) # number of categories
   D <- 1 # seq(1, 0, length.out = 5)
   interval <- c(TRUE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables

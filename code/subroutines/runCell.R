@@ -51,6 +51,18 @@ runCell <- function(cond, parms, rp) {
                      npcs = 1)
   }
 
+  # MICE w/ true missing data imposition model (optimal)
+  imp_MICE_true <- impute_MICE(Z = Xy_mis,
+                               imp_target = parms$vmap$ta,
+                               preds = c(parms$vmap$ta, parms$vmap$mp),
+                               parms = parms)
+
+  # MICE w/ minimal missing data models (minimal)
+  imp_MICE_mini <- impute_MICE(Z = Xy_mis,
+                               imp_target = parms$vmap$ta,
+                               preds = parms$vmap$ta,
+                               parms = parms)
+
 # Analyze and pool --------------------------------------------------------
 
   ## Mean, variance, covariance

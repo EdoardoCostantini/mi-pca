@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
-### Modified: 2021-09-06
+### Modified: 2021-09-20
 
 genData <- function(parms, cond){
 
@@ -50,6 +50,8 @@ genData <- function(parms, cond){
 
   # Discretise it
   x_ordi <- x_cont
+
+  # If the categories are not infinite in this condition, go on
   if(cond$K != Inf){
     index_discrete <- c(
       # ta = tail(parms$vmap_it$ta,
@@ -59,11 +61,40 @@ genData <- function(parms, cond){
       ax = tail(parms$vmap$ax,
                 length(parms$vmap$ax) * cond$D)
     )
-    for(j in index_discrete){
-      x_ordi[, j] <- cut(x_cont[, j],
-                         breaks = cond$K,
-                         labels = 1:cond$K,
-                         ordered_result = TRUE)
+
+    # Is the target interval scaled or not?
+    if (cond$interval == TRUE){
+      for(j in index_discrete){
+        x_ordi[, j] <- cut(x_cont[, j],
+                           breaks = cond$K,
+                           labels = 1:cond$K,
+                           ordered_result = TRUE)
+      }
+    } else {
+      K <- cond$K
+      prob_reduction <- .6 # every subsequent bin contains .6 of the remaining obs
+      prob_in <- .2 # first bin probability
+      probs <- rep(NA, K)
+
+      for(k in 1:K){
+        if(k < K){
+          probs[k] <- prob_in
+          whats_left <- (1-sum(probs, na.rm = TRUE))
+          prob_in <- whats_left*prob_reduction
+        } else {
+          probs[k] <- whats_left
+        }
+      }
+
+      for(j in index_discrete){
+        x <- x_ordi[, j]
+        x_sort <- sort(x)
+        x_mem <- sort(sample(1:K, length(x), probs, replace = TRUE))
+        map <- data.frame(value = as.character(x_sort),
+                          bin = x_mem)
+        target <- as.character(x)
+        x_ordi[, j] <- map[match(target, map$value), "bin"]
+      }
     }
   }
 

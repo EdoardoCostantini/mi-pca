@@ -68,7 +68,7 @@
   # Alternative experimental factor
   K <- c(Inf, 7, 5, 3, 2) # number of categories
   D <- 1 # seq(1, 0, length.out = 5)
-  interval <- c(TRUE)
+  interval <- c(TRUE, FALSE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, 5, parms$N*(1 - .4)) # number of PCs extracted
   fpc <- c("all", "imp", "uni") # nature of PC

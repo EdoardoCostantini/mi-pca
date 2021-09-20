@@ -1,7 +1,7 @@
 ### Title:    Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-05-19
-### Modified: 2021-08-25
+### Modified: 2021-09-20
 
 imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   
@@ -71,7 +71,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       imp_PCA_time <- difftime(end_time, start_time, units = "mins")
 
       return(list(mids = imp_PCA_mids,
-                  time = imp_PCA_time))
+                  time = as.vector(imp_PCA_time)))
 
       ### END TRYCATCH EXPRESSION
     }, error = function(e){

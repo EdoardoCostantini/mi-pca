@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-09-20
+# Modified:  2021-09-21
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -25,7 +25,7 @@ runCell <- function(cond, parms, rp) {
                               preds = preds,
                               pm = parms$pm,
                               type = "high")
-  dat_miss <- cbind(dat$ordi[, -parms$vmap$ta], target_miss)
+  dat_miss <- cbind(target_miss, dat$ordi[, -parms$vmap$ta])
 
 # Imputation --------------------------------------------------------------
 
@@ -52,75 +52,36 @@ runCell <- function(cond, parms, rp) {
   }
 
   # MICE w/ true missing data imposition model (optimal)
-  imp_MICE_true <- impute_MICE(Z = Xy_mis,
-                               imp_target = parms$vmap$ta,
-                               preds = c(parms$vmap$ta, parms$vmap$mp),
-                               parms = parms)
+  mids_out <- impute_MICE(Z = dat_miss,
+                          imp_target = parms$vmap$ta,
+                          preds = c(parms$vmap$ta, parms$vmap$mp),
+                          parms = parms)
 
   # MICE w/ minimal missing data models (minimal)
-  imp_MICE_mini <- impute_MICE(Z = Xy_mis,
-                               imp_target = parms$vmap$ta,
-                               preds = parms$vmap$ta,
-                               parms = parms)
+  mids_out <- impute_MICE(Z = dat_miss,
+                          imp_target = parms$vmap$ta,
+                          preds = parms$vmap$ta,
+                          parms = parms)
 
 # Analyze and pool --------------------------------------------------------
 
-  ## Mean, variance, covariance
-  # MI data
-  mi_sat_fits <- miFitSat(mi_data = imp_out$dats,
-                          model = satModWrite(names(imp_out$dats[[1]][,
-                                                      parms$vmap_it$ta]))
+  ## Estimate Mean, variance, covariance
+  fits <- fitSatModel(mids = mids_out$mids,
+                      model = genLavaanMod(dat_miss,
+                                           targets = parms$vmap$ta)
   )
-  mi_sat_pool <- miPool(mi_fits = mi_sat_fits,
-                        m = parms$mice_ndt,
-                        N = parms$N)
 
-  # Original data and complete case analysis
-  sd_data <- list(orig = dat$dat_ob,
-                  omit = na.omit(dat_miss))
-  sd_sat_fits <- miFitSat(mi_data = sd_data,
-                          model = satModWrite(names(imp_out$dats[[1]][,
-                                                      parms$vmap_it$ta]))
-  )
-  sd_sat_ests <- lapply(sd_sat_fits, function(x) {
-    est_all <- parameterEstimates(x, standardized = TRUE)
-    est <- est_all[, c("std.all", "est", "ci.lower", "ci.upper")]
-    return(
-      cbind(par = apply(est_all[, 1:3], 1, paste0, collapse = ""),
-            est)
-    )
-  })
-  sat_ests <- c(sd_sat_ests, mi = list(mi_sat_pool))
+  ## Pool mean, variance, covariance
+  pooled_sat <- poolSatMod(fits)
 
-  ## Factor Loadings ##
-  # MI data
-  mi_cfa_fits <- miFitCFA(mi_data = imp_out$dats,
-                       model = parms$CFA_model
-  )
-  mi_cfa_pool <- miPool(mi_fits = mi_cfa_fits,
-                     m = parms$mice_ndt,
-                     N = parms$N)
+  ## Estimate and pool regression coefficients
+  pooled_cor <- poolCor(mids_out$mids, targets = parms$vmap$ta)
 
-  # Original data and complete case analysis
-  sd_cfa_fits <- miFitCFA(mi_data = sd_data, model = parms$CFA_model)
-  sd_cfa_ests <- lapply(sd_cfa_fits, function(x) {
-    est_all <- parameterEstimates(x, standardized = TRUE)
-    est <- est_all[, c("std.all", "est", "ci.lower", "ci.upper")]
-    return(
-      cbind(par = apply(est_all[, 1:3], 1, paste0, collapse = ""),
-            est)
-    )
-  })
+  ## Join outputs
+  pooled_est <- rbind(pooled_sat, pooled_cor)
 
-  # Join into a list
-  cfa_ests <- c(sd_cfa_ests, mi = list(mi_cfa_pool))
-
-  # Combine all results into a single object
-  res_sat_list <- lapply(sat_ests, reshape2::melt, id = "par")
-  res_cfa_list <- lapply(cfa_ests, reshape2::melt, id = "par")
-  res_sat_df <- do.call(rbind, res_sat_list)
-  res_cfa_df <- do.call(rbind, res_cfa_list)
-  res <- cbind(cond, rbind(res_sat_df, res_cfa_df))
+  ## Attach condition tags
+  res <- cbind(cond, pooled_est)
 
 # Store Output ------------------------------------------------------------
   

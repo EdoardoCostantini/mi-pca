@@ -50,14 +50,14 @@
   parms$item_var  <- (2.5)^2 # true item variance
   
   # Map variables
-  parms$vmap <- list(ta = (parms$P-3):parms$P, # TArget of analysis
-                     mp = (parms$P-7):(parms$P-4), # Mar Predictors
-                     ax = 1:(parms$P-8) # Auxiliary variables
+  parms$vmap <- list(ta = 1:4, # TArget of analysis
+                     mp = 5:8, # Mar Predictors
+                     ax = 9:parms$P # Auxiliary variables
   )
 
   # Imputation Routine
-  parms$mice_ndt <- 2
-  parms$mice_iters <- 5
+  parms$mice_ndt <- 5
+  parms$mice_iters <- 20
 
   # Storing Objects
   parms$outDir <- "../output/"

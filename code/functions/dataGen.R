@@ -26,8 +26,8 @@ genData <- function(parms, cond){
   if(length(index_junk_aux) == 0){
     Phi[-c(parms$vmap$ta, parms$vmap$mp), ] <- parms$cov_ax
   } else {
-    Phi[, -index_junk_aux] <- parms$cov_ax # not junk
-    Phi[, index_junk_aux] <- parms$cov_junk # junk
+    Phi[-index_junk_aux, ] <- parms$cov_ax # not junk
+    Phi[index_junk_aux, ] <- parms$cov_junk # junk
   }
   
   # Fix diagonal

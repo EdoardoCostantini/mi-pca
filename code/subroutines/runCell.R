@@ -78,10 +78,16 @@ runCell <- function(cond, parms, rp) {
   pooled_cor <- poolCor(mids_out$mids, targets = parms$vmap$ta)
 
   ## Join outputs
-  pooled_est <- rbind(pooled_sat, pooled_cor)
+  res <- rbind(pooled_sat, pooled_cor)
+
+  ## Complete Case analysis
+  res <- fitSingleData(na.omit(dat_miss), targets = parms$vmap$ta)
+
+  ## Original data
+  res <- fitSingleData(dat$cont, targets = parms$vmap$ta)
 
   ## Attach condition tags
-  res <- cbind(cond, pooled_est)
+  res <- cbind(cond, res)
 
 # Store Output ------------------------------------------------------------
   

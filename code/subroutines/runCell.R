@@ -30,30 +30,28 @@ runCell <- function(cond, parms, rp) {
 # Imputation --------------------------------------------------------------
 
   if(cond$method == "all"){
-    pca_out <- imputePCA(dat_miss,
+    imp_out <- imputePCA(dat_miss,
                          imp_target = parms$vmap$ta,
                          pcs_target = unlist(parms$vmap, use.names = FALSE),
                          ncfs = cond$npc,
                          parms = parms)
-    mids_out <- pca_out$mids
   }
   if(cond$method == "imp") {
-    pca_out <- imputePCA(dat_miss,
+    imp_out <- imputePCA(dat_miss,
                          imp_target = parms$vmap$ta,
                          pcs_target = c(parms$vmap$mp, parms$vmap$ax),
                          ncfs = cond$npc,
                          parms = parms)
-    mids_out <- pca_out$mids
   }
   if(cond$method == "uni") {
-    mids_out <- mice(sapply(dat_miss, as.numeric),
+    imp_out <- mice(sapply(dat_miss, as.numeric),
                      method = "pcr.mixed",
                      npcs = 1)
   }
 
   # MICE w/ true missing data imposition model (optimal)
   if(cond$method == "MITR") {
-    mids_out <- imputeMICE(Z = dat_miss,
+    imp_out <- imputeMICE(Z = dat_miss,
                            imp_target = parms$vmap$ta,
                            preds = c(parms$vmap$ta, parms$vmap$mp),
                            parms = parms)
@@ -61,7 +59,7 @@ runCell <- function(cond, parms, rp) {
 
   # MICE w/ minimal missing data models (minimal)
   if(cond$method == "MIMI") {
-    mids_out <- imputeMICE(Z = dat_miss,
+    imp_out <- imputeMICE(Z = dat_miss,
                            imp_target = parms$vmap$ta,
                            preds = parms$vmap$ta,
                            parms = parms)
@@ -71,7 +69,7 @@ runCell <- function(cond, parms, rp) {
 
   if(cond$method %in% c("all", "imp", "uni", "MITR", "MIMI")){
     ## Estimate Mean, variance, covariance
-    fits <- fitSatModel(mids = mids_out$mids,
+    fits <- fitSatModel(mids = imp_out$mids,
                         model = genLavaanMod(dat_miss,
                                              targets = parms$vmap$ta)
     )
@@ -80,7 +78,7 @@ runCell <- function(cond, parms, rp) {
     pooled_sat <- poolSatMod(fits)
 
     ## Estimate and pool regression coefficients
-    pooled_cor <- poolCor(mids_out$mids, targets = parms$vmap$ta)
+    pooled_cor <- poolCor(imp_out$mids, targets = parms$vmap$ta)
 
     ## Join outputs
     res <- rbind(pooled_sat, pooled_cor)

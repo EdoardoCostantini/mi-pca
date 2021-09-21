@@ -71,16 +71,26 @@
   interval <- c(TRUE, FALSE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, parms$P*seq(.1, .9, .1)) # number of PCs extracted
-  fpc <- c("all", "imp", "uni") # nature of PC
+  method <- c("all", "imp", "uni", "MITR", "MIMI", "CC", "OG") # nature of PC
 
   # Make Conditionsa
-  conds <- expand.grid(K = K,
-                       D = D,
-                       interval = interval,
-                       pj = pj,
-                       npc = npc,
-                       fpc = fpc,
-                       stringsAsFactors = FALSE)
+  conds_1 <- expand.grid(K = K,
+                         D = D,
+                         interval = interval,
+                         pj = pj,
+                         npc = npc,
+                         method = method[1:3],
+                         stringsAsFactors = FALSE)
+
+  conds_2 <- expand.grid(K = K,
+                         D = D,
+                         interval = interval,
+                         pj = pj,
+                         npc = npc[1],
+                         method = method[-c(1:3)],
+                         stringsAsFactors = FALSE)
+
+  conds <- rbind(conds_1, conds_2)
 
   # Append Condition Tag
   conds$tag <- sapply(1:nrow(conds), function(i) {

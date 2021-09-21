@@ -29,7 +29,7 @@ runCell <- function(cond, parms, rp) {
 
 # Imputation --------------------------------------------------------------
 
-  if(cond$fpc == "all"){
+  if(cond$method == "all"){
     pca_out <- imputePCA(dat_miss,
                          imp_target = parms$vmap$ta,
                          pcs_target = unlist(parms$vmap, use.names = FALSE),
@@ -37,7 +37,7 @@ runCell <- function(cond, parms, rp) {
                          parms = parms)
     mids_out <- pca_out$mids
   }
-  if(cond$fpc == "imp") {
+  if(cond$method == "imp") {
     pca_out <- imputePCA(dat_miss,
                          imp_target = parms$vmap$ta,
                          pcs_target = c(parms$vmap$mp, parms$vmap$ax),
@@ -45,46 +45,56 @@ runCell <- function(cond, parms, rp) {
                          parms = parms)
     mids_out <- pca_out$mids
   }
-  if(cond$fpc == "uni") {
+  if(cond$method == "uni") {
     mids_out <- mice(sapply(dat_miss, as.numeric),
                      method = "pcr.mixed",
                      npcs = 1)
   }
 
   # MICE w/ true missing data imposition model (optimal)
-  mids_out <- imputeMICE(Z = dat_miss,
-                          imp_target = parms$vmap$ta,
-                          preds = c(parms$vmap$ta, parms$vmap$mp),
-                          parms = parms)
+  if(cond$method == "MITR") {
+    mids_out <- imputeMICE(Z = dat_miss,
+                           imp_target = parms$vmap$ta,
+                           preds = c(parms$vmap$ta, parms$vmap$mp),
+                           parms = parms)
+  }
 
   # MICE w/ minimal missing data models (minimal)
-  mids_out <- imputeMICE(Z = dat_miss,
-                          imp_target = parms$vmap$ta,
-                          preds = parms$vmap$ta,
-                          parms = parms)
+  if(cond$method == "MIMI") {
+    mids_out <- imputeMICE(Z = dat_miss,
+                           imp_target = parms$vmap$ta,
+                           preds = parms$vmap$ta,
+                           parms = parms)
+  }
 
 # Analyze and pool --------------------------------------------------------
 
-  ## Estimate Mean, variance, covariance
-  fits <- fitSatModel(mids = mids_out$mids,
-                      model = genLavaanMod(dat_miss,
-                                           targets = parms$vmap$ta)
-  )
+  if(cond$method %in% c("all", "imp", "uni", "MITR", "MIMI")){
+    ## Estimate Mean, variance, covariance
+    fits <- fitSatModel(mids = mids_out$mids,
+                        model = genLavaanMod(dat_miss,
+                                             targets = parms$vmap$ta)
+    )
 
-  ## Pool mean, variance, covariance
-  pooled_sat <- poolSatMod(fits)
+    ## Pool mean, variance, covariance
+    pooled_sat <- poolSatMod(fits)
 
-  ## Estimate and pool regression coefficients
-  pooled_cor <- poolCor(mids_out$mids, targets = parms$vmap$ta)
+    ## Estimate and pool regression coefficients
+    pooled_cor <- poolCor(mids_out$mids, targets = parms$vmap$ta)
 
-  ## Join outputs
-  res <- rbind(pooled_sat, pooled_cor)
+    ## Join outputs
+    res <- rbind(pooled_sat, pooled_cor)
+  }
 
   ## Complete Case analysis
-  res <- fitSingleData(na.omit(dat_miss), targets = parms$vmap$ta)
+  if(cond$method == "CC"){
+    res <- fitSingleData(na.omit(dat_miss), targets = parms$vmap$ta)
+  }
 
   ## Original data
-  res <- fitSingleData(dat$cont, targets = parms$vmap$ta)
+  if(cond$method == "OG"){
+    res <- fitSingleData(dat$cont, targets = parms$vmap$ta)
+  }
 
   ## Attach condition tags
   res <- cbind(cond, res)

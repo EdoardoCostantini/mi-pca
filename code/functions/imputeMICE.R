@@ -4,7 +4,7 @@
 # Created:   2021-09-20
 # Modified:  2021-09-20
 
-impute_MICE <- function(Z, imp_target, preds, parms){
+imputeMICE <- function(Z, imp_target, preds, parms){
 
   ## Example inputs
   # Z = dat_miss

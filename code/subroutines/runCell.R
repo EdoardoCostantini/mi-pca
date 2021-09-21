@@ -52,13 +52,13 @@ runCell <- function(cond, parms, rp) {
   }
 
   # MICE w/ true missing data imposition model (optimal)
-  mids_out <- impute_MICE(Z = dat_miss,
+  mids_out <- imputeMICE(Z = dat_miss,
                           imp_target = parms$vmap$ta,
                           preds = c(parms$vmap$ta, parms$vmap$mp),
                           parms = parms)
 
   # MICE w/ minimal missing data models (minimal)
-  mids_out <- impute_MICE(Z = dat_miss,
+  mids_out <- imputeMICE(Z = dat_miss,
                           imp_target = parms$vmap$ta,
                           preds = parms$vmap$ta,
                           parms = parms)

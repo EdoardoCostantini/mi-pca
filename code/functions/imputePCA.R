@@ -1,7 +1,7 @@
 ### Title:    Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-05-19
-### Modified: 2021-09-20
+### Modified: 2021-09-28
 
 imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   
@@ -19,9 +19,8 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   # For internals
   ## Data
   # Z = dat_miss
-  # imp_target = parms$vmap_it$ta
-  # pcs_target = c(parms$vmap_it$mp, parms$vmap_it$ax)
-  # criterion = c("first", "half")[2]
+  # imp_target = parms$vmap$ta
+  # pcs_target = c(parms$vmap$mp, parms$vmap$ax)
   # ncfs <- 1
 
   ## body:
@@ -47,7 +46,8 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       # Extract PCs
       pcaout <- principal(sapply(Z_tpca, as.numeric),
                           nfactors = ncfs,
-                          cor = "mixed")
+                          cor = "cor")
+      pc_var_exp <- sum(prop.table(pcaout$values)[1:ncfs])
 
       ## Define input data for imputation
       Z_input <- cbind(pcaout$scores, Z[, imp_target])
@@ -71,6 +71,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       imp_PCA_time <- difftime(end_time, start_time, units = "mins")
 
       return(list(mids = imp_PCA_mids,
+                  pc_var_exp = pc_var_exp,
                   time = as.vector(imp_PCA_time)))
 
       ### END TRYCATCH EXPRESSION
@@ -78,6 +79,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       err <- paste0("Original Error: ", e)
       print(err)
       return(list(mids = NULL,
+                  pc_var_exp = NULL,
                   time = NULL)
       )
     }

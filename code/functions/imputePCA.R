@@ -44,13 +44,24 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       }
 
       # Extract PCs
-      pcaout <- principal(sapply(Z_tpca, as.numeric),
-                          nfactors = ncfs,
-                          cor = "cor")
-      pc_var_exp <- sum(prop.table(pcaout$values)[1:ncfs])
+      prcomp_out <- prcomp(sapply(Z_tpca, as.numeric),
+                           center = TRUE,
+                           scale = TRUE)
+      pc_var_exp <- prop.table(prcomp_out$sdev^2)
+
+      # Keep desired number of factors (based on how it was specified)
+      if(ncfs >= 1){
+        # ncfs as NOT a proportion
+        pcs_keep <- 1:ncfs
+        prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
+      } else {
+        # ncfs as a proportion
+        pcs_keep <- cumsum(pc_var_exp) <= ncfs
+        prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
+      }
 
       ## Define input data for imputation
-      Z_input <- cbind(pcaout$scores, Z[, imp_target])
+      Z_input <- cbind(prcomp_dat, Z[, imp_target])
 
       ## Define predictor matrix
       pred_mat <- make.predictorMatrix(Z_input)

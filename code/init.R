@@ -74,6 +74,9 @@
            5, 10, # low range forced
            seq(20, (parms$P-1), 30), # granularity in high range
            parms$P) # max
+  npc <- c(1, # min
+           .2, .4, .6, .8, # propotion of explained variance
+           parms$P) # max
   method <- c("all", "imp", "uni", "MITR", "MIMI", "CC", "OG") # nature of PC
 
   # Make Conditionsa

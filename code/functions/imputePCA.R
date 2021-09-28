@@ -47,7 +47,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       prcomp_out <- prcomp(sapply(Z_tpca, as.numeric),
                            center = TRUE,
                            scale = TRUE)
-      pc_var_exp <- prop.table(prcomp_out$sdev^2)
+      prop_var_exp <- prop.table(prcomp_out$sdev^2)
 
       # Keep desired number of factors (based on how it was specified)
       if(ncfs >= 1){
@@ -56,9 +56,14 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
         prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
       } else {
         # ncfs as a proportion
-        pcs_keep <- cumsum(pc_var_exp) <= ncfs
+        pcs_keep <- which(cumsum(prop_var_exp) <= ncfs)
+        # Check is not empty
+        if(length(pcs_keep) == 0){
+          pcs_keep <- 1
+        }
         prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
       }
+      pc_var_exp <- sum(prop_var_exp[pcs_keep])
 
       ## Define input data for imputation
       Z_input <- cbind(prcomp_dat, Z[, imp_target])

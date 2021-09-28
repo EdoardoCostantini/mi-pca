@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-09-20
+# Modified:  2021-09-28
 
 # Packages ----------------------------------------------------------------
 
@@ -40,7 +40,7 @@
   
   # Data generation
   parms$N <- 1e3 # sample size
-  parms$P <- 10 # number of variables
+  parms$P <- 50 # number of variables (100 target)
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
   parms$cov_mp <- .7 # for mar predictors
@@ -70,7 +70,10 @@
   D <- 1 # seq(1, 0, length.out = 5)
   interval <- c(TRUE, FALSE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
-  npc <- c(1, parms$P*seq(.1, .9, .1)) # number of PCs extracted
+  npc <- c(min = 1,
+           5, 10,
+           seq(20, (parms$P-1), 30),
+           max = parms$P) # number of PCs extracted
   method <- c("all", "imp", "uni", "MITR", "MIMI", "CC", "OG") # nature of PC
 
   # Make Conditionsa

@@ -2,14 +2,14 @@
 # Objective: Estimate, pool and sturcture correlation output
 # Author:    Edoardo Costantini
 # Created:   2021-09-21
-# Modified:  2021-09-21
+# Modified:  2021-09-28
 
 poolCor <- function (mids, targets, alphaCI = .95){
 
   ## Internals
-  mids = mids_out$mids
-  targets = parms$vmap$ta
-  alphaCI = .95
+  # mids = mids_out$mids
+  # targets = parms$vmap$ta
+  # alphaCI = .95
 
   ## Body
   cor_out <- miceadds::micombine.cor(mids,

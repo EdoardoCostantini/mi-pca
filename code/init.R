@@ -70,10 +70,10 @@
   D <- 1 # seq(1, 0, length.out = 5)
   interval <- c(TRUE, FALSE)
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
-  npc <- c(min = 1,
-           5, 10,
-           seq(20, (parms$P-1), 30),
-           max = parms$P) # number of PCs extracted
+  npc <- c(1, # min
+           5, 10, # low range forced
+           seq(20, (parms$P-1), 30), # granularity in high range
+           parms$P) # max
   method <- c("all", "imp", "uni", "MITR", "MIMI", "CC", "OG") # nature of PC
 
   # Make Conditionsa

@@ -7,7 +7,7 @@
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
 
-runCell <- function(cond, parms, rp) {
+runCell <- function(rp, cond, fs, parms) {
 
 # Example Internals -------------------------------------------------------
 

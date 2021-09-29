@@ -1,7 +1,7 @@
 ### Title:    Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-05-19
-### Modified: 2021-09-28
+### Modified: 2021-09-29
 
 imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   
@@ -21,10 +21,17 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   # Z = dat_miss
   # imp_target = parms$vmap$ta
   # pcs_target = c(parms$vmap$mp, parms$vmap$ax)
-  # ncfs <- 1
+  # ncfs = 1
 
   ## body:
     tryCatch({
+
+      ## Process the number of predictors
+      if(grepl("max", ncfs)){
+        ncfs_int <- length(pcs_target)
+      } else {
+        ncfs_int <- as.numeric(ncfs)
+      }
 
       start_time <- Sys.time()
 
@@ -49,20 +56,19 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
                            scale = TRUE)
       prop_var_exp <- prop.table(prcomp_out$sdev^2)
 
-      # Keep desired number of factors (based on how it was specified)
-      if(ncfs >= 1){
-        # ncfs as NOT a proportion
-        pcs_keep <- 1:ncfs
-        prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
+      # Define which pcs to keep (flexible to proportion of v explained)
+      if(ncfs_int >= 1){
+        # ncfs_int is a number
+        pcs_keep <- 1:ncfs_int
       } else {
-        # ncfs as a proportion
-        pcs_keep <- which(cumsum(prop_var_exp) <= ncfs)
+        # ncfs_int is a proportion
+        pcs_keep <- which(cumsum(prop_var_exp) <= ncfs_int)
         # Check is not empty
         if(length(pcs_keep) == 0){
           pcs_keep <- 1
         }
-        prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
       }
+      prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
       pc_var_exp <- sum(prop_var_exp[pcs_keep])
 
       ## Define input data for imputation
@@ -79,6 +85,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       ## Impute
       imp_PCA_mids <- mice::mice(Z_input,
                                  m      = parms$mice_ndt,
+                                 method = "norm.boot",
                                  maxit  = parms$mice_iters,
                                  predictorMatrix = pred_mat)
 

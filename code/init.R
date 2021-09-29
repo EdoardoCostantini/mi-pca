@@ -6,12 +6,17 @@
 
 # Packages ----------------------------------------------------------------
 
-  pack_list <- c("parallel",
-                 "MASS",
-                 "lavaan",
-                 "mice",
-                 "mice.pcr.sim",
+  pack_list <- c("parallel",    # simulation paralleliazion
+                 "rlecuyer",    # simulation paralleliazion
+                 "MASS",        # data generation
+                 "lavaan",      # fitting analysis models
+                 "mice",        # imputation
+                 "mice.pcr.sim",# imputation
                  "FactoMineR",
+                 "stringr",     # result pooling
+                 "ggplot2",     # results analysis
+                 "dplyr",       # results analysis
+                 "forcats",     # results analysis
                  "OrdNor",
                  "BinNor")
   
@@ -58,21 +63,24 @@
 
   # Imputation Routine
   parms$mice_ndt <- 5
-  parms$mice_iters <- 20
+  parms$mice_iters <- 10
 
-  # Storing Objects
-  parms$outDir <- "../output/"
+  # Results and replicability
+  parms$rps      <- 100
+  parms$seed     <- 20210929
+  parms$nStreams <- 1000
+  parms$outDir   <- "../output/"
 
 # Experimental Conditions -------------------------------------------------
   
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
-  K <- c(Inf, 7, 5, 3, 2) # number of categories
+  K <- 5 # c(Inf, 7, 5, 3, 2) # number of categories
   D <- 1 # seq(1, 0, length.out = 5)
-  interval <- c(TRUE, FALSE)
-  pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
+  interval <- TRUE # c(TRUE, FALSE)
+  pj <- .67 # round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, # min
-           5, 10, # low range forced
+           # 5, # low range forced
            # seq(20, (parms$P-length(parms$vmap$ta)), 30), # granularity in high range
            "max") # max
   method <- c("all", "aux", "vbv", "MITR", "MIMI", "CC", "OG") # nature of PC

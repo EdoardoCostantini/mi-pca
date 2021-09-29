@@ -7,8 +7,8 @@
 genLavaanMod <- function (dt, targets){
 
   ## Inputs
-  dt = dat_miss
-  targets = parms$vmap$ta
+  # dt = dat_miss
+  # targets = parms$vmap$ta
 
   ## Body
   var_names <- colnames(dt[, targets])

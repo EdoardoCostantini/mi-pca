@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-05-20
-### Modified: 2021-09-20
+### Modified: 2021-09-29
 
 genData <- function(parms, cond){
 
@@ -22,7 +22,7 @@ genData <- function(parms, cond){
   
   # Other Predictors (junk and no junk)
   nauxiliaries <- length(parms$vmap$ax)
-  index_junk_aux <- head(parms$vmap$ax, nauxiliaries * cond$pj)
+  index_junk_aux <- tail(parms$vmap$ax, nauxiliaries * cond$pj)
   if(length(index_junk_aux) == 0){
     Phi[-c(parms$vmap$ta, parms$vmap$mp), ] <- parms$cov_ax
   } else {

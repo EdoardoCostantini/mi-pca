@@ -72,7 +72,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       pc_var_exp <- sum(prop_var_exp[pcs_keep])
 
       ## Define input data for imputation
-      Z_input <- cbind(prcomp_dat, Z[, imp_target])
+      Z_input <- cbind(Z[, imp_target], prcomp_dat)
 
       ## Define predictor matrix
       pred_mat <- make.predictorMatrix(Z_input)

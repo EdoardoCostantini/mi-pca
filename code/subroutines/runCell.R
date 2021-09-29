@@ -36,7 +36,7 @@ runCell <- function(cond, parms, rp) {
                          ncfs = cond$npc,
                          parms = parms)
   }
-  if(cond$method == "imp") {
+  if(cond$method == "aux") {
     imp_out <- imputePCA(dat_miss,
                          imp_target = parms$vmap$ta,
                          pcs_target = c(parms$vmap$mp, parms$vmap$ax),
@@ -66,7 +66,7 @@ runCell <- function(cond, parms, rp) {
 
 # Analyze and pool --------------------------------------------------------
 
-  if(cond$method %in% c("all", "imp", "vbv", "MITR", "MIMI")){
+  if(cond$method %in% c("all", "aux", "vbv", "MITR", "MIMI")){
     ## Estimate Mean, variance, covariance
     fits <- fitSatModel(mids = imp_out$mids,
                         model = genLavaanMod(dat_miss,

@@ -75,7 +75,7 @@
            5, 10, # low range forced
            # seq(20, (parms$P-length(parms$vmap$ta)), 30), # granularity in high range
            "max") # max
-  method <- c("all", "imp", "vbv", "MITR", "MIMI", "CC", "OG") # nature of PC
+  method <- c("all", "aux", "vbv", "MITR", "MIMI", "CC", "OG") # nature of PC
 
   # Make Conditionsa
   conds_1 <- expand.grid(K = K,

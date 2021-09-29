@@ -10,6 +10,7 @@
                  "MASS",
                  "lavaan",
                  "mice",
+                 "mice.pcr.sim",
                  "FactoMineR",
                  "OrdNor",
                  "BinNor")
@@ -72,12 +73,9 @@
   pj <- round(seq(1, 0, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, # min
            5, 10, # low range forced
-           seq(20, (parms$P-1), 30), # granularity in high range
-           parms$P) # max
-  npc <- c(1, # min
-           .2, .4, .6, .8, # propotion of explained variance
-           parms$P) # max
-  method <- c("all", "imp", "uni", "MITR", "MIMI", "CC", "OG") # nature of PC
+           # seq(20, (parms$P-length(parms$vmap$ta)), 30), # granularity in high range
+           "max") # max
+  method <- c("all", "imp", "vbv", "MITR", "MIMI", "CC", "OG") # nature of PC
 
   # Make Conditionsa
   conds_1 <- expand.grid(K = K,

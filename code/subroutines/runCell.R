@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-09-21
+# Modified:  2021-09-29
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -43,10 +43,9 @@ runCell <- function(cond, parms, rp) {
                          ncfs = cond$npc,
                          parms = parms)
   }
-  if(cond$method == "uni") {
-    imp_out <- mice(sapply(dat_miss, as.numeric),
-                     method = "pcr.mixed",
-                     npcs = 1)
+  if(cond$method == "vbv") {
+    imp_out <- imputePCAvbv(Z = sapply(dat_miss, as.numeric),
+                            ncfs = cond$npc)
   }
 
   # MICE w/ true missing data imposition model (optimal)
@@ -67,7 +66,7 @@ runCell <- function(cond, parms, rp) {
 
 # Analyze and pool --------------------------------------------------------
 
-  if(cond$method %in% c("all", "imp", "uni", "MITR", "MIMI")){
+  if(cond$method %in% c("all", "imp", "vbv", "MITR", "MIMI")){
     ## Estimate Mean, variance, covariance
     fits <- fitSatModel(mids = imp_out$mids,
                         model = genLavaanMod(dat_miss,

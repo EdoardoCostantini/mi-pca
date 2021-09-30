@@ -102,7 +102,7 @@ runCell <- function(rp, cond, fs, parms) {
   }
 
   ## Attach condition tags
-  res <- cbind(cond, PC_exp = PC_exp, res)
+  res <- cbind(rp = rp, cond, PC_exp = PC_exp, res)
 
 # Store Output ------------------------------------------------------------
   

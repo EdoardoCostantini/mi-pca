@@ -40,6 +40,18 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
       !all(is.na(x))}
     )
     pc_exp_dfs <- mids_pcr_sim$pcs[keep]
+    pc_exp_dfs <- lapply(1:length(pc_exp_dfs),
+                         function (x) {
+                           # Fix Column names to number of imputation
+                           colnames(pc_exp_dfs[[x]]) <- paste0("m",
+                                                               1:ncol(pc_exp_dfs[[x]]))
+                           cbind(
+                           # Add variable name column
+                             var = names(pc_exp_dfs)[x],
+                           # Add iteration counter column
+                             iter = 1:nrow(pc_exp_dfs[[x]]),
+                             pc_exp_dfs[[x]])
+                         })
     pc_var_mat <- do.call(rbind, pc_exp_dfs)
 
     # Compute mean for the last iteration

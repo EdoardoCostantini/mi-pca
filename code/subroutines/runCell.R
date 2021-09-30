@@ -106,12 +106,24 @@ runCell <- function(rp, cond, fs, parms) {
 
 # Store Output ------------------------------------------------------------
   
-  ## Store Results
+  ## Store Main Results
   saveRDS(res,
           file = paste0(fs$outDir,
                         "rep_", rp, "_", cond$tag,
+                        "_main",
                         ".rds")
   )
+
+  ## Store Cumulative Explained Variance in vbv case
+  if(cond$method == "vbv"){
+    pc_res <- cbind(cond, imp_out$pc_var_mat)
+    saveRDS(pc_res,
+            file = paste0(fs$outDir,
+                          "rep_", rp, "_", cond$tag,
+                          "_CPVE",
+                          ".rds")
+    )
+  }
 
 }
 

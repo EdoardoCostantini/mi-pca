@@ -4,7 +4,7 @@
 # Created:   2021-09-29
 # Modified:  2021-09-29
 
-imputePCAvbv <- function(Z, ncfs = 1){
+imputePCAvbv <- function(Z, ncfs = 1, parms){
 
   ## Example inputs
   # Z = sapply(dat_miss, as.numeric)
@@ -34,8 +34,22 @@ imputePCAvbv <- function(Z, ncfs = 1){
                                  maxit  = parms$mice_iters,
                                  method = "pcr.mixed",
                                  npcs = ncfs_int)
-    # pc_var_exp_df <- do.call(rbind, imp_out$pcs)
-    pc_var_exp <- mean(unlist(mids_pcr_sim$pcs), na.rm = TRUE)
+    # Drop empty PCs
+    is.na(mids_pcr_sim$pcs)
+    keep <- sapply(mids_pcr_sim$pcs, function (x) {
+      !all(is.na(x))}
+    )
+    pc_exp_dfs <- mids_pcr_sim$pcs[keep]
+    pc_var_mat <- do.call(rbind, pc_exp_dfs)
+
+    # Compute mean for the last iteration
+    pc_var_exp <-
+      mean(
+        unlist(
+          lapply(pc_exp_df,
+                 function (x) x[nrow(x), ])
+        )
+      )
 
     # TIME STAMP: End!
     end_time <- Sys.time()
@@ -44,6 +58,7 @@ imputePCAvbv <- function(Z, ncfs = 1){
     # Store results
     return(list(mids = mids_pcr_sim,
                 pc_var_exp = pc_var_exp,
+                pc_var_mat = pc_var_mat,
                 time = as.vector(imp_time)))
 
     ### END TRYCATCH EXPRESSION

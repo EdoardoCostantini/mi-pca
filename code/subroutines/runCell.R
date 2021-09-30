@@ -45,7 +45,8 @@ runCell <- function(rp, cond, fs, parms) {
   }
   if(cond$method == "vbv") {
     imp_out <- imputePCAvbv(Z = sapply(dat_miss, as.numeric),
-                            ncfs = cond$npc)
+                            ncfs = cond$npc,
+                            parms = parms)
   }
 
   # MICE w/ true missing data imposition model (optimal)
@@ -93,8 +94,15 @@ runCell <- function(rp, cond, fs, parms) {
     res <- fitSingleData(dat$cont, targets = parms$vmap$ta)
   }
 
+  ## Define explained variance information
+  if(cond$method %in% c("all", "aux", "vbv")){
+    PC_exp <- imp_out$pc_var_exp
+  } else {
+    PC_exp <- NA
+  }
+
   ## Attach condition tags
-  res <- cbind(cond, res)
+  res <- cbind(cond, PC_exp = PC_exp, res)
 
 # Store Output ------------------------------------------------------------
   

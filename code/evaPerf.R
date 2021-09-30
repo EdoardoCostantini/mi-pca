@@ -35,9 +35,11 @@ evaPerf <- function ()
   par_var <- NULL
 
 # Cast experimental factors to ordered factors
-out$par <- factor(out$par, levels = unique(out$par), ordered = TRUE)
 out$tag <- factor(out$tag, levels = unique(out$tag), ordered = TRUE)
-out$method <- factor(out$method, levels = unique(out$method), ordered = TRUE)
+out$par <- factor(out$par, levels = unique(out$par), ordered = TRUE)
+out$method <- factor(out$method,
+                     levels = unique(output$sInfo$conds$method),
+                     ordered = TRUE)
 
 # True values
 ref_df <- out %>%
@@ -46,13 +48,14 @@ ref_df <- out %>%
   dplyr::summarize(ref = mean(Q_bar))
 ref_vec <- ref_df$ref
 out$ref <- rep(ref_vec, nrow(out) / length(ref_vec))
-head(out, 50)
 
 # Idea of bias
-out %>%
-  filter(method == "MITR") %>%
+temp <- out %>%
+  filter(method == "aux") %>%
   group_by(par, tag) %>%
   dplyr::summarize(Mean = mean(Q_bar))
+temp$bias <- abs(temp$Mean - ref_vec) / ref_vec*100
+data.frame(temp)
 
 out %>%
   filter(method == "CC") %>%

@@ -105,7 +105,8 @@
   conds <- rbind(conds_1, conds_2)
 
   # Append Condition Tag
-  conds$tag <- sapply(1:nrow(conds), function(i) {
-    paste0(colnames(conds), conds[i, ], collapse = "_")
-  }
-  )
+  conds <- cbind(tag = sapply(1:nrow(conds),
+                              function(i) {
+                                paste0(colnames(conds), conds[i, ], collapse = "_")
+                              }),
+                 conds)

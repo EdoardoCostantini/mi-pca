@@ -58,8 +58,9 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
     pc_var_exp <-
       mean(
         unlist(
-          lapply(pc_exp_df,
-                 function (x) x[nrow(x), ])
+          lapply(pc_exp_dfs,
+                 function (x) x[nrow(x), -c(1, 2)]
+          )
         )
       )
 
@@ -80,6 +81,7 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
     print(err)
     return(list(mids = NULL,
                 pc_var_exp = NULL,
+                pc_var_mat = NULL,
                 time = NULL))
   }
   )

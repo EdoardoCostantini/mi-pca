@@ -30,6 +30,8 @@ imputePCAvbv <- function(Z, ncfs = 1){
 
     # Impute
     mids_pcr_sim <- mice.pcr.sim(Z,
+                                 m      = parms$mice_ndt,
+                                 maxit  = parms$mice_iters,
                                  method = "pcr.mixed",
                                  npcs = ncfs_int)
     # pc_var_exp_df <- do.call(rbind, imp_out$pcs)

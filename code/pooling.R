@@ -23,7 +23,10 @@
   # Give unique name to all objects
   # names(output$out) <- output$file_names
 
-  out <- do.call(rbind, output$out)
+  # Put together main results
+  out_main <- output$out[grepl("main", output$file_names)]
+  out <- do.call(rbind, out_main)
+
   # out <- out[, -which(colnames(out) == "tag")]
   gg_shape <- reshape2::melt(out, id.var = colnames(out)[1:8])
 
@@ -34,3 +37,7 @@
                         "_pooled",
                         ".rds")
   )
+
+  # Put together CPVE results from VBV method
+  out_CPVE_list <- output$out[grepl("CPVE", output$file_names)]
+  out_CPVE <- do.call(rbind, out_CPVE_list)

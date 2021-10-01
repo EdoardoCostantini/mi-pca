@@ -102,6 +102,7 @@ genData <- function(parms, cond){
 
   return(
     list(cont = x_cont,
-         ordi = x_ordi)
+         ordi = x_ordi,
+         index_junk_aux = index_junk_aux)
   )
 }

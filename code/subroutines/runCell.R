@@ -11,7 +11,7 @@ runCell <- function(rp, cond, fs, parms) {
 
 # Example Internals -------------------------------------------------------
 
-  # cond = conds[9, ]
+  # cond = conds[18, ]
   # rp   = 1
 
 # Data Generation ---------------------------------------------------------
@@ -44,17 +44,33 @@ runCell <- function(rp, cond, fs, parms) {
                             parms = parms)
   }
   if(cond$method == "vbv") {
-    imp_out <- imputePCAvbv(Z = sapply(dat_miss, as.numeric),
+    imp_out <- imputePCAvbv(dat_miss,
                             ncfs = cond$npc,
                             parms = parms)
   }
 
-  # MICE w/ true missing data imposition model (optimal)
-  if(cond$method == "MITR") {
+  # MICE w/ optimal choices
+  if(cond$method == "MIOP") {
     imp_out <- imputeMICE(Z = dat_miss,
-                           imp_target = parms$vmap$ta,
-                           preds = c(parms$vmap$ta, parms$vmap$mp),
-                           parms = parms)
+                          imp_target = parms$vmap$ta,
+                          preds = c(parms$vmap$ta,
+                                    parms$vmap$mp,
+                                    # auxiliaries that are not junk
+                                    parms$vmap$ax[
+                                      !parms$vmap$ax
+                                        %in%
+                                        dat$index_junk_aux
+                                    ]),
+                          parms = parms)
+  }
+
+  # MICE w/ oracle knowledge
+  if(cond$method == "MIOR") {
+    imp_out <- imputeMICE(Z = dat_miss,
+                          imp_target = parms$vmap$ta,
+                          preds = c(parms$vmap$ta,
+                                    parms$vmap$mp),
+                          parms = parms)
   }
 
   # MICE w/ minimal missing data models (minimal)
@@ -67,7 +83,7 @@ runCell <- function(rp, cond, fs, parms) {
 
 # Analyze and pool --------------------------------------------------------
 
-  if(cond$method %in% c("all", "aux", "vbv", "MITR", "MIMI")){
+  if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
     ## Estimate Mean, variance, covariance
     fits <- fitSatModel(mids = imp_out$mids,
                         model = genLavaanMod(dat_miss,
@@ -96,7 +112,7 @@ runCell <- function(rp, cond, fs, parms) {
 
   ## Define explained variance information
   if(cond$method %in% c("all", "aux", "vbv")){
-    PC_exp <- imp_out$pc_var_exp
+    PC_exp <- imp_out$CPVE
   } else {
     PC_exp <- NA
   }
@@ -116,7 +132,7 @@ runCell <- function(rp, cond, fs, parms) {
 
   ## Store Cumulative Explained Variance in vbv case
   if(cond$method == "vbv"){
-    pc_res <- cbind(cond, imp_out$pc_var_mat)
+    pc_res <- cbind(cond, imp_out$CPVE)
     saveRDS(pc_res,
             file = paste0(fs$outDir,
                           "rep_", rp, "_", cond$tag,

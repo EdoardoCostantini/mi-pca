@@ -27,17 +27,17 @@ imputeMICE <- function(Z, imp_target, preds, parms){
     pred_mat[imp_target, -preds] <- 0
 
     # Impute
-    imp_MITR_mids <- mice::mice(Z,
-                                predictorMatrix = pred_mat,
-                                m = parms$mice_ndt,
-                                maxit = parms$mice_iters,
-                                method = "norm.boot")
+    imp_mids <- mice::mice(Z,
+                           predictorMatrix = pred_mat,
+                           m = parms$mice_ndt,
+                           maxit = parms$mice_iters,
+                           method = "norm.boot")
     end_time <- Sys.time()
-    imp_MITR_time <- difftime(end_time, start_time, units = "mins")
+    imp_time <- difftime(end_time, start_time, units = "mins")
 
     # Store results
-    return(list(mids = imp_MITR_mids,
-                time = as.vector(imp_MITR_time)))
+    return(list(mids = imp_mids,
+                time = as.vector(imp_time)))
 
     ### END TRYCATCH EXPRESSION
   }, error = function(e){

@@ -30,18 +30,18 @@ runCell <- function(rp, cond, fs, parms) {
 # Imputation --------------------------------------------------------------
 
   if(cond$method == "all"){
-    imp_out <- imputePCA(dat_miss,
-                         imp_target = parms$vmap$ta,
-                         pcs_target = unlist(parms$vmap, use.names = FALSE),
-                         ncfs = cond$npc,
-                         parms = parms)
+    imp_out <- imputePCAall(dat_miss,
+                            imp_target = parms$vmap$ta,
+                            pcs_target = unlist(parms$vmap, use.names = FALSE),
+                            ncfs = cond$npc,
+                            parms = parms)
   }
   if(cond$method == "aux") {
-    imp_out <- imputePCA(dat_miss,
-                         imp_target = parms$vmap$ta,
-                         pcs_target = c(parms$vmap$mp, parms$vmap$ax),
-                         ncfs = cond$npc,
-                         parms = parms)
+    imp_out <- imputePCAaux(dat_miss,
+                            imp_target = parms$vmap$ta,
+                            pcs_target = c(parms$vmap$mp, parms$vmap$ax),
+                            ncfs = cond$npc,
+                            parms = parms)
   }
   if(cond$method == "vbv") {
     imp_out <- imputePCAvbv(Z = sapply(dat_miss, as.numeric),

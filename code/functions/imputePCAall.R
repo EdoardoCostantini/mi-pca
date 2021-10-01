@@ -1,9 +1,9 @@
 ### Title:    Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-05-19
-### Modified: 2021-09-29
+### Modified: 2021-10-01
 
-imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
+imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   
   ## Input: 
   # @Z: dataset w/ missing values,
@@ -35,26 +35,24 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
 
       start_time <- Sys.time()
 
-      ## Single Imputation Run
-      if(any(imp_target %in% pcs_target)){
-        pMat     <- quickpred(Z, mincor = .3)
-        ZDA_mids <- mice(Z,
-                         m               = 1,
-                         maxit           = 100,
-                         predictorMatrix = pMat,
-                         printFlag       = FALSE,
-                         method          = "pmm")
+      # Single Imputation to allow PCA
+      pMat     <- quickpred(Z, mincor = .3)
+      Z_SI_mids <- mice(Z,
+                        m               = 1,
+                        maxit           = 100,
+                        predictorMatrix = pMat,
+                        printFlag       = FALSE,
+                        method          = "pmm")
+      Z_SI <- complete(Z_SI_mids)
 
-        Z_tpca <- complete(ZDA_mids)
-      } else {
-        Z_tpca <- Z[, pcs_target]
-      }
+      # Prepare object for prcomp
+      Z_pca <- apply(Z_SI, 2, as.numeric)
 
       # Extract PCs
-      prcomp_out <- prcomp(sapply(Z_tpca, as.numeric),
+      prcomp_out <- prcomp(Z_pca,
                            center = TRUE,
                            scale = TRUE)
-      prop_var_exp <- prop.table(prcomp_out$sdev^2)
+      PVE <- prop.table(prcomp_out$sdev^2)
 
       # Define which pcs to keep (flexible to proportion of v explained)
       if(ncfs_int >= 1){
@@ -62,31 +60,31 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
         pcs_keep <- 1:ncfs_int
       } else {
         # ncfs_int is a proportion
-        pcs_keep <- which(cumsum(prop_var_exp) <= ncfs_int)
+        pcs_keep <- which(cumsum(PVE) <= ncfs_int)
         # Check is not empty
         if(length(pcs_keep) == 0){
           pcs_keep <- 1
         }
       }
+
+      # Keep dataset of PC predictors
       prcomp_dat <- prcomp_out$x[, pcs_keep, drop = FALSE]
-      pc_var_exp <- sum(prop_var_exp[pcs_keep])
+
+      # Keep CPVE value
+      CPVE <- sum(PVE[pcs_keep])
 
       ## Define input data for imputation
-      Z_input <- cbind(Z[, imp_target], prcomp_dat)
+      Z_mice <- cbind(Z[, imp_target], prcomp_dat)
 
       ## Define predictor matrix
-      pred_mat <- make.predictorMatrix(Z_input)
-      if(any(imp_target %in% pcs_target)){
-        # If we have included the imp_target variables that are pcs_target,
-        # then we do not want to use them again in the imputaion
-        pred_mat[, colnames(Z[, imp_target])] <- 0
-      }
+      pred_mat <- make.predictorMatrix(Z_mice)
+      pred_mat[, colnames(Z[, imp_target])] <- 0
 
       ## Impute
-      imp_PCA_mids <- mice::mice(Z_input,
+      imp_PCA_mids <- mice::mice(Z_mice,
                                  m      = parms$mice_ndt,
                                  method = "norm.boot",
-                                 maxit  = parms$mice_iters,
+                                 maxit  = 1,
                                  predictorMatrix = pred_mat)
 
       # Track time it took
@@ -94,7 +92,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       imp_PCA_time <- difftime(end_time, start_time, units = "mins")
 
       return(list(mids = imp_PCA_mids,
-                  pc_var_exp = pc_var_exp,
+                  CPVE = CPVE,
                   time = as.vector(imp_PCA_time)))
 
       ### END TRYCATCH EXPRESSION
@@ -102,7 +100,7 @@ imputePCA <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
       err <- paste0("Original Error: ", e)
       print(err)
       return(list(mids = NULL,
-                  pc_var_exp = NULL,
+                  CPVE = NULL,
                   time = NULL)
       )
     }

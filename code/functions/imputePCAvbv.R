@@ -7,7 +7,7 @@
 imputePCAvbv <- function(Z, ncfs = 1, parms){
 
   ## Example inputs
-  # Z = sapply(dat_miss, as.numeric)
+  # Z = dat_miss
   # ncfs = 1
 
   ## output:
@@ -28,37 +28,40 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
     # TIME STAMP: Start!
     start_time <- Sys.time()
 
+    # Prepare object for mice
+    Z_mice <- apply(Z, 2, as.numeric)
+
     # Impute
-    mids_pcr_sim <- mice.pcr.sim(Z,
+    mids_pcr_sim <- mice.pcr.sim(Z_mice,
                                  m      = parms$mice_ndt,
                                  maxit  = parms$mice_iters,
                                  method = "pcr.mixed",
                                  npcs = ncfs_int)
-    # Drop empty PCs
-    is.na(mids_pcr_sim$pcs)
+    # Extract CPVE
+    ## Drop empty PCs
     keep <- sapply(mids_pcr_sim$pcs, function (x) {
       !all(is.na(x))}
     )
-    pc_exp_dfs <- mids_pcr_sim$pcs[keep]
-    pc_exp_dfs <- lapply(1:length(pc_exp_dfs),
+    CPVE_dfs <- mids_pcr_sim$pcs[keep]
+    CPVE_dfs <- lapply(1:length(CPVE_dfs),
                          function (x) {
                            # Fix Column names to number of imputation
-                           colnames(pc_exp_dfs[[x]]) <- paste0("m",
-                                                               1:ncol(pc_exp_dfs[[x]]))
+                           colnames(CPVE_dfs[[x]]) <- paste0("m",
+                                                               1:ncol(CPVE_dfs[[x]]))
                            cbind(
                            # Add variable name column
-                             var = names(pc_exp_dfs)[x],
+                             var = names(CPVE_dfs)[x],
                            # Add iteration counter column
-                             iter = 1:nrow(pc_exp_dfs[[x]]),
-                             pc_exp_dfs[[x]])
+                             iter = 1:nrow(CPVE_dfs[[x]]),
+                             CPVE_dfs[[x]])
                          })
-    pc_var_mat <- do.call(rbind, pc_exp_dfs)
+    CPVE_mat <- do.call(rbind, CPVE_dfs)
 
     # Compute mean for the last iteration
-    pc_var_exp <-
+    CPVE <-
       mean(
         unlist(
-          lapply(pc_exp_dfs,
+          lapply(CPVE_dfs,
                  function (x) x[nrow(x), -c(1, 2)]
           )
         )
@@ -70,8 +73,8 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
 
     # Store results
     return(list(mids = mids_pcr_sim,
-                pc_var_exp = pc_var_exp,
-                pc_var_mat = pc_var_mat,
+                CPVE = CPVE,
+                CPVE_mat = CPVE_mat,
                 time = as.vector(imp_time)))
 
     ### END TRYCATCH EXPRESSION
@@ -80,8 +83,8 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
     err <- paste0("Original Error: ", e)
     print(err)
     return(list(mids = NULL,
-                pc_var_exp = NULL,
-                pc_var_mat = NULL,
+                CPVE = NULL,
+                CPVE_mat = NULL,
                 time = NULL))
   }
   )

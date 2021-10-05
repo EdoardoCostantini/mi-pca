@@ -36,7 +36,9 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
                                  m      = parms$mice_ndt,
                                  maxit  = parms$mice_iters,
                                  method = "pcr.mixed",
-                                 npcs = ncfs_int)
+                                 npcs = ncfs_int,
+                                 eps = 0)
+
     # Extract CPVE
     ## Drop empty PCs
     keep <- sapply(mids_pcr_sim$pcs, function (x) {

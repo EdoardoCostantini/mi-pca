@@ -18,36 +18,23 @@ imputeMICE <- function(Z, imp_target, preds, parms){
   # - imputation run time
 
   ## body:
-  tryCatch({
+  start_time <- Sys.time()
 
-    start_time <- Sys.time()
+  # Make predictor matrix
+  pred_mat <- make.predictorMatrix(Z)
+  pred_mat[imp_target, -preds] <- 0
 
-    # Make predictor matrix
-    pred_mat <- make.predictorMatrix(Z)
-    pred_mat[imp_target, -preds] <- 0
+  # Impute
+  imp_mids <- mice::mice(Z,
+                         predictorMatrix = pred_mat,
+                         m = parms$mice_ndt,
+                         maxit = parms$mice_iters,
+                         method = "norm.boot")
+  end_time <- Sys.time()
+  imp_time <- difftime(end_time, start_time, units = "mins")
 
-    # Impute
-    imp_mids <- mice::mice(Z,
-                           predictorMatrix = pred_mat,
-                           m = parms$mice_ndt,
-                           maxit = parms$mice_iters,
-                           method = "norm.boot")
-    end_time <- Sys.time()
-    imp_time <- difftime(end_time, start_time, units = "mins")
-
-    # Store results
-    return(list(mids = imp_mids,
-                time = as.vector(imp_time)))
-
-    ### END TRYCATCH EXPRESSION
-  }, error = function(e){
-
-    err <- paste0("Original Error: ", e)
-    print(err)
-    return(list(mids = NULL,
-                time = NULL))
-
-  }
-  )
+  # Store results
+  return(list(mids = imp_mids,
+              time = as.vector(imp_time)))
 
 }

@@ -2,7 +2,7 @@
 # Objective: Estimate, pool and sturcture correlation output
 # Author:    Edoardo Costantini
 # Created:   2021-09-21
-# Modified:  2021-10-04
+# Modified:  2021-09-28
 
 poolCor <- function (mids, targets, alphaCI = .95){
 
@@ -12,39 +12,29 @@ poolCor <- function (mids, targets, alphaCI = .95){
   # alphaCI = .95
 
   ## Body
-  tryCatch({
-    ### START TRYCATCH EXPRESSION
+  cor_out <- miceadds::micombine.cor(mids,
+                                     variables = targets,
+                                     conf.level = alphaCI,
+                                     method = "pearson",
+                                     nested = FALSE,
+                                     partial = NULL)
 
-    cor_out <- miceadds::micombine.cor(mids,
-                                       variables = targets,
-                                       conf.level = alphaCI,
-                                       method = "pearson",
-                                       nested = FALSE,
-                                       partial = NULL)
+  ## Identify unique correlations
+  cor_unique_index <- !duplicated(t(apply(cor_out, 1, sort)))
+  cor_unique <- cor_out[cor_unique_index, ]
 
-    ## Identify unique correlations
-    cor_unique_index <- !duplicated(t(apply(cor_out, 1, sort)))
-    cor_unique <- cor_out[cor_unique_index, ]
+  ## Store name of parameter
+  cor_unique <- cbind(par = paste0(cor_unique$variable1,
+                                   "r",
+                                   cor_unique$variable2),
+                      cor_unique)
 
-    ## Store name of parameter
-    cor_unique <- cbind(par = paste0(cor_unique$variable1,
-                                     "r",
-                                     cor_unique$variable2),
-                        cor_unique)
+  ## Drop useless column
+  cor_select <- cor_unique[, c("par", "r", "lower95", "upper95")]
 
-    ## Drop useless column
-    cor_select <- cor_unique[, c("par", "r", "lower95", "upper95")]
+  ## Change names
+  colnames(cor_select) <- c("par", "Q_bar", "lwr", "upr")
 
-    ## Change names
-    colnames(cor_select) <- c("par", "Q_bar", "lwr", "upr")
-
-    return(cor_select)
-    ### END TRYCATCH EXPRESSION
-  }, error = function(e){
-    err <- paste0("Original Error: ", e)
-    print(err)
-    return(NULL)
-  }
-  )
+  return(cor_select)
 }
 

@@ -38,7 +38,7 @@ runCell <- function(rp, cond, fs, parms) {
                               parms = parms)
     }
     if(cond$method == "aux") {
-      imp_out <- imputePCAaux(dat_miss___,
+      imp_out <- imputePCAaux(dat_miss,
                               imp_target = parms$vmap$ta,
                               pcs_target = c(parms$vmap$mp, parms$vmap$ax),
                               ncfs = cond$npc,

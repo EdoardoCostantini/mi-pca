@@ -29,7 +29,7 @@ imputeMICE <- function(Z, imp_target, preds, parms){
                          predictorMatrix = pred_mat,
                          m = parms$mice_ndt,
                          maxit = parms$mice_iters,
-                         method = "norm.boot")
+                         method = "norm")
   end_time <- Sys.time()
   imp_time <- difftime(end_time, start_time, units = "mins")
 

@@ -20,24 +20,69 @@
 # Restructure Results -----------------------------------------------------
 # list of conditions containing results for every repetition
 
-  # Give unique name to all objects
-  # names(output$out) <- output$file_names
+  # Were there any errors?
+  grep("ERROR", output$file_names)
 
   # Put together main results
   out_main <- output$out[grepl("main", output$file_names)]
   out <- do.call(rbind, out_main)
 
-  # out <- out[, -which(colnames(out) == "tag")]
-  gg_shape <- reshape2::melt(out, id.var = colnames(out)[1:8])
-
-  # Save
-  saveRDS(gg_shape,
-          file = paste0("../output/",
-                        output$name_run,
-                        "_pooled",
-                        ".rds")
-  )
-
   # Put together CPVE results from VBV method
   out_CPVE_list <- output$out[grepl("CPVE", output$file_names)]
   out_CPVE <- do.call(rbind, out_CPVE_list)
+
+# Extract Results ----------------------------------------------------------
+
+results <- evaPerf(out, output)
+head(results)
+gg_shape <- results
+
+# Analysis ----------------------------------------------------------
+
+# Line plot
+
+K_conditions <- rev(sort(unique(gg_shape$K)))
+D_conditions <- sort(unique(gg_shape$D))
+int_conditions <- unique(gg_shape$interval)[1]
+pj_sel <- unique(gg_shape$pj)
+npc_sel <- unique(gg_shape$npc)
+par_sel <- unique(gg_shape$par)
+meth_sel <- unique(gg_shape$method)[c(1,2,3)]
+
+plot1 <- gg_shape %>%
+  # Subset
+  filter(par == "z1~1") %>%
+  filter(method %in% meth_sel) %>%
+
+  # Main Plot
+  ggplot(aes(x = pj, y = Mean, group = method)) +
+  # geom_errorbar(aes(ymin = lwr_avg,
+  #                   ymax = upr_avg,
+  #                   group = method),
+  #               width = .1) +
+  geom_line(aes(linetype = method)) +
+  geom_point() +
+
+  # Grid
+  facet_grid(cols = vars(factor(npc,
+                                labels = paste0("npcs = ", npc_sel))),
+             rows = vars(factor(K,
+                                levels = K_conditions,
+                                labels = paste0("K = ", K_conditions))),
+             scales = "free") +
+  # Format
+  theme(text = element_text(size = 15),
+        plot.title = element_text(hjust = 0.5),
+        axis.text = element_text(size = 15),
+        # axis.text.x = element_text(angle = 45, hjust = 0.95),
+        axis.title = element_text(size = 15)) +
+  # scale_y_continuous(name = "Estimate Value",
+  #                    limits = c(.5, .8)) +
+  scale_x_continuous(name = "Proportion of junk variables",
+                     breaks = pj_sel,
+                     limits = range(pj_sel)) +
+  labs(title = NULL,
+       x     = NULL,
+       y     = NULL)
+
+plot1

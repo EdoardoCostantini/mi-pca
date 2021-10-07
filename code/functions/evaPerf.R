@@ -2,10 +2,15 @@
 # Objective: Function to compute bias, coverage, and CIW
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-10-06
+# Modified:  2021-10-07
 
 evaPerf <- function (out, output){
   # Cast experimental factors to ordered factors
+  out$npc <- factor(out$npc,
+                    levels = c(sort(as.numeric(unique(out$npc))),
+                                tail(unique(out$npc), 1)),
+                    ordered = TRUE)
+  out$K <- factor(out$K, levels = rev(unique(out$K)), ordered = TRUE)
   out$tag <- factor(out$tag, levels = unique(out$tag), ordered = TRUE)
   out$par <- factor(out$par, levels = unique(out$par), ordered = TRUE)
   out$method <- factor(out$method,
@@ -25,12 +30,14 @@ evaPerf <- function (out, output){
                    by = ref_grouping,
                    all.x = TRUE)
   out_ref <- arrange(out_ref, rp, tag, par)
-  head(out_ref)
+
   # Bias Computation
   comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "par")
   bias_df <- data.frame(out_ref %>%
                           group_by_at(comp_grouping) %>%
-                          dplyr::summarize(Mean = mean(Q_bar)))
+                          dplyr::summarize(Mean = mean(Q_bar),
+                                           PC_exp = mean(PC_exp))
+  )
   bias_df <- merge(x = bias_df, y = ref_df, by = ref_grouping)
   bias_df$bias <- round(abs(bias_df$Mean - bias_df$ref) / bias_df$ref*100, 3)
   bias_df <- arrange_at(bias_df, comp_grouping)

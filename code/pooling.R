@@ -2,87 +2,117 @@
 # Objective: pooling simulation results (not imputations!)
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-09-29
+# Modified:  2021-10-07
 
-  ## Make sure we have a clean environment:
-  rm(list = ls())
+## Make sure we have a clean environment:
+rm(list = ls())
 
-  ## Support Functions
-  source("./init.R")
+## Support Functions
+source("./init.R")
 
 # Load Results ----------------------------------------------------------
 
-  inDir <- "../output/"
-  files <- grep("tar", list.files(inDir), value = TRUE)
-  target_tar <- files[length(files)]
-  output <- readTarGz(target_tar)
+inDir <- "../output/"
+files <- grep("tar", list.files(inDir), value = TRUE)
+target_tar <- files[length(files)]
+output <- readTarGz(target_tar)
 
 # Restructure Results -----------------------------------------------------
 # list of conditions containing results for every repetition
 
-  # Were there any errors?
-  grep("ERROR", output$file_names)
+# Were there any errors?
+errors <- grep("ERROR", output$file_names)
+out_errors <- output$out[errors] # check that these are all trivial
+out_errors <- do.call(rbind, out_errors)
 
-  # Put together main results
-  out_main <- output$out[grepl("main", output$file_names)]
-  out <- do.call(rbind, out_main)
+# Put together main results
+out_main <- output$out[grepl("main", output$file_names)]
+out <- do.call(rbind, out_main)
 
-  # Put together CPVE results from VBV method
-  out_CPVE_list <- output$out[grepl("CPVE", output$file_names)]
-  out_CPVE <- do.call(rbind, out_CPVE_list)
+# Put together CPVE results from VBV method
+out_CPVE_list <- output$out[grepl("CPVE", output$file_names)]
+out_CPVE <- do.call(rbind, out_CPVE_list)
 
 # Extract Results ----------------------------------------------------------
 
 results <- evaPerf(out, output)
-head(results)
 gg_shape <- results
 
 # Analysis ----------------------------------------------------------
 
 # Line plot
 
-K_conditions <- rev(sort(unique(gg_shape$K)))
+target_par <- c(
+  Mean = "z1~1",
+  Correlation = "z1rz2",
+  Covariance = "z1~~z2"
+)
+
+# Plot Style 1:
+# - main plot: mean by npcs
+# - grid: pj by ordinal degree
+
+lapply(target_par, function (x){
+  plotLine(
+    dat = gg_shape,
+    par_est = x,
+    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    plot_x_axis = "npc",
+    plot_y_axis = "bias",
+    moderator = "method",
+    grid_x_axis = "pj",
+    grid_y_axis = "K",
+    x_axis_name = "Number of principal components extracted",
+    y_axis_name = "Bias for ",
+    scales = NULL,
+    error_bar = FALSE
+  )
+})
+
+# Plot Style 1.5:
+# - main plot: mean by explained variance
+# - grid: pj by ordinal degree
+
+lapply(target_par, function (x){
+  plotLine(
+    dat = gg_shape,
+    par_est = x,
+    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    plot_x_axis = "PC_exp",
+    plot_y_axis = "bias",
+    moderator = "method",
+    grid_x_axis = "pj",
+    grid_y_axis = "K",
+    x_axis_name = "Proportion of explained variance",
+    y_axis_name = "Bias for ",
+    scales = NULL,
+    error_bar = FALSE,
+    scale_x_cont = FALSE
+  )
+})
+
+
+# Plot Style 2:
+# - main plot: mean by pj
+# - grid: npcs by ordinal degree
+
+lapply(target_par, function (x){
+  plotLine(
+    dat = gg_shape,
+    par_est = x,
+    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    plot_x_axis = "pj",
+    plot_y_axis = "Mean",
+    moderator = "method",
+    grid_x_axis = "npc",
+    grid_y_axis = "K",
+    x_axis_name = "Proportion of junk variables",
+    y_axis_name = "Estimate of ",
+    scales = NULL,
+    error_bar = FALSE
+  )
+})
+
+## INCLUDE THESE IN YOUR PLOT THOUGHT!
 D_conditions <- sort(unique(gg_shape$D))
 int_conditions <- unique(gg_shape$interval)[1]
-pj_sel <- unique(gg_shape$pj)
-npc_sel <- unique(gg_shape$npc)
-par_sel <- unique(gg_shape$par)
-meth_sel <- unique(gg_shape$method)[c(1,2,3)]
-
-plot1 <- gg_shape %>%
-  # Subset
-  filter(par == "z1~1") %>%
-  filter(method %in% meth_sel) %>%
-
-  # Main Plot
-  ggplot(aes(x = pj, y = Mean, group = method)) +
-  # geom_errorbar(aes(ymin = lwr_avg,
-  #                   ymax = upr_avg,
-  #                   group = method),
-  #               width = .1) +
-  geom_line(aes(linetype = method)) +
-  geom_point() +
-
-  # Grid
-  facet_grid(cols = vars(factor(npc,
-                                labels = paste0("npcs = ", npc_sel))),
-             rows = vars(factor(K,
-                                levels = K_conditions,
-                                labels = paste0("K = ", K_conditions))),
-             scales = "free") +
-  # Format
-  theme(text = element_text(size = 15),
-        plot.title = element_text(hjust = 0.5),
-        axis.text = element_text(size = 15),
-        # axis.text.x = element_text(angle = 45, hjust = 0.95),
-        axis.title = element_text(size = 15)) +
-  # scale_y_continuous(name = "Estimate Value",
-  #                    limits = c(.5, .8)) +
-  scale_x_continuous(name = "Proportion of junk variables",
-                     breaks = pj_sel,
-                     limits = range(pj_sel)) +
-  labs(title = NULL,
-       x     = NULL,
-       y     = NULL)
-
-plot1

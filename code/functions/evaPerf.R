@@ -6,10 +6,8 @@
 
 evaPerf <- function (out, output){
   # Cast experimental factors to ordered factors
-  out$npc <- factor(out$npc,
-                    levels = c(sort(as.numeric(unique(out$npc))),
-                                tail(unique(out$npc), 1)),
-                    ordered = TRUE)
+  out$npc[out$npc == "max"] <- output$sInfo$parms$P
+  out$npc <- as.numeric(out$npc)
   out$K <- factor(out$K, levels = rev(unique(out$K)), ordered = TRUE)
   out$tag <- factor(out$tag, levels = unique(out$tag), ordered = TRUE)
   out$par <- factor(out$par, levels = unique(out$par), ordered = TRUE)

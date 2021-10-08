@@ -17,6 +17,7 @@
                  "ggplot2",     # results analysis
                  "dplyr",       # results analysis
                  "forcats",     # results analysis
+                 "miceadds",    # results analysis
                  "OrdNor",
                  "BinNor")
   
@@ -75,13 +76,13 @@
   
   # Parallel Experiments: for the continuous and attenuated relationship
   # Alternative experimental factor
-  K <- c(7, 5) # c(Inf, 7, 5, 3, 2) # number of categories
+  K <- c(Inf, 7, 5, 3, 2) # number of categories
   D <- 1 # seq(1, 0, length.out = 5)
   interval <- TRUE # c(TRUE, FALSE)
-  pj <- c(.33, .67) # round(seq(0, 1, length.out = 4), 2) # proportion of junk variables
+  pj <- round(seq(0, 1, length.out = 4), 2) # proportion of junk variables
   npc <- c(1, # min
-           # 5, # low range forced
-           # seq(20, (parms$P-length(parms$vmap$ta)), 30), # granularity in high range
+           5, # low range forced
+           seq(20, (parms$P-length(parms$vmap$ta)), 30), # granularity in high range
            "max") # max
   method <- c("all", "aux", "vbv",
               "MIOP", "MIOR", "MIMI",

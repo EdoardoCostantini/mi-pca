@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-09-28
+# Modified:  2021-10-09
 
 # Packages ----------------------------------------------------------------
 
@@ -44,7 +44,12 @@
 
   # Empty List
   parms    <- list()
-  
+
+  # Run type
+  parms$run_type <- c(final = 1,
+                      convCheck = 2,
+                      trial = 3)[2]
+
   # Data generation
   parms$N <- 1e3 # sample size
   parms$P <- 50 # number of variables (100 target)
@@ -64,29 +69,66 @@
 
   # Imputation Routine
   parms$mice_ndt <- 5
-  parms$mice_iters <- 10
+  parms$mice_iters <- list(
+    final     = "??",
+    convCheck = 100,
+    trial     = 10
+  )[[parms$run_type]]
 
   # Results and replicability
-  parms$rps      <- 100
+  parms$rps <- list(
+    final     = 1e3,
+    convCheck = 5,
+    trial     = 50
+  )[[parms$run_type]]
+
   parms$seed     <- 20210929
   parms$nStreams <- 1000
   parms$outDir   <- "../output/"
 
 # Experimental Conditions -------------------------------------------------
-  
-  # Parallel Experiments: for the continuous and attenuated relationship
-  # Alternative experimental factor
-  K <- c(Inf, 7, 5, 3, 2) # number of categories
-  D <- 1 # seq(1, 0, length.out = 5)
-  interval <- TRUE # c(TRUE, FALSE)
-  pj <- round(seq(0, 1, length.out = 4), 2) # proportion of junk variables
-  npc <- c(1, # min
-           5, # low range forced
-           seq(20, (parms$P-length(parms$vmap$ta)), 30), # granularity in high range
-           "max") # max
-  method <- c("all", "aux", "vbv",
-              "MIOP", "MIOR", "MIMI",
-              "CC", "OG") # nature of PC
+
+  # Number of categories
+  K <- list(
+    final     = c(Inf, 7, 5, 3, 2),
+    convCheck = c(7, 2),
+    trial     = c(Inf, 7, 5, 3, 2)
+  )[[parms$run_type]]
+
+  # Proportion of discretized variables
+  D <- list(
+    final     = 1,
+    convCheck = 1,
+    trial     = 1 # seq(1, 0, length.out = 5)
+  )[[parms$run_type]]
+
+  # Intraval scale
+  interval <- list(
+    final     = c(TRUE, FALSE),
+    convCheck = c(TRUE, FALSE),
+    trial     = TRUE
+  )[[parms$run_type]]
+
+  # Proportion of junk variables
+  pj <- list(
+    final     = round(seq(0, 1, length.out = 4), 2),
+    convCheck = c(0, 1),
+    trial     = round(seq(0, 1, length.out = 4), 2)
+  )[[parms$run_type]]
+
+  # Number of components to extract
+  npc <- list(
+    final     = c(1, 5, 10, 20, 30, 50, 75, "max"),
+    convCheck = c(1, "max"),
+    trial     = c(1, 5, 20, "max")
+  )[[parms$run_type]]
+
+  # Methods
+  method <- list(
+    final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
+    convCheck = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI"),
+    trial     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
+  )[[parms$run_type]]
 
   # Make Conditionsa
   conds_1 <- expand.grid(K = K,

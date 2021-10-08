@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-09-29
+# Modified:  2021-10-08
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -141,6 +141,17 @@ runCell <- function(rp, cond, fs, parms) {
                             ".rds")
       )
     }
+
+    ## Store mids results if run requires it
+    if(parms$run_type == 2){
+      saveRDS(imp_out$mids,
+              file = paste0(fs$outDir,
+                            "rep_", rp, "_", cond$tag,
+                            "_mids",
+                            ".rds")
+      )
+    }
+
     ### END TRYCATCH EXPRESSION
   }, error = function(e){
     err <- paste0("Original Error: ", e)

@@ -70,7 +70,7 @@
   # Imputation Routine
   parms$mice_ndt <- 5
   parms$mice_iters <- list(
-    final     = "??",
+    final     = 20,
     convCheck = 100,
     trial     = 10
   )[[parms$run_type]]

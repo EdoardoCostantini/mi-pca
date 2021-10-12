@@ -20,6 +20,9 @@ output <- readTarGz(target_tar)
 # Restructure Results -----------------------------------------------------
 # list of conditions containing results for every repetition
 
+output$sInfo$conds
+output$sInfo$parms
+
 # Were there any errors?
 errors <- grep("ERROR", output$file_names)
 out_errors <- output$out[errors] # check that these are all trivial
@@ -92,16 +95,16 @@ lapply(target_par, function (x){
 })
 
 # Plot Style 2:
-# - main plot: mean by pj
-# - grid: npcs by ordinal degree
+# - main plot: bias by pj
+# - grid: K by npcs
 
 lapply(target_par, function (x){
   plotLine(
     dat = gg_shape,
     par_est = x,
-    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    # sel_meths = unique(gg_shape$method)[c(1,2,3,4)],
     plot_x_axis = "pj",
-    plot_y_axis = "Mean",
+    plot_y_axis = "bias",
     moderator = "method",
     grid_x_axis = "npc",
     grid_y_axis = "K",
@@ -111,6 +114,49 @@ lapply(target_par, function (x){
     error_bar = FALSE
   )
 })
+
+# Plot Style 3:
+# - main plot: CIC by pj
+# - grid: K by npcs
+
+lapply(target_par, function (x){
+  plotLine(
+    dat = gg_shape,
+    par_est = x,
+    # sel_meths = unique(gg_shape$method)[c(1,2,3,4)],
+    sel_meths = unique(gg_shape$method)[c(4, 5, 6)],
+    plot_x_axis = "pj",
+    plot_y_axis = "CIC",
+    moderator = "method",
+    grid_x_axis = "npc",
+    grid_y_axis = "K",
+    x_axis_name = "Proportion of junk variables",
+    y_axis_name = "Estimate of ",
+    scales = NULL,
+    error_bar = FALSE
+  )
+})
+
+# - main plot: CIC by Proportion of explained variance
+# - grid: K by pj
+lapply(target_par, function (x){
+  plotLine(
+    dat = gg_shape,
+    par_est = x,
+    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    plot_x_axis = "PC_exp",
+    plot_y_axis = "CIC",
+    moderator = "method",
+    grid_x_axis = "pj",
+    grid_y_axis = "K",
+    x_axis_name = "Proportion of explained variance",
+    y_axis_name = "Bias for ",
+    scales = NULL,
+    error_bar = FALSE,
+    scale_x_cont = FALSE
+  )
+})
+
 
 ## INCLUDE THESE IN YOUR PLOT THOUGHT!
 D_conditions <- sort(unique(gg_shape$D))

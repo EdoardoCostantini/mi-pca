@@ -22,7 +22,7 @@ evaPerf <- function (out, output){
                          group_by_at(ref_grouping) %>%
                          dplyr::summarize(ref = mean(Q_bar)))
 
-  ## Add based on matching par to original dataset
+  # Attach referemce value based on matching par to original dataset
   out_ref <- merge(x = out,
                    y = ref_df,
                    by = ref_grouping,
@@ -41,8 +41,7 @@ evaPerf <- function (out, output){
   bias_df <- arrange_at(bias_df, comp_grouping)
 
   # Confidence interval coverage for a given method across other factors
-  # In or out?
-  # Check if the confidence interval contains them
+  # Check if the confidence intervals contains reference value
   out_ref$cover_log <- out_ref$lwr < out_ref$ref & out_ref$ref < out_ref$upr
   CIC <- data.frame(out_ref %>%
                       group_by_at(comp_grouping) %>%

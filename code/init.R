@@ -126,7 +126,7 @@
   # Methods
   method <- list(
     final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
-    convCheck = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI"),
+    convCheck = c("aux", "vbv", "MIOP", "MIOR", "MIMI"),
     trial     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
   )[[parms$run_type]]
 

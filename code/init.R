@@ -136,7 +136,7 @@
                          interval = interval,
                          pj = pj,
                          npc = npc,
-                         method = method[1:3],
+                         method = intersect(c("all", "aux", "vbv"), method),
                          stringsAsFactors = FALSE)
 
   conds_2 <- expand.grid(K = K,
@@ -144,7 +144,9 @@
                          interval = interval,
                          pj = pj,
                          npc = npc[1],
-                         method = method[-c(1:3)],
+                         method = intersect(c("MIOP", "MIOR", "MIMI",
+                                              "CC", "OG"),
+                                            method),
                          stringsAsFactors = FALSE)
 
   conds <- rbind(conds_1, conds_2)

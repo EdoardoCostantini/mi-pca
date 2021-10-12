@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-10-09
+# Modified:  2021-10-12
 
 # Packages ----------------------------------------------------------------
 
@@ -51,7 +51,7 @@
                       trial = 3)[2]
 
   # Data generation
-  parms$N <- 1e3 # sample size
+  parms$N <- 500 # sample size
   parms$P <- 50 # number of variables (100 target)
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
@@ -104,8 +104,8 @@
 
   # Intraval scale
   interval <- list(
-    final     = c(TRUE, FALSE),
-    convCheck = c(TRUE, FALSE),
+    final     = TRUE,
+    convCheck = TRUE,
     trial     = TRUE
   )[[parms$run_type]]
 

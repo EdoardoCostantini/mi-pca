@@ -37,10 +37,10 @@ imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   pMat     <- quickpred(Z, mincor = .3)
   Z_SI_mids <- mice(Z,
                     m               = 1,
-                    maxit           = 100,
+                    maxit           = 20,
                     predictorMatrix = pMat,
-                    printFlag       = FALSE,
-                    method          = "pmm")
+                    printFlag       = TRUE,
+                    method          = "norm")
   Z_SI <- complete(Z_SI_mids)
 
   # Prepare object for prcomp

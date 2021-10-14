@@ -48,7 +48,7 @@
   # Run type
   parms$run_type <- c(final = 1,
                       convCheck = 2,
-                      trial = 3)[2]
+                      trial = 3)[1]
 
   # Data generation
   parms$N <- 500 # sample size
@@ -118,7 +118,7 @@
 
   # Number of components to extract
   npc <- list(
-    final     = c(1, 5, 10, 20, 30, 50, 75, "max"),
+    final     = c(1, 2, 3, 4, 5, 10, 20, 25, "max"),
     convCheck = c(1, "max"),
     trial     = c(1, 5, 20, "max")
   )[[parms$run_type]]

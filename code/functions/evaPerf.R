@@ -5,8 +5,13 @@
 # Modified:  2021-10-07
 
 evaPerf <- function (out, output){
+
+  # Transform npc = max to appropriate number
+  out$npc[out$npc == "max" & out$method == "all"] <- 50
+  out$npc[out$npc == "max" & out$method == "aux"] <- 46
+  out$npc[out$npc == "max" & out$method == "vbv"] <- 49
+
   # Cast experimental factors to ordered factors
-  out$npc[out$npc == "max"] <- output$sInfo$parms$P
   out$npc <- as.numeric(out$npc)
   out$K <- factor(out$K, levels = rev(unique(out$K)), ordered = TRUE)
   out$tag <- factor(out$tag, levels = unique(out$tag), ordered = TRUE)

@@ -47,13 +47,14 @@ gg_shape <- results
 
 target_par <- c(
   Mean = "z1~1",
-  Correlation = "z1rz2",
-  Covariance = "z1~~z2"
+  Variance = "z1~~z1",
+  Covariance = "z1~~z2",
+  Correlation = "z1rz2"
 )
 
 # Plot Style 1:
-# - main plot: mean by npcs
-# - grid: pj by ordinal degree
+# - main: bias x npcs
+# - grid: K    x pj
 
 lapply(target_par, function (x){
   plotLine(
@@ -73,8 +74,8 @@ lapply(target_par, function (x){
 })
 
 # Plot Style 1.5:
-# - main plot: mean by explained variance
-# - grid: pj by ordinal degree
+# - main: bias x PC explained variance
+# - grid: K    x pj
 
 lapply(target_par, function (x){
   plotLine(
@@ -94,51 +95,9 @@ lapply(target_par, function (x){
   )
 })
 
-# Plot Style 2:
-# - main plot: bias by pj
-# - grid: K by npcs
-
-lapply(target_par, function (x){
-  plotLine(
-    dat = gg_shape,
-    par_est = x,
-    # sel_meths = unique(gg_shape$method)[c(1,2,3,4)],
-    plot_x_axis = "pj",
-    plot_y_axis = "bias",
-    moderator = "method",
-    grid_x_axis = "npc",
-    grid_y_axis = "K",
-    x_axis_name = "Proportion of junk variables",
-    y_axis_name = "Estimate of ",
-    scales = NULL,
-    error_bar = FALSE
-  )
-})
-
 # Plot Style 3:
-# - main plot: CIC by pj
-# - grid: K by npcs
-
-lapply(target_par, function (x){
-  plotLine(
-    dat = gg_shape,
-    par_est = x,
-    # sel_meths = unique(gg_shape$method)[c(1,2,3,4)],
-    sel_meths = unique(gg_shape$method)[c(4, 5, 6)],
-    plot_x_axis = "pj",
-    plot_y_axis = "CIC",
-    moderator = "method",
-    grid_x_axis = "npc",
-    grid_y_axis = "K",
-    x_axis_name = "Proportion of junk variables",
-    y_axis_name = "Estimate of ",
-    scales = NULL,
-    error_bar = FALSE
-  )
-})
-
-# - main plot: CIC by Proportion of explained variance
-# - grid: K by pj
+# - main: CIC x PC explained variance
+# - grid: K   x pj
 lapply(target_par, function (x){
   plotLine(
     dat = gg_shape,
@@ -150,7 +109,7 @@ lapply(target_par, function (x){
     grid_x_axis = "pj",
     grid_y_axis = "K",
     x_axis_name = "Proportion of explained variance",
-    y_axis_name = "Bias for ",
+    y_axis_name = "CIC for ",
     scales = NULL,
     error_bar = FALSE,
     scale_x_cont = FALSE

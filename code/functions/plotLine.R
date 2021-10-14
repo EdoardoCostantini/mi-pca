@@ -44,8 +44,7 @@ plotLine <- function (
   plot_main <- dat_sub %>%
     ggplot(aes_string(x = plot_x_axis,
                       y = plot_y_axis,
-                      group = moderator,
-                      color = moderator)) +
+                      group = moderator)) +
     geom_line(aes_string(linetype = moderator)) +
     geom_point()
 

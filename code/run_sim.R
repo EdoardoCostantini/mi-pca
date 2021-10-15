@@ -51,7 +51,7 @@ out <- parLapply(cl    = clus,
 stopCluster(clus)
 
 sim_ends <- Sys.time()
-
+run_time <- difftime(sim_ends, sim_start, units = "hours")
 cat(paste0("\n", "------", "\n",
            "Ends at: ", Sys.time(), "\n",
            "Run time: ",
@@ -66,6 +66,7 @@ out_support <- list()
 out_support$parms <- parms
 out_support$conds <- conds
 out_support$session_info <- devtools::session_info()
+out_support$run_time <- run_time
 
 # Save output -------------------------------------------------------------
 

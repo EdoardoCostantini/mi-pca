@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-10-12
+# Modified:  2021-10-15
 
 # Packages ----------------------------------------------------------------
 
@@ -73,13 +73,6 @@
     final     = 20,
     convCheck = 100,
     trial     = 10
-  )[[parms$run_type]]
-
-  # Results and replicability
-  parms$rps <- list(
-    final     = 1e3,
-    convCheck = 5,
-    trial     = 50
   )[[parms$run_type]]
 
   parms$seed     <- 20210929

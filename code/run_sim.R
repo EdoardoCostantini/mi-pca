@@ -2,7 +2,7 @@
 # Objective: Run the simulation study
 # Author:    Edoardo Costantini
 # Created:   2021-08-24
-# Modified:  2021-08-24
+# Modified:  2021-10-16
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -25,7 +25,8 @@ cat(paste0("SIMULATION PROGRESS REPORT",
     sep = "\n",
     append = TRUE)
 
-## Create a cluster object:
+## Define repetitions and clusters
+reps <- 1 : 500
 clus <- makeCluster(10)
 
 ## Export to worker nodes
@@ -40,7 +41,7 @@ sim_start <- Sys.time()
 
 ## Run the computations in parallel on the 'clus' object:
 out <- parLapply(cl    = clus,
-                 X     = 1 : parms$rps,
+                 X     = reps,
                  fun   = runRep,
                  conds = conds,
                  parms = parms,

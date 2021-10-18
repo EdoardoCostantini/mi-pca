@@ -128,3 +128,55 @@ lapply(target_par, function (x){
 ## INCLUDE THESE IN YOUR PLOT THOUGHT!
 D_conditions <- sort(unique(gg_shape$D))
 int_conditions <- unique(gg_shape$interval)[1]
+
+  library(kableExtra)
+  # Paramters
+  dat = gg_shape
+  sel_meths = unique(gg_shape$method)[c(1,2,3)]
+  filters = list(npc = c(1, 5, 46, 49, 50),
+                 K = c("Inf", "5"))
+
+  # Subset data
+  conds_columns <- c("pj", "K", "npc", "method")
+  value_columns <- c("bias", "CIC", "CIW", "PC_exp")
+  table_columns <- c(conds_columns, value_columns)
+  dat_list <- list()
+  for (i in seq_along(target_par)){
+    dat_sub <- dat %>%
+      filter(par == target_par[i]) %>%
+      filter(method %in% sel_meths) %>%
+      arrange(pj, K, npc, method)
+
+    # Apply extra filters
+    for (f in seq_along(filters)){
+      filter_factor <- names(filters)[f]
+      filter_lvels <- filters[[f]]
+      dat_sub <- dat_sub %>%
+        filter(!!as.symbol(filter_factor) %in% filter_lvels)
+    }
+    dat_list[[i]] <- dat_sub[, value_columns]
+  }
+
+  # Combine columns of data for different paramters
+  dat_sub <- cbind(dat_sub[, conds_columns], do.call(cbind, dat_list))
+
+  # Round
+  dat_sub[, -(1:length(conds_columns))] <- round(dat_sub[, -(1:length(conds_columns))], 3)
+
+  # Get rid of number of rows
+  rownames(dat_sub) <- c()
+
+  # Create header grouping vector
+  header <- c(length(conds_columns),
+              rep(length(value_columns), length(target_par)))
+  names(header) <- c(" ", names(target_par))
+
+  # Make table
+  kbl(dat_sub,
+      align = "c",
+      format = "latex") %>%
+    kable_styling(font_size = 6) %>%
+    add_header_above(header) %>% # to name parameter columns
+    row_spec(0, bold = T, background = "#D3D3D3") %>%
+    column_spec(1:4, bold = T)  %>%
+    collapse_rows(c(1, 2, 3), latex_hline = "full") # to combine factor levels

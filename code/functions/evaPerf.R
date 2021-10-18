@@ -2,9 +2,17 @@
 # Objective: Function to compute bias, coverage, and CIW
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-10-07
+# Modified:  2021-10-18
 
 evaPerf <- function (out, output){
+
+  # Get rid of failed rows
+  to_remove <- sapply(out[, c("Q_bar", "lwr", "upr")], function (j){
+    which(is.nan(j))
+  })
+  if(length(unique(unlist(to_remove))) != 0){
+    out <- out[-unique(unlist(to_remove)), ]
+  }
 
   # Transform npc = max to appropriate number
   out$npc[out$npc == "max" & out$method == "all"] <- 50
@@ -50,7 +58,7 @@ evaPerf <- function (out, output){
   out_ref$cover_log <- out_ref$lwr < out_ref$ref & out_ref$ref < out_ref$upr
   CIC <- data.frame(out_ref %>%
                       group_by_at(comp_grouping) %>%
-                      dplyr::summarize(coverage = mean(cover_log)))
+                      dplyr::summarize(coverage = mean(cover_log, na.rm = TRUE)))
 
   # Confidence interval width for a given method across other factors
   out_ref$CIW <- abs(out_ref$lwr - out_ref$upr)

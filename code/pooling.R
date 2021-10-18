@@ -73,7 +73,8 @@ lapply(target_par, function (x){
     x_axis_name = "Number of principal components extracted",
     y_axis_name = "Bias for ",
     scales = NULL,
-    error_bar = FALSE
+    error_bar = FALSE,
+    filters = list(npc = c(1, 5, 10, 20, 46, 49, 50))
   )
 })
 
@@ -95,7 +96,8 @@ lapply(target_par, function (x){
     y_axis_name = "Bias for ",
     scales = NULL,
     error_bar = FALSE,
-    scale_x_cont = FALSE
+    scale_x_cont = FALSE,
+    filters = list(npc = c(1, 5, 10, 20, 46, 49, 50))
   )
 })
 
@@ -116,7 +118,8 @@ lapply(target_par, function (x){
     y_axis_name = "CIC for ",
     scales = NULL,
     error_bar = FALSE,
-    scale_x_cont = FALSE
+    scale_x_cont = FALSE,
+    filters = list(npc = c(1, 5, 10, 20, 46, 49, 50))
   )
 })
 

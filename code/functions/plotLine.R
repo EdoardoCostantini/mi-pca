@@ -17,7 +17,8 @@ plotLine <- function (
   grid_y_axis,
   scales = NULL, # or "free"
   error_bar = FALSE,
-  scale_x_cont = TRUE
+  scale_x_cont = TRUE,
+  filters = NULL
 ){
 
   # Inputs
@@ -34,11 +35,21 @@ plotLine <- function (
   # scales = NULL # or "free"
   # error_bar = FALSE
   # scale_x_cont = TRUE
+  # filters = list(npc = c(1, 5, 10, 20, 46, 49, 50),
+  #                K = c("Inf", "7", "2"))
 
   # Subset data
   dat_sub <- dat %>%
     filter(par == par_est) %>%
     filter(method %in% sel_meths)
+
+  # Apply extra filters
+  for (f in seq_along(filters)){
+    filter_factor <- names(filters)[f]
+    filter_lvels <- filters[[f]]
+    dat_sub <- dat_sub %>%
+      filter(!!as.symbol(filter_factor) %in% filter_lvels)
+  }
 
   # Main Plot
   plot_main <- dat_sub %>%

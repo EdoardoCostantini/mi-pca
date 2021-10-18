@@ -2,7 +2,7 @@
 # Objective: pooling simulation results (not imputations!)
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-10-07
+# Modified:  2021-10-18
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -119,7 +119,8 @@ lapply(target_par, function (x){
     scales = NULL,
     error_bar = FALSE,
     scale_x_cont = FALSE,
-    filters = list(npc = c(1, 5, 10, 20, 46, 49, 50))
+    filters = list(npc = c(1, 5, 10, 20, 46, 49, 50)),
+    plot_y_lim = c(.75, 1)
   )
 })
 

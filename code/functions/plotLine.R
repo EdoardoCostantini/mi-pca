@@ -2,7 +2,7 @@
 # Objective: function to obtain the line plot results
 # Author:    Edoardo Costantini
 # Created:   2021-10-07
-# Modified:  2021-10-07
+# Modified:  2021-10-18
 
 plotLine <- function (
   dat,
@@ -18,7 +18,8 @@ plotLine <- function (
   scales = NULL, # or "free"
   error_bar = FALSE,
   scale_x_cont = TRUE,
-  filters = NULL
+  filters = NULL,
+  plot_y_lim = NULL
 ){
 
   # Inputs
@@ -34,9 +35,10 @@ plotLine <- function (
   # grid_y_axis = "K"
   # scales = NULL # or "free"
   # error_bar = FALSE
-  # scale_x_cont = TRUE
+  # scale_x_cont = FALSE
   # filters = list(npc = c(1, 5, 10, 20, 46, 49, 50),
   #                K = c("Inf", "7", "2"))
+  # plot_y_lim = c(0, 5) # or NULL
 
   # Subset data
   dat_sub <- dat %>%
@@ -83,7 +85,8 @@ plotLine <- function (
           axis.title = element_text(size = 10)) +
     labs(title = NULL,
          x     = x_axis_name,
-         y     = paste(y_axis_name, par_est))
+         y     = paste(y_axis_name, par_est)) +
+    coord_cartesian(ylim = plot_y_lim)
 
   if(is.numeric(dat[, plot_x_axis]) & scale_x_cont == TRUE){
     plot_themed <- plot_themed +

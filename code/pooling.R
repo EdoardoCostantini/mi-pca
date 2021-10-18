@@ -28,6 +28,10 @@ errors <- grep("ERROR", output$file_names)
 out_errors <- output$out[errors] # check that these are all trivial
 out_errors <- do.call(rbind, out_errors)
 
+sapply(unique(out_errors$tag), function (x){
+  sum(out_errors$tag %in% x)/length(out_errors$tag)
+})*100
+
 # Put together main results
 out_main <- output$out[grepl("main", output$file_names)]
 out <- do.call(rbind, out_main)

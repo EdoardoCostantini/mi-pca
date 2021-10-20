@@ -172,9 +172,8 @@ int_conditions <- unique(gg_shape$interval)[1]
   library(kableExtra)
   # Paramters
   dat = gg_shape
-  sel_meths = unique(gg_shape$method)[c(1,2,3)]
   filters = list(npc = c(1, 5, 46, 49, 50),
-                 K = c("Inf", "5"))
+                 K = c("7", "2"))
 
   # Subset data
   conds_columns <- c("pj", "K", "npc", "method")

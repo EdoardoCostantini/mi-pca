@@ -45,7 +45,22 @@ out_CPVE <- do.call(rbind, out_CPVE_list)
 results <- evaPerf(out, output)
 gg_shape <- results
 
+# Store Results
+  saveRDS(gg_shape,
+          file = paste0("../output/",
+                        output$name_run,
+                        "_res",
+                        ".rds")
+  )
+
 # Analysis ----------------------------------------------------------
+  # Read results
+  inDir <- "../output/"
+  files <- grep("rds", list.files(inDir), value = TRUE)
+  runName <- files[length(files)]
+
+  # Read output
+  gg_shape <- readRDS(paste0(inDir, runName))
 
 # Line plot
 

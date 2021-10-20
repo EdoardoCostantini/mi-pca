@@ -70,6 +70,7 @@ target_par <- c(
   Covariance = "z1~~z2",
   Correlation = "z1rz2"
 )
+meth_sel <- unique(gg_shape$method)[c(3, 4, 5, 6)]
 
 # Plot Style 1:
 # - main: bias x npcs
@@ -79,7 +80,7 @@ lapply(target_par, function (x){
   plotLine(
     dat = gg_shape,
     par_est = x,
-    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    sel_meths = meth_sel,
     plot_x_axis = "npc",
     plot_y_axis = "bias",
     moderator = "method",
@@ -101,7 +102,7 @@ lapply(target_par, function (x){
   plotLine(
     dat = gg_shape,
     par_est = x,
-    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    sel_meths = meth_sel,
     plot_x_axis = "PC_exp",
     plot_y_axis = "bias",
     moderator = "method",
@@ -123,7 +124,7 @@ lapply(target_par, function (x){
   plotLine(
     dat = gg_shape,
     par_est = x,
-    sel_meths = unique(gg_shape$method)[c(1,2,3)],
+    sel_meths = meth_sel,
     plot_x_axis = "PC_exp",
     plot_y_axis = "CIC",
     moderator = "method",

@@ -131,6 +131,16 @@ runCell <- function(rp, cond, fs, parms) {
                           ".rds")
     )
 
+    ## Store Time Results
+    if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
+      saveRDS(cbind(cond, time = imp_out$time),
+              file = paste0(fs$outDir,
+                            "rep_", rp, "_", cond$tag,
+                            "_time",
+                            ".rds")
+      )
+    }
+
     ## Store Cumulative Explained Variance in vbv case
     if(cond$method == "vbv"){
       pc_res <- cbind(cond, imp_out$CPVE)

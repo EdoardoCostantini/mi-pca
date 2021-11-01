@@ -19,7 +19,8 @@
                  "forcats",     # results analysis
                  "miceadds",    # results analysis
                  "OrdNor",
-                 "BinNor")
+                 "BinNor",
+                 "grDevices")   # for plotting gray.colors function
   
   lapply(pack_list, library, character.only = TRUE, verbose = FALSE)
 

@@ -59,7 +59,7 @@ plotLine <- function (
                       y = plot_y_axis,
                       group = moderator)) +
     geom_line(aes_string(linetype = moderator)) +
-    geom_point(size = 1)
+    geom_point(size = 0)
 
   # Add error bars if wanted
   if(error_bar == TRUE){

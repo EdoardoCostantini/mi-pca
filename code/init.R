@@ -137,7 +137,7 @@
                          D = D,
                          interval = interval,
                          pj = pj,
-                         npc = npc[1],
+                         npc = 0,
                          method = intersect(c("MIOP", "MIOR", "MIMI",
                                               "CC", "OG"),
                                             method),

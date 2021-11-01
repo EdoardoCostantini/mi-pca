@@ -2,7 +2,7 @@
 # Objective: pooling simulation results (not imputations!)
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-10-18
+# Modified:  2021-11-01
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -40,6 +40,23 @@ out <- do.call(rbind, out_main)
 out_CPVE_list <- output$out[grepl("CPVE", output$file_names)]
 out_CPVE <- do.call(rbind, out_CPVE_list)
 
+# Check out the time to impute
+out_time <- output$out[grepl("time", output$file_names)]
+res_time <- do.call(rbind, out_time)
+
+# Transform npc = max to appropriate number
+res_time$npc[res_time$npc == "max" & res_time$method == "all"] <- 50
+res_time$npc[res_time$npc == "max" & res_time$method == "aux"] <- 46
+res_time$npc[res_time$npc == "max" & res_time$method == "vbv"] <- 49
+
+# Cast experimental factors to ordered factors
+res_time$npc <- as.numeric(res_time$npc)
+res_time$K <- factor(res_time$K, levels = rev(unique(res_time$K)), ordered = TRUE)
+res_time$tag <- factor(res_time$tag, levels = unique(res_time$tag), ordered = TRUE)
+res_time$method <- factor(res_time$method,
+                     levels = unique(output$sInfo$conds$method),
+                     ordered = TRUE)
+
 # Extract Results ----------------------------------------------------------
 
 results <- evaPerf(out, output)
@@ -50,6 +67,14 @@ gg_shape <- results
           file = paste0("../output/",
                         output$name_run,
                         "_res",
+                        ".rds")
+  )
+
+# Store Results
+  saveRDS(res_time,
+          file = paste0("../output/",
+                        output$name_run,
+                        "_time",
                         ".rds")
   )
 

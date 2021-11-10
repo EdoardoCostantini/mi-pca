@@ -53,7 +53,7 @@
 
   # Data generation
   parms$N <- 500 # sample size
-  parms$P <- 50 # number of variables (100 target)
+  parms$P <- 56 # number of variables (100 target)
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
   parms$cov_mp <- .7 # for mar predictors
@@ -110,6 +110,13 @@
     trial     = round(seq(0, 1, length.out = 4), 2)
   )[[parms$run_type]]
 
+  # Latent Structure
+  lv <- list(
+    final     = c(TRUE, FALSE),
+    convCheck = c(TRUE, FALSE),
+    trial     = c(TRUE, FALSE)
+  )[[parms$run_type]]
+
   # Number of components to extract
   npc <- list(
     final     = c(1, 2, 3, 4, 5, 10, 20, 25, "max"),
@@ -131,6 +138,7 @@
                          pj = pj,
                          npc = npc,
                          method = intersect(c("all", "aux", "vbv"), method),
+                         lv = lv,
                          stringsAsFactors = FALSE)
 
   conds_2 <- expand.grid(K = K,
@@ -141,6 +149,7 @@
                          method = intersect(c("MIOP", "MIOR", "MIMI",
                                               "CC", "OG"),
                                             method),
+                         lv = lv,
                          stringsAsFactors = FALSE)
 
   conds <- rbind(conds_1, conds_2)

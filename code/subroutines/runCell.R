@@ -11,22 +11,28 @@ runCell <- function(rp, cond, fs, parms) {
 
   # Example Internals -------------------------------------------------------
 
-  # cond = conds[18, ]
+  # cond = conds[1017, ]
   # rp   = 1
   tryCatch({
     ### START TRYCATCH EXPRESSION
     # Data Generation ---------------------------------------------------------
 
-    dat <- genData(parms = parms, cond = cond)
+    if(cond$lv == TRUE){
+      dat <- genDataLatent(parms = parms, cond = cond)
+    }
+    if(cond$lv == FALSE){
+      dat <- genData(parms = parms, cond = cond)
+    }
+    dat_ordi <- disData(x = dat$x, K = cond$K, parms)
 
     ## Impose Missingness
-    preds   <- dat$cont[, parms$vmap$mp, drop = FALSE]
-    targets <- dat$ordi[, parms$vmap$ta, drop = FALSE]
+    preds   <- dat$x[, parms$vmap$mp, drop = FALSE]
+    targets <- dat_ordi[, parms$vmap$ta, drop = FALSE]
     target_miss <- amputePerVar(targets = targets,
                                 preds = preds,
                                 pm = parms$pm,
                                 type = "high")
-    dat_miss <- cbind(target_miss, dat$ordi[, -parms$vmap$ta])
+    dat_miss <- cbind(target_miss, dat_ordi[, -parms$vmap$ta])
 
     # Imputation --------------------------------------------------------------
 
@@ -108,7 +114,7 @@ runCell <- function(rp, cond, fs, parms) {
 
     ## Original data
     if(cond$method == "OG"){
-      res <- fitSingleData(dat$cont, targets = parms$vmap$ta)
+      res <- fitSingleData(dat$x, targets = parms$vmap$ta)
     }
 
     ## Define explained variance information

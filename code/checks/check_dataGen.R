@@ -12,10 +12,10 @@ source("./init.R")
 
 # Simpler version of conditions
 conds <- expand.grid(K = K,
-                       D = D,
-                       interval = interval,
-                       pj = pj,
-                       stringsAsFactors = FALSE)
+                     D = D,
+                     interval = interval,
+                     pj = pj,
+                     stringsAsFactors = FALSE)
 
 # Correlations as expected ------------------------------------------------
 store_cors <- matrix(nrow = nrow(conds), ncol = 3)
@@ -23,7 +23,7 @@ store_cors <- matrix(nrow = nrow(conds), ncol = 3)
 for (i in 1:nrow(conds)){
   print(i)
   dat_list <- genData(parms = parms, cond = conds[i, ])
-  cormat <- round(cor(dat_list), 3)
+  cormat <- round(cor(dat_list$x), 3)
   ta_cor <- cormat[parms$vmap$ta, parms$vmap$ta][upper.tri(diag(length(parms$vmap$ta)))]
   mp_cor <- cormat[parms$vmap$mp, parms$vmap$mp][upper.tri(diag(length(parms$vmap$mp)))]
   ax_cor <- cormat[parms$vmap$ax, parms$vmap$ax][upper.tri(diag(length(parms$vmap$ax)))]
@@ -32,41 +32,28 @@ for (i in 1:nrow(conds)){
 
 round(store_cors, 1)
 
-# Categorical distributions ------------------------------------------------
-dat_list <- genData(parms = parms, cond = conds[13, ])
-par(mfrow = c(4,3))
-apply(dat_list, 2, function (x) plot(density(as.numeric(x))))
+# Latent Data Gen works for all conditions of pj --------------------------
 
-# MAR effect ---------------------------------------------------------------
+# Simpler version of conditions
+conds <- expand.grid(K = K,
+                     D = D,
+                     pj = pj,
+                     stringsAsFactors = FALSE)
 
-  library(lattice)
+# Store correlations
+store_cors <- matrix(nrow = nrow(conds), ncol = 3)
 
-  ## Data
-  plots_nomar <- list()
-  plots_mar <- list()
+for(i in 1:nrow(conds)){
+  cond <- conds[i, ]
+  dat <- genDataLatent(parms = parms, cond = cond)
+  cormat <- round(cor(dat$x), 3)
+  ta_cor <- cormat[parms$vmap$ta, parms$vmap$ta][upper.tri(diag(length(parms$vmap$ta)))]
+  mp_cor <- cormat[parms$vmap$mp, parms$vmap$mp][upper.tri(diag(length(parms$vmap$mp)))]
+  ax_cor <- cormat[parms$vmap$ax, parms$vmap$ax][upper.tri(diag(length(parms$vmap$ax)))]
+  store_cors[i, ] <- sapply(list(ta_cor, mp_cor, ax_cor), mean)
+  dat_ordi <- disData(x = dat$x, K = cond$K, parms = parms) # no errors is enough
+}
+round(store_cors, 1)
+colMeans(round(store_cors, 1))
 
-  for(i in 6:10){
-    dat_list <- genData(parms = parms, cond = conds[i, ])
-    # cor(dat_list)[, parms$vmap$mp, drop = FALSE]
 
-    ## Impose Missingness
-    preds   <- dat_list[, parms$vmap$mp, drop = FALSE]
-    targets <- dat_list[, parms$vmap$ta, drop = FALSE]
-    target_miss <- amputePerVar(targets = targets,
-                                preds = preds,
-                                pm = parms$pm,
-                                type = "high")
-    dat_miss <- cbind(dat_list[, -parms$vmap$ta], target_miss)
-
-    # Imputation --------------------------------------------------------------
-    plots_nomar[[i-5]] <- densityplot(~ as.numeric(z1), data = data.frame(dat_miss),
-                                      groups =  is.na(z10),
-                                      par.settings = list(superpose.line = list(col = c("blue","red"))),
-                                      auto.key = TRUE)
-    plots_mar[[i-5]] <- densityplot(~ as.numeric(z5), data = data.frame(dat_miss),
-                                    groups =  is.na(z10),
-                                    par.settings = list(superpose.line = list(col = c("blue","red"))),
-                                    auto.key = TRUE)
-  }
-  plots_nomar
-  plots_mar

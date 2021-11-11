@@ -2,7 +2,7 @@
 # Objective: pooling simulation results (not imputations!)
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-11-01
+# Modified:  2021-11-11
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -56,6 +56,26 @@ res_time$tag <- factor(res_time$tag, levels = unique(res_time$tag), ordered = TR
 res_time$method <- factor(res_time$method,
                      levels = unique(output$sInfo$conds$method),
                      ordered = TRUE)
+# Average time per condition
+
+comp_grouping <- c("K", "D", "interval", "pj", "npc", "method")
+time_avg <- data.frame(res_time %>%
+                         group_by_at(comp_grouping) %>%
+                         dplyr::summarize(mean = mean(time))
+)
+
+ref_time <- time_avg %>%
+  filter(method == "MIOR")
+
+merge_cols <- comp_grouping <- c("K", "D", "interval", "pj")
+
+time_avg <- base::merge(x = time_avg, y = ref_time,
+                        by = merge_cols,
+                        suffixes = c("",".ref"))
+
+res_time <- time_avg %>%
+  mutate(relative = mean / mean.ref) %>%
+  select(-grep("ref", colnames(time_avg)))
 
 # Extract Results ----------------------------------------------------------
 

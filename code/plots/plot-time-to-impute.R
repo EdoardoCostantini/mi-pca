@@ -2,7 +2,7 @@
 # Objective: Plot time to impute
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2021-11-01
+# Modified:  2021-11-10
 
 # Clean environment:
 rm(list = ls())
@@ -16,7 +16,7 @@ files <- grep("rds", list.files(inDir), value = TRUE)
 runName <- files[4]
 
 # Read output
-gg_shape <- readRDS(paste0(inDir, runName))
+res_time <- readRDS(paste0(inDir, runName))
 
 # Define what to plot
 target_par <- c(
@@ -28,14 +28,14 @@ target_par <- c(
 
 # Inputs
 dat = res_time
-sel_meths = unique(res_time$method)#[c(1, 2, 3)] # all
+sel_meths = levels(res_time$method)[-5] # all
 plot_x_axis = "K"
-plot_y_axis = "time"
+plot_y_axis = "relative"
 moderator = "npc"
 grid_x_axis = "pj"
 grid_y_axis = "method"
 x_axis_name = "Number of categories (K)"
-y_axis_name = "Minutes"
+y_axis_name = "Scaling factor"
 scales = NULL
 error_bar = FALSE
 filters = list()
@@ -79,7 +79,7 @@ filters = list()
           # axis.text = element_text(size = 15),
           # axis.text.x = element_text(angle = 45, hjust = 0.95),
           axis.title = element_text(size = 10)) +
-    labs(title = "Time to impute",
+    labs(title = "Time to impute relative to MI-OR",
          x     = x_axis_name,
          y     = y_axis_name)
 

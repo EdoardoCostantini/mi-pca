@@ -23,7 +23,7 @@ runCell <- function(rp, cond, fs, parms) {
     if(cond$lv == FALSE){
       dat <- genData(parms = parms, cond = cond)
     }
-    dat_ordi <- disData(x = dat$x, K = cond$K, parms)
+    dat_ordi <- disData(x = dat$x, K = cond$K, parms = parms)
 
     ## Impose Missingness
     preds   <- dat$x[, parms$vmap$mp, drop = FALSE]

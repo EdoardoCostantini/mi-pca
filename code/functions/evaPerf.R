@@ -2,7 +2,7 @@
 # Objective: Function to compute bias, coverage, and CIW
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-10-18
+# Modified:  2021-11-10
 
 evaPerf <- function (out, output){
 
@@ -47,6 +47,7 @@ evaPerf <- function (out, output){
   bias_df <- data.frame(out_ref %>%
                           group_by_at(comp_grouping) %>%
                           dplyr::summarize(Mean = mean(Q_bar),
+                                           mcsd = sd(Q_bar),
                                            PC_exp = mean(PC_exp))
   )
   bias_df <- merge(x = bias_df, y = ref_df, by = ref_grouping)
@@ -61,7 +62,7 @@ evaPerf <- function (out, output){
                       dplyr::summarize(coverage = mean(cover_log, na.rm = TRUE)))
 
   # Confidence interval width for a given method across other factors
-  out_ref$CIW <- abs(out_ref$lwr - out_ref$upr)
+  out_ref$CIW <- out_ref$upr - out_ref$lwr
   CIW <- data.frame(out_ref %>%
                       group_by_at(comp_grouping) %>%
                       dplyr::summarize(CIW = mean(CIW)))
@@ -74,8 +75,8 @@ evaPerf <- function (out, output){
 
   # Merge all
   res <- cbind(bias_df,
-               CIC = CIC$coverage,
-               CIW = CIW$CIW,
+               CIC = round(CIC$coverage, 3),
+               CIW = round(CIW$CIW, 3),
                lwr_avg = lwr_avg$lwr_avg,
                upr_avg = upr_avg$upr_avg)
   return(res)

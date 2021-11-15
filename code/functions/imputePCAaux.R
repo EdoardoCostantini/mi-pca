@@ -69,6 +69,7 @@ imputePCAaux <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
                              method = "norm.boot",
                              maxit  = parms$mice_iters,
                              predictorMatrix = pred_mat,
+                             printFlag = FALSE,
                              eps = 0)
 
   # Track time it took

@@ -39,7 +39,7 @@ imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
                     m               = 1,
                     maxit           = 20,
                     predictorMatrix = pMat,
-                    printFlag       = TRUE,
+                    printFlag       = FALSE,
                     method          = "norm")
   Z_SI <- complete(Z_SI_mids)
 
@@ -83,6 +83,7 @@ imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
                              m      = parms$mice_ndt,
                              method = "norm.boot",
                              maxit  = 1,
+                             printFlag = FALSE,
                              predictorMatrix = pred_mat,
                              eps = 0)
 

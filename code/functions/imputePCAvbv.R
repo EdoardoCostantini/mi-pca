@@ -37,6 +37,7 @@ imputePCAvbv <- function(Z, ncfs = 1, parms){
                                  maxit  = parms$mice_iters,
                                  method = "pcr.mixed",
                                  npcs = ncfs_int,
+                                 printFlag = FALSE,
                                  eps = 0)
 
     # Extract CPVE

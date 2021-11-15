@@ -2,7 +2,7 @@
 # Objective: Function to generate data with a latent structure
 # Author:    Edoardo Costantini
 # Created:   2021-11-10
-# Modified:  2021-11-10
+# Modified:  2021-11-15
 
 genDataLatent <- function(parms, cond){
 
@@ -32,7 +32,7 @@ genDataLatent <- function(parms, cond){
   Phi[upper.tri(Phi)] <- t(Phi)[upper.tri(Phi)]
 
   # Factor loadings ---------------------------------------------------------
-  lambda <- rep(.9, P)
+  lambda <- rep(.85, P)
 
   # Observed Items Error Covariance matrix ----------------------------------
   # Note: here we create uncorrelated errors for the observed items

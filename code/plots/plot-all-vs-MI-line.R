@@ -35,11 +35,11 @@ plot_y_axis = "bias"
 moderator = "method"
 grid_x_axis = "npc"
 grid_y_axis = "K"
-x_axis_name = "Proportion of junk variables"
-y_axis_name = "Bias for "
+x_axis_name = "Number of categories (K)"
+y_axis_name = "PRB"
 scales = NULL
 error_bar = FALSE
-filters = list(npc = c(0, 1, 5, 10, 50))
+filters = list(npc = unique(gg_shape$npc)[c(1, 2, 6, 7, 12)])
 # filters = list()
 
 # Subset data
@@ -54,8 +54,6 @@ for (f in seq_along(filters)){
   dat_sub <- dat_sub %>%
     filter(!!as.symbol(filter_factor) %in% filter_lvels)
 }
-
-# Mesh npcs to method
 
 # transfor to character for pasting
 dat_sub$method <- as.character(dat_sub$method)
@@ -81,22 +79,13 @@ plot_main <- dat_sub %>%
                     group = moderator,
                     color = moderator)) +
   geom_line(aes_string(linetype = moderator), size = .75) +
-  scale_linetype_manual(values = c(rep(1, same_line), 3, 5)) +
+  scale_linetype_manual(values = c(rep(1, same_line), 5, 3)) +
   scale_color_manual(values = c(gray.colors(same_line,
-                                            start = .1,
-                                            end = .7),
+                                            start = .7,
+                                            end = .1),
                                 "blue",
                                 "blue")) +
   geom_point(size = 0)
-
-# Add error bars if wanted
-if(error_bar == TRUE){
-  plot_main <- plot_main +
-    geom_errorbar(aes(ymin = lwr_avg,
-                      ymax = upr_avg,
-                      group = method),
-                  width = .1)
-}
 
 # Grid
 plot_grid <- plot_main +
@@ -109,12 +98,11 @@ plot_grid <- plot_main +
 plot_themed <- plot_grid +
   theme(text = element_text(size = 15),
         plot.title = element_text(hjust = 0.5),
-        axis.text = element_text(size = 10),
-        axis.text.x = element_text(angle = 45, hjust = 0.95),
+        # axis.text = element_text(size = 10),
         axis.title = element_text(size = 10)) +
   labs(title = paste("Bias for ", par_est),
        x     = x_axis_name,
-       y     = paste(y_axis_name, par_est))
+       y     = y_axis_name)
 
 # Return final plot
 plot_themed

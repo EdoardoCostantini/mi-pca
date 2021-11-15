@@ -13,7 +13,7 @@ source("./init.R")
 # Read results
 inDir <- "../output/"
 files <- grep("rds", list.files(inDir), value = TRUE)
-runName <- files[2]
+runName <- files[3]
 
 # Read output
 gg_shape <- readRDS(paste0(inDir, runName))
@@ -29,13 +29,13 @@ target_par <- c(
 # Inputs
 dat = gg_shape
 par_est = target_par[[4]]
-sel_meths = levels(gg_shape$method)#[c(1, 3)] # all
+sel_meths = levels(gg_shape$method)[c(1:7)] # all
 plot_x_axis = "K"
 plot_y_axis = "bias"
 moderator = "npc"
 grid_x_axis = "pj"
 grid_y_axis = "method"
-x_axis_name = "Proportion of junk variables"
+x_axis_name = "Number of categories (K)"
 y_axis_name = "PRB"
 scales = NULL
 error_bar = FALSE
@@ -82,7 +82,7 @@ filters = list()
   plot_themed <- plot_grid +
     theme(text = element_text(size = 15),
           plot.title = element_text(hjust = 0.5),
-          axis.text = element_text(size = 15),
+          # axis.text = element_text(size = 15),
           # axis.text.x = element_text(angle = 45, hjust = 0.95),
           axis.title = element_text(size = 10)) +
     labs(title = paste("Bias for ", par_est),

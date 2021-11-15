@@ -13,7 +13,7 @@ source("./init.R")
 # Read results
 inDir <- "../output/"
 files <- grep("rds", list.files(inDir), value = TRUE)
-runName <- files[2]
+runName <- files[3]
 
 # Read output
 gg_shape <- readRDS(paste0(inDir, runName))
@@ -29,21 +29,20 @@ target_par <- c(
 # Confidence Interval Width --------------------------------------------
 
 dat         <- gg_shape
-par_est     <- target_par[[1]]
-sel_meths   <- unique(gg_shape$method)[c(2:3, 8)] # all
+par_est     <- target_par[[4]]
+sel_meths   <- unique(gg_shape$method)#[c(2:3, 8)] # all
 plot_x_axis <- "K"
 plot_y_axis <- "Mean"
 moderator   <- "npc"
 grid_x_axis <- "pj"
 grid_y_axis <- "method"
-x_axis_name <- "Number of categories"
+x_axis_name = "Number of categories (K)"
 y_axis_name <- "Average Estimate"
 scales      <- NULL
 error_bar   <- FALSE
 # filters     <- list(npc <- c(1, 5, 10, 20))
 filters     <- list()
 
-head(dat_sub)
   # Subset data
   dat_sub <- dat %>%
     filter(par == par_est) %>%
@@ -99,14 +98,14 @@ head(dat_sub)
 ## V2
 # Inputs
 dat         <- gg_shape
-par_est     <- target_par[[1]]
-sel_meths   <- unique(gg_shape$method)[c(1:3, 8)] # all
+par_est     <- target_par[[4]]
+sel_meths   <- unique(gg_shape$method)#[c(1:3, 8)] # all
 plot_x_axis <- "K"
-plot_y_axis <- "CIW"
+plot_y_axis <- "mcsd"
 moderator   <- "npc"
 grid_x_axis <- "pj"
 grid_y_axis <- "method"
-x_axis_name <- "Number of categories"
+x_axis_name = "Number of categories (K)"
 y_axis_name <- "CIW"
 scales      <- "free"
 error_bar   <- FALSE
@@ -151,11 +150,12 @@ plot_grid <- plot_main +
 plot_themed <- plot_grid +
   theme(text = element_text(size = 15),
         plot.title = element_text(hjust = 0.5),
-        axis.text = element_text(size = 15),
+        axis.text = element_text(size = 10),
         axis.title = element_text(size = 10)) +
   labs(title = paste("Confidence Interval Width for ", par_est),
        x     = x_axis_name,
-       y     = y_axis_name)
+       y     = y_axis_name) +
+  coord_cartesian(ylim = c(0, .10))
 
 # Return final plot
 plot_themed
@@ -164,14 +164,14 @@ plot_themed
 
 # Inputs
 dat         <- gg_shape
-par_est     <- target_par[[1]]
-sel_meths   <- unique(gg_shape$method)[c(1:3, 8)] # all
+par_est     <- target_par[[4]]
+sel_meths   <- levels(gg_shape$method)[-8]
 plot_x_axis <- "K"
 plot_y_axis <- "CIC"
 moderator   <- "npc"
 grid_x_axis <- "pj"
 grid_y_axis <- "method"
-x_axis_name <- "Number of categories"
+x_axis_name = "Number of categories (K)"
 y_axis_name <- "Confidence Interval Coverage"
 scales      <- NULL
 error_bar   <- FALSE
@@ -212,7 +212,6 @@ plot_main <- dat_sub %>%
   geom_hline(aes(yintercept = -.05),
              size = .25)
 
-
 # Grid
 plot_grid <- plot_main +
   facet_grid(reformulate(grid_x_axis, grid_y_axis),
@@ -222,7 +221,6 @@ plot_grid <- plot_main +
 plot_themed <- plot_grid +
   theme(text = element_text(size = 15),
         plot.title = element_text(hjust = 0.5),
-        axis.text = element_text(size = 15),
         axis.title = element_text(size = 10)) +
   labs(title = paste(y_axis_name, " for ", par_est),
        x     = x_axis_name,

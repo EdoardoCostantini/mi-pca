@@ -70,18 +70,20 @@ filters = list()
   plot_grid <- plot_main +
     facet_grid(reformulate(grid_x_axis, grid_y_axis),
                labeller = label_both,
-               scales = "free")
+               scales = "free",
+               switch = "y")
 
   # Format
   plot_themed <- plot_grid +
     theme(text = element_text(size = 15),
           plot.title = element_text(hjust = 0.5),
-          # axis.text = element_text(size = 15),
-          # axis.text.x = element_text(angle = 45, hjust = 0.95),
+          strip.text.y.left = element_text(angle = 0),
+          legend.position = "left",
           axis.title = element_text(size = 10)) +
     labs(title = "Time to impute relative to MI-OR",
          x     = x_axis_name,
-         y     = y_axis_name)
+         y     = y_axis_name) +
+    scale_y_continuous(position="right") # y-axis labels on the right
 
   # Return final plot
   plot_themed

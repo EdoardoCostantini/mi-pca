@@ -80,17 +80,20 @@ filters     <- list()
   plot_grid <- plot_main +
     facet_grid(reformulate(grid_x_axis, grid_y_axis),
                labeller = label_both,
-               scales = scales)
+               scales = scales,
+               switch = "y")
 
   # Format
   plot_themed <- plot_grid +
     theme(text = element_text(size = 15),
           plot.title = element_text(hjust = 0.5),
-          # axis.text = element_text(size = 15),
+          strip.text.y.left = element_text(angle = 0),
+          legend.position = "left",
           axis.title = element_text(size = 10)) +
     labs(title = paste("Confidence Interval Width for ", par_est),
          x     = x_axis_name,
-         y     = y_axis_name)
+         y     = y_axis_name) +
+    scale_y_continuous(position="right") # y-axis labels on the right
 
   # Return final plot
   plot_themed
@@ -99,7 +102,7 @@ filters     <- list()
 # Inputs
 dat         <- gg_shape
 par_est     <- target_par[[4]]
-sel_meths   <- unique(gg_shape$method)#[c(1:3, 8)] # all
+sel_meths   <- levels(gg_shape$method)[c(1:5, 8)] # all
 plot_x_axis <- "K"
 plot_y_axis <- "mcsd"
 moderator   <- "npc"
@@ -144,17 +147,21 @@ plot_main <- dat_sub %>%
 plot_grid <- plot_main +
   facet_grid(reformulate(grid_x_axis, grid_y_axis),
              labeller = label_both,
-             scales = scales)
+             scales = scales,
+             switch = "y")
 
 # Format
 plot_themed <- plot_grid +
   theme(text = element_text(size = 15),
+        strip.text.y.left = element_text(angle = 0),
+        legend.position = "left",
         plot.title = element_text(hjust = 0.5),
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 10)) +
-  labs(title = paste("Confidence Interval Width for ", par_est),
+  labs(title = paste0("Confidence Interval Width for ", par_est),
        x     = x_axis_name,
        y     = y_axis_name) +
+  scale_y_continuous(position="right") + # y-axis labels on the right
   coord_cartesian(ylim = c(0, .10))
 
 # Return final plot
@@ -165,14 +172,14 @@ plot_themed
 # Inputs
 dat         <- gg_shape
 par_est     <- target_par[[4]]
-sel_meths   <- levels(gg_shape$method)[-8]
+sel_meths   <- levels(gg_shape$method)[c(1:5, 8)] # all
 plot_x_axis <- "K"
 plot_y_axis <- "CIC"
 moderator   <- "npc"
 grid_x_axis <- "pj"
 grid_y_axis <- "method"
-x_axis_name = "Number of categories (K)"
-y_axis_name <- "Confidence Interval Coverage"
+x_axis_name <- "Number of categories (K)"
+y_axis_name <- "CIC"
 scales      <- NULL
 error_bar   <- FALSE
 # filters     <- list(npc <- c(1, 5, 10, 20))
@@ -208,21 +215,25 @@ plot_main <- dat_sub %>%
                                          end = .1)) +
   scale_y_continuous(breaks = c(-.25, -.15, -.05, 0, .05),
                      labels = c(70, 80, 90, 95, 100),
-                     limits = c(-.95, .05)) +
+                     limits = c(-.95, .05),
+                     position = "right") +
   geom_hline(aes(yintercept = -.05),
              size = .25)
 
 # Grid
 plot_grid <- plot_main +
   facet_grid(reformulate(grid_x_axis, grid_y_axis),
-             labeller = label_both)
+             labeller = label_both,
+             switch = "y")
 
 # Format
 plot_themed <- plot_grid +
   theme(text = element_text(size = 15),
+        strip.text.y.left = element_text(angle = 0),
+        legend.position = "left",
         plot.title = element_text(hjust = 0.5),
         axis.title = element_text(size = 10)) +
-  labs(title = paste(y_axis_name, " for ", par_est),
+  labs(title = paste0("Confidence Interval Coverage for ", par_est),
        x     = x_axis_name,
        y     = y_axis_name) +
   coord_cartesian(ylim = c(-.15, .05))

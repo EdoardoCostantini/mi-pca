@@ -2,7 +2,7 @@
 # Objective: Plot bias for the PCA based methods
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2021-11-01
+# Modified:  2021-11-15
 
 # Clean environment:
 rm(list = ls())
@@ -29,7 +29,7 @@ target_par <- c(
 # Inputs
 dat = gg_shape
 par_est = target_par[[4]]
-sel_meths = levels(gg_shape$method)[c(1:7)] # all
+sel_meths = levels(gg_shape$method)[c(1:5)] # all
 plot_x_axis = "K"
 plot_y_axis = "bias"
 moderator = "npc"
@@ -76,18 +76,20 @@ filters = list()
   plot_grid <- plot_main +
     facet_grid(reformulate(grid_x_axis, grid_y_axis),
                labeller = label_both,
-               scales = "free")
+               scales = "free",
+               switch = "y")
 
   # Format
   plot_themed <- plot_grid +
     theme(text = element_text(size = 15),
           plot.title = element_text(hjust = 0.5),
-          # axis.text = element_text(size = 15),
-          # axis.text.x = element_text(angle = 45, hjust = 0.95),
+          strip.text.y.left = element_text(angle = 0),
+          legend.position = "left",
           axis.title = element_text(size = 10)) +
-    labs(title = paste("Bias for ", par_est),
+    labs(title = paste0("Bias for ", par_est),
          x     = x_axis_name,
          y     = y_axis_name) +
+    scale_y_continuous(position="right") + # y-axis labels on the right
     coord_cartesian(ylim = c(0, 15))
 
   # Return final plot

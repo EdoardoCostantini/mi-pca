@@ -4,25 +4,24 @@
 # Created:   2021-11-16
 # Modified:  2021-11-16
 
-# Prepare Environment
-rm(list = ls())
+# Make sure we have a clean environment:
+rm(list = ls(all = TRUE))
 
-# Source initialization script
+# Initialize the environment:
 source("./init.R")
 
-# Calculate
-goal_reps <- 30 # should match your total goal of repetitions
-ncores    <- 15 # I want to use this many cores in each node
-narray    <- ceiling(goal_reps/ncores)  # I want to specify a sbatch array of 2 tasks (sbatch -a 1-2 job_script_array.sh)
+# Prepare storing results
+source("./fs.R")
 
-# Save in input folder for Stopos
-outDir <- "../input/"
-fileName <- paste0("stopos_lines")
-write(as.character(1:goal_reps),
-      file = paste0(outDir, fileName))
+# Input values
+rp        <- 1
+fs$outDir <- "../output/trash/"
 
-# Compute Estimated CPU time (not printed, just for yourself)
-n_nodes <- goal_reps/ncores # this is also the number of nodes
-n_cores <- ncores
-job_time <- 40 * 1.5 # 60ish hours
-n_nodes * n_cores * job_time
+## Run one replication of the simulation:
+start <- Sys.time()
+runRep(rp = rp,
+       conds = conds,
+       parms = parms,
+       fs = fs)
+end <- Sys.time()
+end - start

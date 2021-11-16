@@ -19,6 +19,7 @@
                  "miceadds",    # results analysis
                  "OrdNor",
                  "BinNor",
+                 "testthat",
                  "devtools",    # for detailed session info
                  "grDevices")   # for plotting gray.colors function
 
@@ -28,21 +29,25 @@
   # Install packages not yet installed from CRAN
   installed_packages <- cran_list %in% rownames(installed.packages())
   if (any(installed_packages == FALSE)) {
-    install.packages(cran_list[!installed_packages])
+    install.packages(cran_list[!installed_packages],
+                     repos = 'http://cran.us.r-project.org')
   }
+
+  # Update packages that need to be updated
+  update.packages(cran_list, repos = 'http://cran.us.r-project.org')
 
   # Install packages not yet installed from local
   installed_packages <- local_list %in% rownames(installed.packages())
   if (any(installed_packages == FALSE)) {
     to_install <- sapply(local_list, grep, list.files(local_list_location),
                          value = TRUE)
-    install.packages(paste0(local_list_location, to_install),
-                     repos = NULL, type = "source")
+    install.packages(paste0(local_list_location, to_install))
   }
 
   # Put together
   pack_list <- c(cran_list, local_list)
 
+  # Load packages
   lapply(pack_list, library, character.only = TRUE, verbose = FALSE)
 
 # Load Functions ----------------------------------------------------------

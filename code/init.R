@@ -86,7 +86,7 @@
   K <- list(
     final     = c(Inf, 7, 5, 3, 2),
     convCheck = c(7, 2),
-    trial     = c(Inf, 7, 5, 3, 2)
+    trial     = c(Inf, 2)
   )[[parms$run_type]]
 
   # Proportion of discretized variables
@@ -107,7 +107,7 @@
   pj <- list(
     final     = round(seq(0, 1, length.out = 4), 2),
     convCheck = c(0, 1),
-    trial     = round(seq(0, 1, length.out = 4), 2)
+    trial     = round(seq(0, 1, length.out = 3), 2)
   )[[parms$run_type]]
 
   # Latent Structure
@@ -121,7 +121,7 @@
   npc <- list(
     final     = c(1, 2, 3, 4, 5, 10, 20, 25, "max"),
     convCheck = c(1, "max"),
-    trial     = c(1, 5, 20, "max")
+    trial     = c(1, 20, "max")
   )[[parms$run_type]]
 
   # Methods

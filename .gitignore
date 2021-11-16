@@ -44,6 +44,9 @@ vignettes/*.pdf
 
 ## Folders
 
+# Ignore lisa folder
+/lisa/
+
 # Ignore output/console folder
 /output/console
 /output/*.txt

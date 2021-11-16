@@ -11,7 +11,7 @@ runCell <- function(rp, cond, fs, parms) {
 
   # Example Internals -------------------------------------------------------
 
-  # cond = conds[1017, ]
+  # cond = conds[14, ]
   # rp   = 1
   tryCatch({
     ### START TRYCATCH EXPRESSION
@@ -131,8 +131,8 @@ runCell <- function(rp, cond, fs, parms) {
 
     ## Store Main Results
     saveRDS(res,
-            file = paste0(fs$outDir,
-                          "rep_", rp, "_", cond$tag,
+            file = paste0(fs$outDir_rp[rp],
+                          "rp", rp, "_", cond$tag,
                           "_main",
                           ".rds")
     )
@@ -140,8 +140,8 @@ runCell <- function(rp, cond, fs, parms) {
     ## Store Time Results
     if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
       saveRDS(cbind(cond, time = imp_out$time),
-              file = paste0(fs$outDir,
-                            "rep_", rp, "_", cond$tag,
+              file = paste0(fs$outDir_rp[rp],
+                            "rp", rp, "_", cond$tag,
                             "_time",
                             ".rds")
       )
@@ -151,8 +151,8 @@ runCell <- function(rp, cond, fs, parms) {
     if(cond$method == "vbv"){
       pc_res <- cbind(cond, imp_out$CPVE)
       saveRDS(pc_res,
-              file = paste0(fs$outDir,
-                            "rep_", rp, "_", cond$tag,
+              file = paste0(fs$outDir_rp[rp],
+                            "rp", rp, "_", cond$tag,
                             "_CPVE",
                             ".rds")
       )
@@ -161,8 +161,8 @@ runCell <- function(rp, cond, fs, parms) {
     ## Store mids results if run requires it
     if(parms$run_type == 2){
       saveRDS(imp_out$mids,
-              file = paste0(fs$outDir,
-                            "rep_", rp, "_", cond$tag,
+              file = paste0(fs$outDir_rp[rp],
+                            "rp", rp, "_", cond$tag,
                             "_mids",
                             ".rds")
       )
@@ -173,8 +173,8 @@ runCell <- function(rp, cond, fs, parms) {
     err <- paste0("Original Error: ", e)
     err_res <- cbind(rp = rp, cond, Error = err)
     saveRDS(err_res,
-            file = paste0(fs$outDir,
-                          "rep_", rp, "_", cond$tag,
+            file = paste0(fs$outDir_rp[rp],
+                          "rp", rp, "_", cond$tag,
                           "_ERROR",
                           ".rds")
     )

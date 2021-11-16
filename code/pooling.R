@@ -14,7 +14,7 @@ source("./init.R")
 
 inDir <- "../output/"
 files <- grep("tar", list.files(inDir), value = TRUE)
-target_tar <- files[length(files)]
+target_tar <- "20211027_154635.tar.gz" # last good results
 output <- readTarGz(target_tar)
 
 # Restructure Results -----------------------------------------------------

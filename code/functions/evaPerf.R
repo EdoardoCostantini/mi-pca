@@ -27,9 +27,10 @@ evaPerf <- function (out, output){
   out$method <- factor(out$method,
                        levels = unique(output$sInfo$conds$method),
                        ordered = TRUE)
+  out$lv <- factor(out$lv, levels = unique(out$lv), ordered = TRUE)
 
   # True values
-  ref_grouping <- c("K", "D", "interval", "pj", "par")
+  ref_grouping <- c("K", "D", "interval", "pj", "par", "lv")
   ref_df <- data.frame(out %>%
                          filter(method == "OG") %>%
                          group_by_at(ref_grouping) %>%
@@ -43,7 +44,7 @@ evaPerf <- function (out, output){
   out_ref <- arrange(out_ref, rp, tag, par)
 
   # Bias Computation
-  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "par")
+  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "par", "lv")
   bias_df <- data.frame(out_ref %>%
                           group_by_at(comp_grouping) %>%
                           dplyr::summarize(Mean = mean(Q_bar),

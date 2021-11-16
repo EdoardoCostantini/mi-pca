@@ -14,7 +14,8 @@
 
   inDir <- "../output/"
   files <- grep("rds", list.files(inDir), value = TRUE)
-  runName <- files[length(files)]
+  runName <- "20211027_154635_res.rds" # results for IOPS
+  runName <- "20211116_120623_res.rds" # with latent + subfolders
 
   # Read output
   gg_shape <- readRDS(paste0(inDir, runName))

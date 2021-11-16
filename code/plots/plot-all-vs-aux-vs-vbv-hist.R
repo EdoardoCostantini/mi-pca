@@ -13,7 +13,8 @@ source("./init.R")
 # Read results
 inDir <- "../output/"
 files <- grep("rds", list.files(inDir), value = TRUE)
-runName <- files[3]
+runName <- "20211027_154635_res.rds" # results for IOPS
+runName <- "20211116_120623_res.rds" # with latent + subfolders
 
 # Read output
 gg_shape <- readRDS(paste0(inDir, runName))
@@ -39,8 +40,8 @@ x_axis_name = "Number of categories (K)"
 y_axis_name = "PRB"
 scales = NULL
 error_bar = FALSE
-# filters = list(npc = c(1, 5, 10, 20))
-filters = list()
+filters = list(lv = "TRUE")
+# filters = list()
 
   # Subset data
   dat_sub <- dat %>%

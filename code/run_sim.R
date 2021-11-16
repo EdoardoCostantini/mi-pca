@@ -10,11 +10,29 @@ rm(list = ls())
 ## Initialize the environment:
 source("./init.R")
 
-## Prepare storing results
-source("./fs.R")
+## Run specs
+  reps <- 1 : 5 # define repetitions
+  clusters <- 5  # define clusters
+
+## File System
+  fs <- list()
+  fs$start_time <- format(Sys.time(), "%Y%m%d_%H%M%S")
+
+  # Main Folder
+  fs$outDir <- paste0("../output/", fs$start_time, "/")
+  dir.create(fs$outDir)
+
+  # Subfolders for repetitions
+  outDir_rp <- paste0(fs$outDir, "rp", reps, "/")
+  names(outDir_rp) <- reps
+  fs$outDir_rp <- outDir_rp # append to file system
+  sapply(outDir_rp, dir.create)
+
+  # File names
+  fs$fileName_res <- fs$start_time
+  fs$fileName_prog <- fs$start_time
 
 ## Progress report file
-dir.create(fs$outDir)
 file.create(paste0(fs$outDir, fs$fileName_prog, ".txt"))
 
 cat(paste0("SIMULATION PROGRESS REPORT",
@@ -25,9 +43,8 @@ cat(paste0("SIMULATION PROGRESS REPORT",
     sep = "\n",
     append = TRUE)
 
-## Define repetitions and clusters
-reps <- 1 : 500
-clus <- makeCluster(10)
+## Open clusters
+clus <- makeCluster(clusters)
 
 ## Export to worker nodes
 # export global env

@@ -104,7 +104,7 @@ runCell <- function(rp, cond, fs, parms) {
       pooled_cor <- poolCor(imp_out$mids, targets = parms$vmap$ta)
 
       ## Join outputs
-      res <- rbind(pooled_sat, pooled_cor)
+      res <- rbind(pooled_sat, pooled_cor, make.row.names = FALSE)
     }
 
     ## Complete Case analysis
@@ -125,6 +125,7 @@ runCell <- function(rp, cond, fs, parms) {
     }
 
     ## Attach condition tags
+    row.names(cond) <- NULL # to avoid warning
     res <- cbind(rp = rp, cond, PC_exp = PC_exp, res)
 
     # Store Output ------------------------------------------------------------

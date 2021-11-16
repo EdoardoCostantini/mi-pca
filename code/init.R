@@ -6,12 +6,11 @@
 
 # Packages ----------------------------------------------------------------
 
-  pack_list <- c("parallel",    # simulation paralleliazion
+  cran_list <- c("parallel",    # simulation paralleliazion
                  "rlecuyer",    # simulation paralleliazion
                  "MASS",        # data generation
                  "lavaan",      # fitting analysis models
                  "mice",        # imputation
-                 "mice.pcr.sim",# imputation
                  "FactoMineR",
                  "stringr",     # result pooling
                  "ggplot2",     # results analysis
@@ -20,8 +19,30 @@
                  "miceadds",    # results analysis
                  "OrdNor",
                  "BinNor",
+                 "devtools",    # for detailed session info
                  "grDevices")   # for plotting gray.colors function
-  
+
+  local_list <- c("mice.pcr.sim")
+  local_list_location <- c("../input/")
+
+  # Install packages not yet installed from CRAN
+  installed_packages <- cran_list %in% rownames(installed.packages())
+  if (any(installed_packages == FALSE)) {
+    install.packages(cran_list[!installed_packages])
+  }
+
+  # Install packages not yet installed from local
+  installed_packages <- local_list %in% rownames(installed.packages())
+  if (any(installed_packages == FALSE)) {
+    to_install <- sapply(local_list, grep, list.files(local_list_location),
+                         value = TRUE)
+    install.packages(paste0(local_list_location, to_install),
+                     repos = NULL, type = "source")
+  }
+
+  # Put together
+  pack_list <- c(cran_list, local_list)
+
   lapply(pack_list, library, character.only = TRUE, verbose = FALSE)
 
 # Load Functions ----------------------------------------------------------

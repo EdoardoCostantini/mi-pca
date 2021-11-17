@@ -2,7 +2,7 @@
 # Objective: Run a single repetition in lisa
 # Author:    Edoardo Costantini
 # Created:   2021-11-16
-# Modified:  2021-11-16
+# Modified:  2021-11-17
 
 ## Make sure we have a clean environment:
 rm(list = ls(all = TRUE))
@@ -24,6 +24,6 @@ fs$outDir <- args[2]   # overwrite output directory defined in exp5_init.R
 
 ## Run one replication of the simulation:
 runRep(rp = rp,
-       conds = conds[1:20, ],
+       conds = conds,
        parms = parms,
        fs = fs)

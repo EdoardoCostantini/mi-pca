@@ -5,18 +5,18 @@
 # Modified:  2021-11-16
 
   rm(list = ls())
-  source("./init_general.R")
+  source("./init.R")
 
 # Load results ------------------------------------------------------------
 
   # Input directory
-  inDir <- "../output/"
+  inDir <- "../output/lisa/"
   
   # Output directory
-  outDir <- "../output/results/"
+  outDir <- "../output/lisa/"
   
   # Job ID
-  idJob <- "7705632"
+  idJob <- "8405014"
   
   # Define Output Run folder
   resDir <- paste0(inDir, idJob, "/") # location of results
@@ -36,105 +36,71 @@
   
   # Obtain unique names of all result files
   fileNames <- grep(".rds", list.files(subDir), value = TRUE)
-  
-  # Read all of them in
-  out <- lapply(paste0(subDir, fileNames), readRDS)
-  
+
+  # Read all
+  output <- lapply(paste0(subDir, fileNames), readRDS)
+
   # Read the session info object
-  sInfo <- readRDS(paste0(resDir, "sInfo.rds"))
-  
-# Restructure Results -----------------------------------------------------
+  sInfo <- readRDS(paste0(resDir, "20211116_183620.rds"))
+  sInfo$parms
+  sInfo$conds
+  sInfo$session_info
 
-  # Give unique name to all objects
-  names(out) <- fileNames
-  
-  # Define the Unique repetitions
-  reps <- sInfo$parms$dt_rep # you need to input this manually right now
-  rep_index <- paste0("rep", 1:reps, "[^0-9]")
-  
-  # Create an index based on the repetition membership
-  index <- lapply(rep_index, 
-                  function(x) {
-                    grep(x, names(out), value = TRUE)
-                  }
+# Check for errors --------------------------------------------------------
+  # Were there any errors?
+  errors <- grep("ERROR", fileNames)
+  if(length(errors) > 0){
+    out_errors <- output[errors] # check that these are all trivial
+    out_errors <- do.call(rbind, out_errors)
+    sapply(unique(out_errors$tag), function (x){
+      sum(out_errors$tag %in% x)/length(out_errors$tag)
+    })*100
+  }
+
+# Extract time results ----------------------------------------------------
+
+  # Check out the time to impute
+  out_time <- output[grepl("time", fileNames)]
+  res_time <- do.call(rbind, out_time)
+
+  # Transform npc = max to appropriate number
+  res_time$npc[res_time$npc == "max" & res_time$method == "all"] <- 56
+  res_time$npc[res_time$npc == "max" & res_time$method == "aux"] <- 52
+  res_time$npc[res_time$npc == "max" & res_time$method == "vbv"] <- 55
+
+  # Cast experimental factors to ordered factors
+  res_time$npc <- as.numeric(res_time$npc)
+  res_time$K <- factor(res_time$K, levels = rev(unique(res_time$K)), ordered = TRUE)
+  res_time$tag <- factor(res_time$tag, levels = unique(res_time$tag), ordered = TRUE)
+  res_time$method <- factor(res_time$method,
+                       levels = unique(sInfo$conds$method),
+                       ordered = TRUE)
+  res_time$lv <- factor(res_time$lv)
+
+  # Average time per condition
+  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "lv")
+  time_avg <- data.frame(res_time %>%
+                           group_by_at(comp_grouping) %>%
+                           dplyr::summarize(mean = mean(time))
   )
-  
-  # Re-aggregate Results 
-  out_list <- lapply(index, function(x) {
-    temp_out <- out[x]
-    names(temp_out) <- gsub("(.*?)cond", "", (names(temp_out))) 
-    return(temp_out)
-    }
-  )
-  out <- out_list
-  
-  # Append the parms object for this run
-  out$parms <- sInfo$parms
-  out$conds <- sInfo$conds
-  out$session_info <- sInfo$session_info
 
-# Time --------------------------------------------------------------------
+  ref_time <- time_avg %>%
+    filter(method == "MIOR")
 
-  out_time <- sapply(1:length(names(out[[1]])), res_sem_time, out = out)
-  colnames(out_time) <- names(out[[1]])
-  t(out_time)
+  merge_cols <- comp_grouping <- c("K", "D", "interval", "pj")
 
-# Extract Estimates ------------------------------------------------------
-# Extract results per conditions for each analysis type
+  time_avg <- base::merge(x = time_avg, y = ref_time,
+                          by = merge_cols,
+                          suffixes = c("",".ref"))
 
-## SEM estimates raw data (saturated model) ##
-  semR_res <- lapply(seq_along(1:length(out[[1]])),
-                     function(x) res_sum(out, 
-                                         model = "semR", 
-                                         condition = x,
-                                         bias_sd = TRUE))
+  res_time <- time_avg %>%
+    mutate(relative = mean / mean.ref) %>%
+    select(-grep("ref", colnames(time_avg)))
 
-## CFA model results
-  CFA_res <- lapply(1:length(out[[1]]),
-                    function(x) res_sum(out, 
-                                        model = "CFA", 
-                                        condition = x))
+# Main Results ------------------------------------------------------------
 
-  # Check
-  lapply(1:length(out[[1]]),
-         function(x) CFA_res[[x]]$bias_per[1:10, ])
+  out_main <- output[grepl("main", fileNames)]
+  out <- do.call(rbind, out_main)
 
-# Store results -----------------------------------------------------------
-
-  output <- lapply(list(semR = semR_res,
-                        CFA  = CFA_res), 
-                   function(x){
-                     names(x) <- paste0("cond", seq_along(out[[1]]))
-                     return(x)
-                   }
-  )
-  output <- c(output, parms = list(out$parms), conds = list(out$conds))
-  
-# Arrange results for ggplot ----------------------------------------------
-  
-  gg_out_semR <- plotwise(res = output,
-                          model = "semR",
-                          parPlot = list(Means = 1:10,
-                                         Variances = 11:20,
-                                         Covariances = 21:65),
-                          meth_compare = output$parms$methods[c(1:5, 7:10)],
-                          label_x_axis = NULL,
-                          label_y_axis = NULL)
-  
-  gg_out_CFA <- plotwise(res = output,
-                         model = "CFA",
-                         parPlot = list(Loadings = 1:10),
-                         meth_compare = output$parms$methods[c(1:5, 7:10)],
-                         label_x_axis = NULL,
-                         label_y_axis = NULL)
-  
-# Save Results ------------------------------------------------------------
-  
-  saveRDS(object = output,
-          file = paste0(outDir, idJob, "_res.rds"))
-  saveRDS(object = gg_out_semR,
-          file = paste0(outDir, idJob, "_res_gg_semR.rds"))
-  saveRDS(object = gg_out_CFA,
-          file = paste0(outDir, idJob, "_res_gg_CFA.rds"))
-  
-  
+  results <- evaPerf(out, output)
+  gg_shape <- results

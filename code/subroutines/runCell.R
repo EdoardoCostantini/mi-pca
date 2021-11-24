@@ -43,6 +43,14 @@ runCell <- function(rp, cond, fs, parms) {
                               ncfs = cond$npc,
                               parms = parms)
     }
+    if(cond$method == "all_oracle"){
+      imp_out <- imputePCAall(Z = dat_miss,
+                              imp_target = parms$vmap$ta,
+                              pcs_target = unlist(parms$vmap, use.names = FALSE),
+                              ncfs = cond$npc,
+                              Z_ori = dat_ordi,
+                              parms = parms)
+    }
     if(cond$method == "aux") {
       imp_out <- imputePCAaux(dat_miss,
                               imp_target = parms$vmap$ta,

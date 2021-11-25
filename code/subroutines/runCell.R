@@ -11,7 +11,7 @@ runCell <- function(rp, cond, fs, parms) {
 
   # Example Internals -------------------------------------------------------
 
-  # cond = conds[1017, ]
+  # cond = conds[688, ]
   # rp   = 1
   tryCatch({
     ### START TRYCATCH EXPRESSION
@@ -98,7 +98,7 @@ runCell <- function(rp, cond, fs, parms) {
 
     # Analyze and pool --------------------------------------------------------
 
-    if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
+    if(exists("imp_out")){
       ## Estimate Mean, variance, covariance
       fits <- fitSatModel(mids = imp_out$mids,
                           model = genLavaanMod(dat_miss,
@@ -126,7 +126,7 @@ runCell <- function(rp, cond, fs, parms) {
     }
 
     ## Define explained variance information
-    if(cond$method %in% c("all", "aux", "vbv")){
+    if("CPVE" %in% names(imp_out)){
       PC_exp <- imp_out$CPVE
     } else {
       PC_exp <- NA
@@ -147,7 +147,7 @@ runCell <- function(rp, cond, fs, parms) {
     )
 
     ## Store Time Results
-    if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
+    if(exists("imp_out")){
       saveRDS(cbind(cond, time = imp_out$time),
               file = paste0(fs$outDir,
                             "rep_", rp, "_", cond$tag,

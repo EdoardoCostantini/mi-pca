@@ -72,9 +72,14 @@ genDataLatent <- function(parms, cond){
   colnames(x) <- paste0("z", 1:ncol(x))
   colnames(scs_lv) <- paste0("lv", 1:ncol(scs_lv))
 
+  # Scale it correctly
+  x_scaled <- apply(x, 2, function(j) j*sqrt(parms$item_var))
+  x_center <- x_scaled + parms$item_mean
+  x_cont <- data.frame(x_center)
+
   # Return ------------------------------------------------------------------
   return(
-    list(x = data.frame(x),
+    list(x = data.frame(x_cont),
          index_junk_aux = index_junk_aux)
   )
 

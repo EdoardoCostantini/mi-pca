@@ -152,9 +152,10 @@
 
   # Methods
   method <- list(
-    final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
+    # final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
+    final     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
     convCheck = c("aux", "vbv", "MIOP", "MIOR", "MIMI"),
-    trial     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
+    trial     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
   )[[parms$run_type]]
 
   # Make Conditionsa
@@ -163,7 +164,7 @@
                          interval = interval,
                          pj = pj,
                          npc = npc,
-                         method = intersect(c("all", "aux", "vbv"), method),
+                         method = intersect(c("all", "all_oracle", "aux", "vbv"), method),
                          lv = lv,
                          stringsAsFactors = FALSE)
 

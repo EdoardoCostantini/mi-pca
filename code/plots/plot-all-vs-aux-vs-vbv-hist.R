@@ -39,8 +39,8 @@ x_axis_name = "Number of categories (K)"
 y_axis_name = "PRB"
 scales = NULL
 error_bar = FALSE
-# filters = list(npc = c(1, 5, 10, 20))
-filters = list()
+filters = list(lv = TRUE)
+# filters = list()
 
   # Subset data
   dat_sub <- dat %>%

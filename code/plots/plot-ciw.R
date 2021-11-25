@@ -40,8 +40,8 @@ x_axis_name = "Number of categories (K)"
 y_axis_name <- "Average Estimate"
 scales      <- NULL
 error_bar   <- FALSE
-# filters     <- list(npc <- c(1, 5, 10, 20))
-filters     <- list()
+filters     <- list(lv = TRUE)
+# filters     <- list()
 
   # Subset data
   dat_sub <- dat %>%
@@ -112,8 +112,8 @@ x_axis_name = "Number of categories (K)"
 y_axis_name <- "CIW"
 scales      <- "free"
 error_bar   <- FALSE
-# filters     <- list(npc <- c(1, 5, 10, 20))
-filters     <- list()
+filters = list(lv = FALSE)
+# filters     <- list()
 
 # Subset data
 dat_sub <- dat %>%

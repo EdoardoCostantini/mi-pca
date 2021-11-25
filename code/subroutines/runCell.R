@@ -126,9 +126,13 @@ runCell <- function(rp, cond, fs, parms) {
     }
 
     ## Define explained variance information
-    if("CPVE" %in% names(imp_out)){
-      PC_exp <- imp_out$CPVE
-    } else {
+    if(exists("imp_out")){         # If imputation
+      if("CPVE" %in% names(imp_out)){   # - PCA used
+        PC_exp <- imp_out$CPVE
+      } else {                          # - PCA not used
+        PC_exp <- NA
+      }
+    } else {                          # If no Imputation
       PC_exp <- NA
     }
 

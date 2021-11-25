@@ -26,24 +26,6 @@
   local_list <- c("mice.pcr.sim")
   local_list_location <- c("../input/")
 
-  # # Install packages not yet installed from CRAN
-  # installed_packages <- cran_list %in% rownames(installed.packages())
-  # if (any(installed_packages == FALSE)) {
-  #   install.packages(cran_list[!installed_packages],
-  #                    repos = 'http://cran.us.r-project.org')
-  # }
-  #
-  # # Update packages that need to be updated
-  # update.packages(cran_list, repos = 'http://cran.us.r-project.org')
-  #
-  # # Install packages not yet installed from local
-  # installed_packages <- local_list %in% rownames(installed.packages())
-  # if (any(installed_packages == FALSE)) {
-  #   to_install <- sapply(local_list, grep, list.files(local_list_location),
-  #                        value = TRUE)
-  #   install.packages(paste0(local_list_location, to_install))
-  # }
-
   # Put together
   pack_list <- c(cran_list, local_list)
 

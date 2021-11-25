@@ -78,8 +78,12 @@ Researchers at most dutch universities can request access to this cluster comput
 
 You can also replicate the simulation on a personal computer by following these steps: 
 
-- Open the script `run_sim.R`
+- Open the initialization script `init.R` and check that:
+  - you have all the required packages installed;
+  - the parameter `parms$run_type` is set to 1 (this will deploy the conditions for the final run of the simulation
+    as opposed to the trial and convergence checks run).
+- Open the script `pc_run_simulation.R.R`
 - Define the number of desired repetitions by changing the parameter `reps`
 - Define the number of clusters for parallelization by changing the parameter `clus`
-- Run the script `run_sim.R`
+- Run the script `pc_run_simulation.R.R`
 - results are then pooled by the `pooling.R` script.

@@ -17,7 +17,7 @@ This directory contains the following main subfolders:
 # How to replicate results
 
 In the following guide, it is assumed that the machine on which the simulation is run 
-already has the pacakges that are required by the simulation.
+already has the packages that are required by the simulation.
 The script `init.R` contains the list of required packages.
 
 ## Running the simulation on Lisa

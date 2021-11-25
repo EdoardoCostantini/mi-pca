@@ -186,3 +186,13 @@
                                 paste0(colnames(conds), conds[i, ], collapse = "_")
                               }),
                  conds)
+
+  # Make character vectors factors
+  conds <- lapply(conds, function (j){
+    if(is.character(j)){
+      factor(j, levels = unique(j))
+    } else {
+      j
+    }
+  })
+  conds <- as.data.frame(conds)

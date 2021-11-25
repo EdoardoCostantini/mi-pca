@@ -4,47 +4,46 @@
 # Created:   2021-09-29
 # Modified:  2021-11-10
 
-evaPerf <- function (out, output){
+evaPerf <- function (results, sInfo){
 
-  # Get rid of failed rows
-  to_remove <- sapply(out[, c("Q_bar", "lwr", "upr")], function (j){
+# Get rid of failed rows
+  to_remove <- sapply(results[, c("Q_bar", "lwr", "upr")], function (j){
     which(is.nan(j))
   })
   if(length(unique(unlist(to_remove))) != 0){
-    out <- out[-unique(unlist(to_remove)), ]
+    results <- results[-unique(unlist(to_remove)), ]
   }
 
-  # Transform npc = max to appropriate number
-  out$npc[out$npc == "max" & out$method == "all"] <- 50
-  out$npc[out$npc == "max" & out$method == "aux"] <- 46
-  out$npc[out$npc == "max" & out$method == "vbv"] <- 49
+# Transform npc = max to appropriate number
+  npc_temp <- as.character(results$npc)
+  max_position <- npc_temp %in% "max"
+  npc_temp[max_position & results$method == "all"] <- 56
+  npc_temp[max_position & results$method == "all_oracle"] <- 56
+  npc_temp[max_position & results$method == "aux"] <- 52
+  npc_temp[max_position & results$method == "vbv"] <- 55
+  results$npc <- factor(npc_temp)
 
-  # Cast experimental factors to ordered factors
-  out$npc <- as.numeric(out$npc)
-  out$K <- factor(out$K, levels = rev(unique(out$K)), ordered = TRUE)
-  out$tag <- factor(out$tag, levels = unique(out$tag), ordered = TRUE)
-  out$par <- factor(out$par, levels = unique(out$par), ordered = TRUE)
-  out$method <- factor(out$method,
-                       levels = unique(output$sInfo$conds$method),
-                       ordered = TRUE)
+# Cast discrete experimental factors to r factors
+  results$K <- factor(results$K, levels = rev(unique(results$K)))
+  results$par <- factor(results$par, levels = unique(results$par))
 
-  # True values
-  ref_grouping <- c("K", "D", "interval", "pj", "par")
-  ref_df <- data.frame(out %>%
+# Define "True" values
+  ref_grouping <- c("K", "D", "interval", "pj", "par", "lv")
+  ref_df <- data.frame(results %>%
                          filter(method == "OG") %>%
                          group_by_at(ref_grouping) %>%
                          dplyr::summarize(ref = mean(Q_bar)))
 
-  # Attach referemce value based on matching par to original dataset
-  out_ref <- merge(x = out,
-                   y = ref_df,
-                   by = ref_grouping,
-                   all.x = TRUE)
-  out_ref <- arrange(out_ref, rp, tag, par)
+  # Attach reference value based on matching par to original dataset
+  results_ref <- merge(x = results,
+                       y = ref_df,
+                       by = ref_grouping,
+                       all.x = TRUE)
+  results_ref <- arrange(results_ref, rp, tag, par)
 
-  # Bias Computation
-  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "par")
-  bias_df <- data.frame(out_ref %>%
+# Bias Computation
+  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "par", "lv")
+  bias_df <- data.frame(results_ref %>%
                           group_by_at(comp_grouping) %>%
                           dplyr::summarize(Mean = mean(Q_bar),
                                            mcsd = sd(Q_bar),
@@ -54,26 +53,25 @@ evaPerf <- function (out, output){
   bias_df$bias <- round(abs(bias_df$Mean - bias_df$ref) / bias_df$ref*100, 3)
   bias_df <- arrange_at(bias_df, comp_grouping)
 
-  # Confidence interval coverage for a given method across other factors
-  # Check if the confidence intervals contains reference value
-  out_ref$cover_log <- out_ref$lwr < out_ref$ref & out_ref$ref < out_ref$upr
-  CIC <- data.frame(out_ref %>%
+# Coverage
+  results_ref$cover_log <- results_ref$lwr < results_ref$ref & results_ref$ref < results_ref$upr
+  CIC <- data.frame(results_ref %>%
                       group_by_at(comp_grouping) %>%
                       dplyr::summarize(coverage = mean(cover_log, na.rm = TRUE)))
 
-  # Confidence interval width for a given method across other factors
-  out_ref$CIW <- out_ref$upr - out_ref$lwr
-  CIW <- data.frame(out_ref %>%
+# Confidence interval width
+  results_ref$CIW <- results_ref$upr - results_ref$lwr
+  CIW <- data.frame(results_ref %>%
                       group_by_at(comp_grouping) %>%
                       dplyr::summarize(CIW = mean(CIW)))
-  upr_avg <- data.frame(out_ref %>%
+  upr_avg <- data.frame(results_ref %>%
                           group_by_at(comp_grouping) %>%
                           dplyr::summarize(upr_avg = mean(upr)))
-  lwr_avg <- data.frame(out_ref %>%
+  lwr_avg <- data.frame(results_ref %>%
                           group_by_at(comp_grouping) %>%
                           dplyr::summarize(lwr_avg = mean(lwr)))
 
-  # Merge all
+# Merge all
   res <- cbind(bias_df,
                CIC = round(CIC$coverage, 3),
                CIW = round(CIW$CIW, 3),

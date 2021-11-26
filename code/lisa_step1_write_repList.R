@@ -20,9 +20,3 @@ outDir <- "../input/"
 fileName <- paste0("stopos_lines")
 write(as.character(1:goal_reps),
       file = paste0(outDir, fileName))
-
-# Compute Estimated CPU time (not printed, just for yourself)
-n_nodes <- goal_reps/ncores # number of arrays
-time_est <- 3.8 # h it took on blade to run 1 repetition
-wall_time <- time_est * 2 # expected job time on lisa
-n_nodes * ncores * wall_time # expecgted SBU consumption

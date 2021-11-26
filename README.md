@@ -26,6 +26,13 @@ Lisa Cluster is a cluster computer system managed by SURFsara, a cooperative ass
 research institutions.
 Researchers at most dutch universities can request access to this cluster computer.
 
+- Open the `init.R` script and check that the fixed and experimental factors are set to the
+  desired values.
+- Run on a personal computer the script `lisa_step0_time_est.R` to check how long it takes
+  to perform a single run across all the conditions in the simulation study.
+  This will create an R object called `wall_time`.
+- Open the script `lisa_js_normal.sh` and replace the wall time in the header with the value
+  of `wall_time`.
 - Decide the number of repetitions in the preparatory script `lisa_step1_write_repList.R`
   For example:
   ```
@@ -36,7 +43,11 @@ Researchers at most dutch universities can request access to this cluster comput
   Once you have specified these values, run the script on your computer. 
   This will create a `stopos_lines` text file that will define the repetition index.
   This file will be located in the `input` folder.
+- Go to the `lisa/` and create a folder with a meaningful name for the run (I usually use the 
+  current date). Then, copy here the `code` and `input` folders and create an empty `output` 
+  folder.
 - Authenticate on Lisa
+- Check all the packages called by the `init.R` script are available and install what is not.
 - From your terminal, upload the folder containing the project
   ```
   scp -r path/to/local/project user@lisa.surfsara.nl:project
@@ -45,12 +56,13 @@ Researchers at most dutch universities can request access to this cluster comput
   ```
   scp -r lisa/20211116 ******@lisa.surfsara.nl:mipca_compare
   ```
-- load the following modules
+- Go back to the lisa terminal and load the following modules
   ```
   module load 2020
   module load R/4.0.2-intel-2020a
   module load Stopos/0.93-GCC-9.3.0  
   ```
+  (or their most recent version at the time you are running this)
 - go to the code folder on the lisa cloned project
   ``` 
   cd mipca_compare/code/ 

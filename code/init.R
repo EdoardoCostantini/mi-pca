@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-10-15
+# Modified:  2021-11-26
 
 # Packages ----------------------------------------------------------------
 
@@ -127,7 +127,7 @@
 
   # Number of components to extract
   npc <- list(
-    final     = c(1, 2, 3, 4, 5, 10, 20, 25, "max"),
+    final     = c(1:10, 20, 25, "max"),
     convCheck = c(1, "max"),
     trial     = c(1, 20, "max")
   )[[parms$run_type]]

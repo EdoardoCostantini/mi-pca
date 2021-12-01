@@ -161,7 +161,7 @@ runCell <- function(rp, cond, fs, parms) {
     }
 
     ## Store Cumulative Explained Variance in vbv case
-    if(cond$method == "vbv"){
+    if(cond$method == "FREEZE"){ # usually equal to "vbv"
       pc_res <- base::cbind(cond, imp_out$CPVE_mat)
       saveRDS(pc_res,
               file = paste0(fs$outDir,

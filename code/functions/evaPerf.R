@@ -2,7 +2,7 @@
 # Objective: Function to compute bias, coverage, and CIW
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-11-10
+# Modified:  2021-12-01
 
 evaPerf <- function (results, sInfo){
 
@@ -21,7 +21,7 @@ evaPerf <- function (results, sInfo){
   npc_temp[max_position & results$method == "all_oracle"] <- 56
   npc_temp[max_position & results$method == "aux"] <- 52
   npc_temp[max_position & results$method == "vbv"] <- 55
-  results$npc <- factor(npc_temp)
+  results$npc <- factor(npc_temp, sort(as.numeric(unique(npc_temp))))
 
 # Cast discrete experimental factors to r factors
   results$K <- factor(results$K, levels = rev(unique(results$K)))

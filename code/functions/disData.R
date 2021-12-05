@@ -22,10 +22,12 @@ disData <- function (x, K = Inf, D = 1, interval = TRUE, parms){
     # Is the target interval scaled or not?
     if (interval == TRUE){
       for(j in index_discrete){
-        x[, j] <- cut(x[, j],
-                           breaks = K,
-                           labels = 1:K,
-                           ordered_result = TRUE)
+        x[, j] <- as.numeric(cut(x[, j],
+                                 breaks = K,
+                                 labels = 1:K))
+        if(K == 2){
+          x[, j] <- x[, j] - 1
+        }
       }
     } else {
       prob_reduction <- .6 # every subsequent bin contains .6 of the remaining obs

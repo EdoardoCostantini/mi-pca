@@ -2,7 +2,7 @@
 # Objective: Plot time to impute
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2021-11-10
+# Modified:  2021-12-16
 
 # Clean environment:
 rm(list = ls())
@@ -28,7 +28,7 @@ target_par <- c(
 
 # Inputs
 dat = res_time
-sel_meths = levels(res_time$method)[-5] # all
+sel_meths = levels(res_time$method)[-c(6, 7)] # all
 plot_x_axis = "K"
 plot_y_axis = "relative"
 moderator = "npc"
@@ -38,7 +38,8 @@ x_axis_name = "Number of categories (K)"
 y_axis_name = "Scaling factor"
 scales = NULL
 error_bar = FALSE
-filters = list()
+filters = list(lv = TRUE)
+# filters = list()
 
   # Subset data
   dat_sub <- dat %>%

@@ -2,7 +2,7 @@
 # Objective: Plot All methods against MIOP and MIOR
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2021-11-01
+# Modified:  2021-12-16
 
 # Clean environment:
 rm(list = ls())
@@ -13,8 +13,7 @@ source("./init.R")
 # Read results
 inDir <- "../output/"
 files <- grep("rds", list.files(inDir), value = TRUE)
-runName <- "20211027_154635_res.rds" # results for IOPS
-runName <- "20211116_120623_res.rds" # with latent + subfolders
+runName <- files[7]
 
 # Read output
 gg_shape <- readRDS(paste0(inDir, runName))

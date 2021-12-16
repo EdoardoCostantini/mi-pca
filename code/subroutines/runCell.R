@@ -11,7 +11,7 @@ runCell <- function(rp, cond, fs, parms) {
 
   # Example Internals -------------------------------------------------------
 
-  # cond = conds[14, ]
+  # cond = conds[688, ]
   # rp   = 1
   tryCatch({
     ### START TRYCATCH EXPRESSION
@@ -41,6 +41,14 @@ runCell <- function(rp, cond, fs, parms) {
                               imp_target = parms$vmap$ta,
                               pcs_target = unlist(parms$vmap, use.names = FALSE),
                               ncfs = cond$npc,
+                              parms = parms)
+    }
+    if(cond$method == "all_oracle"){
+      imp_out <- imputePCAall(Z = dat_miss,
+                              imp_target = parms$vmap$ta,
+                              pcs_target = unlist(parms$vmap, use.names = FALSE),
+                              ncfs = cond$npc,
+                              Z_ori = dat_ordi,
                               parms = parms)
     }
     if(cond$method == "aux") {
@@ -90,7 +98,7 @@ runCell <- function(rp, cond, fs, parms) {
 
     # Analyze and pool --------------------------------------------------------
 
-    if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
+    if(exists("imp_out")){
       ## Estimate Mean, variance, covariance
       fits <- fitSatModel(mids = imp_out$mids,
                           model = genLavaanMod(dat_miss,
@@ -118,9 +126,13 @@ runCell <- function(rp, cond, fs, parms) {
     }
 
     ## Define explained variance information
-    if(cond$method %in% c("all", "aux", "vbv")){
-      PC_exp <- imp_out$CPVE
-    } else {
+    if(exists("imp_out")){         # If imputation
+      if("CPVE" %in% names(imp_out)){   # - PCA used
+        PC_exp <- imp_out$CPVE
+      } else {                          # - PCA not used
+        PC_exp <- NA
+      }
+    } else {                          # If no Imputation
       PC_exp <- NA
     }
 
@@ -132,28 +144,28 @@ runCell <- function(rp, cond, fs, parms) {
 
     ## Store Main Results
     saveRDS(res,
-            file = paste0(fs$outDir_rp[rp],
-                          "rp", rp, "_", cond$tag,
+            file = paste0(fs$outDir,
+                          "rep_", rp, "_", cond$tag,
                           "_main",
                           ".rds")
     )
 
     ## Store Time Results
-    if(cond$method %in% c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI")){
+    if(exists("imp_out")){
       saveRDS(cbind(cond, time = imp_out$time),
-              file = paste0(fs$outDir_rp[rp],
-                            "rp", rp, "_", cond$tag,
+              file = paste0(fs$outDir,
+                            "rep_", rp, "_", cond$tag,
                             "_time",
                             ".rds")
       )
     }
 
     ## Store Cumulative Explained Variance in vbv case
-    if(cond$method == "vbv"){
-      pc_res <- cbind(cond, imp_out$CPVE)
+    if(cond$method == "FREEZE"){ # usually equal to "vbv"
+      pc_res <- base::cbind(cond, imp_out$CPVE_mat)
       saveRDS(pc_res,
-              file = paste0(fs$outDir_rp[rp],
-                            "rp", rp, "_", cond$tag,
+              file = paste0(fs$outDir,
+                            "rep_", rp, "_", cond$tag,
                             "_CPVE",
                             ".rds")
       )
@@ -162,8 +174,8 @@ runCell <- function(rp, cond, fs, parms) {
     ## Store mids results if run requires it
     if(parms$run_type == 2){
       saveRDS(imp_out$mids,
-              file = paste0(fs$outDir_rp[rp],
-                            "rp", rp, "_", cond$tag,
+              file = paste0(fs$outDir,
+                            "rep_", rp, "_", cond$tag,
                             "_mids",
                             ".rds")
       )
@@ -174,8 +186,8 @@ runCell <- function(rp, cond, fs, parms) {
     err <- paste0("Original Error: ", e)
     err_res <- cbind(rp = rp, cond, Error = err)
     saveRDS(err_res,
-            file = paste0(fs$outDir_rp[rp],
-                          "rp", rp, "_", cond$tag,
+            file = paste0(fs$outDir,
+                          "rep_", rp, "_", cond$tag,
                           "_ERROR",
                           ".rds")
     )

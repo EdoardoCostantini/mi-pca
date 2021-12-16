@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-11-16
+# Modified:  2021-11-26
 
 # Packages ----------------------------------------------------------------
 
@@ -25,24 +25,6 @@
 
   local_list <- c("mice.pcr.sim")
   local_list_location <- c("../input/")
-
-  # Install packages not yet installed from CRAN
-  installed_packages <- cran_list %in% rownames(installed.packages())
-  if (any(installed_packages == FALSE)) {
-    install.packages(cran_list[!installed_packages],
-                     repos = 'http://cran.us.r-project.org')
-  }
-
-  # Update packages that need to be updated
-  update.packages(cran_list, repos = 'http://cran.us.r-project.org')
-
-  # Install packages not yet installed from local
-  installed_packages <- local_list %in% rownames(installed.packages())
-  if (any(installed_packages == FALSE)) {
-    to_install <- sapply(local_list, grep, list.files(local_list_location),
-                         value = TRUE)
-    install.packages(paste0(local_list_location, to_install))
-  }
 
   # Put together
   pack_list <- c(cran_list, local_list)
@@ -75,7 +57,7 @@
   # Run type
   parms$run_type <- c(final = 1,
                       convCheck = 2,
-                      trial = 3)[3]
+                      trial = 3)[1]
 
   # Data generation
   parms$N <- 500 # sample size
@@ -145,16 +127,17 @@
 
   # Number of components to extract
   npc <- list(
-    final     = c(1, 2, 3, 4, 5, 10, 20, 25, "max"),
+    final     = c(1:10, 20, 25, "max"),
     convCheck = c(1, "max"),
     trial     = c(1, 20, "max")
   )[[parms$run_type]]
 
   # Methods
   method <- list(
-    final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
+    # final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
+    final     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
     convCheck = c("aux", "vbv", "MIOP", "MIOR", "MIMI"),
-    trial     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
+    trial     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
   )[[parms$run_type]]
 
   # Make Conditionsa
@@ -163,7 +146,7 @@
                          interval = interval,
                          pj = pj,
                          npc = npc,
-                         method = intersect(c("all", "aux", "vbv"), method),
+                         method = intersect(c("all", "all_oracle", "aux", "vbv"), method),
                          lv = lv,
                          stringsAsFactors = FALSE)
 
@@ -186,3 +169,13 @@
                                 paste0(colnames(conds), conds[i, ], collapse = "_")
                               }),
                  conds)
+
+  # Make character vectors factors
+  conds <- lapply(conds, function (j){
+    if(is.character(j)){
+      factor(j, levels = unique(j))
+    } else {
+      j
+    }
+  })
+  conds <- as.data.frame(conds)

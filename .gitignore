@@ -45,11 +45,13 @@ vignettes/*.pdf
 ## Folders
 
 # Ignore lisa folder
-/lisa/
+/lisa/*
+!/lisa/.gitkeep
 
 # Ignore output/console folder
 /output/console
 /output/*.txt
+!/output/.gitkeep
 
 # Ignore .idea folder
 /.idea/

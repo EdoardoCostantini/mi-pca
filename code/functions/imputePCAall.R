@@ -1,15 +1,17 @@
 ### Title:    Imputing High Dimensional Data
 ### Author:   Edoardo Costantini
 ### Created:  2020-05-19
-### Modified: 2021-10-01
+### Modified: 2021-11-24
 
-imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
+imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1,
+                         Z_ori = NULL, parms){
 
   ## Input: 
   # @Z: dataset w/ missing values,
   # @target: integer vector indexing important variables to impute
   # @cond: single line dataframe describing current condition
   # @parms: the initialization object parms
+  # @Z_ori: the original dataset
 
   ## output: 
   # - a list of chains imputed datasets at iteration iters
@@ -22,6 +24,7 @@ imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   # imp_target = parms$vmap$ta
   # pcs_target = c(parms$vmap$mp, parms$vmap$ax)
   # ncfs = 1
+  # Z_ori = dat_ordi
 
   ## body:
   ## Process the number of predictors
@@ -32,19 +35,24 @@ imputePCAall <- function(Z, imp_target, pcs_target, ncfs = 1, parms){
   }
 
   start_time <- Sys.time()
+  ## Check if we are running oracle version or not
+  if(is.null(Z_ori)){
+    # Single Imputation to allow PCA
+    pMat     <- quickpred(Z, mincor = .3)
+    Z_SI_mids <- mice(Z,
+                      m               = 1,
+                      maxit           = 20,
+                      predictorMatrix = pMat,
+                      printFlag       = FALSE,
+                      method          = "norm")
+    Z_SI <- complete(Z_SI_mids)
 
-  # Single Imputation to allow PCA
-  pMat     <- quickpred(Z, mincor = .3)
-  Z_SI_mids <- mice(Z,
-                    m               = 1,
-                    maxit           = 20,
-                    predictorMatrix = pMat,
-                    printFlag       = FALSE,
-                    method          = "norm")
-  Z_SI <- complete(Z_SI_mids)
-
-  # Prepare object for prcomp
-  Z_pca <- apply(Z_SI, 2, as.numeric)
+    # Prepare object for prcomp
+    Z_pca <- apply(Z_SI, 2, as.numeric)
+  } else {
+    # Use original data for PCA
+    Z_pca <- apply(Z_ori, 2, as.numeric)
+  }
 
   # Extract PCs
   prcomp_out <- prcomp(Z_pca,

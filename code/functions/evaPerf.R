@@ -2,7 +2,7 @@
 # Objective: Function to compute bias, coverage, and CIW
 # Author:    Edoardo Costantini
 # Created:   2021-09-29
-# Modified:  2021-12-01
+# Modified:  2021-12-16
 
 evaPerf <- function (results, sInfo){
 
@@ -28,7 +28,7 @@ evaPerf <- function (results, sInfo){
   results$par <- factor(results$par, levels = unique(results$par))
 
 # Define "True" values
-  ref_grouping <- c("K", "D", "interval", "pj", "par", "lv")
+  ref_grouping <- c("K", "D", "interval", "pj", "lv", "par")
   ref_df <- data.frame(results %>%
                          filter(method == "OG") %>%
                          group_by_at(ref_grouping) %>%
@@ -42,7 +42,7 @@ evaPerf <- function (results, sInfo){
   results_ref <- arrange(results_ref, rp, tag, par)
 
 # Bias Computation
-  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "par", "lv")
+  comp_grouping <- c("K", "D", "interval", "pj", "npc", "method", "lv", "par")
   bias_df <- data.frame(results_ref %>%
                           group_by_at(comp_grouping) %>%
                           dplyr::summarize(Mean = mean(Q_bar),
@@ -63,19 +63,19 @@ evaPerf <- function (results, sInfo){
   results_ref$CIW <- results_ref$upr - results_ref$lwr
   CIW <- data.frame(results_ref %>%
                       group_by_at(comp_grouping) %>%
-                      dplyr::summarize(CIW = mean(CIW)))
-  upr_avg <- data.frame(results_ref %>%
-                          group_by_at(comp_grouping) %>%
-                          dplyr::summarize(upr_avg = mean(upr)))
-  lwr_avg <- data.frame(results_ref %>%
-                          group_by_at(comp_grouping) %>%
-                          dplyr::summarize(lwr_avg = mean(lwr)))
+                      dplyr::summarize(CIW_avg = mean(CIW),
+                                       CIW_sd = sd(CIW),
+                                       CIW_lwr_avg = mean(lwr),
+                                       CIW_upr_avg = mean(upr)
+                      ))
 
 # Merge all
   res <- cbind(bias_df,
                CIC = round(CIC$coverage, 3),
-               CIW = round(CIW$CIW, 3),
-               lwr_avg = lwr_avg$lwr_avg,
-               upr_avg = upr_avg$upr_avg)
-  return(res)
+               CIW = round(CIW$CIW_avg, 3),
+               CIW_sd = round(CIW$CIW_sd, 3),
+               lwr_avg = CIW$CIW_lwr_avg,
+               upr_avg = CIW$CIW_upr_avg)
+  return(list(res = res,
+              full_res = results_ref))
 }

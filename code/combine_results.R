@@ -2,7 +2,7 @@
 # Objective: combine results from simulation study
 # Author:    Edoardo Costantini
 # Created:   2021-11-25
-# Modified:  2021-12-01
+# Modified:  2021-12-16
 # Note:      Works for both Lisa and PC results
 
 # Prep environment --------------------------------------------------------
@@ -14,6 +14,7 @@
 
   loaction <- "../output/"
   run_name <- "8447019_unzipped"
+  run_name <- "8469421_unzipped"
   out <- readRDS(paste0(loaction, run_name, ".rds")) # pc
 
   fileNames <- out$fileNames
@@ -24,15 +25,22 @@
 # > Main results
 
   # Reshape
-  gg_shape <- evaPerf(results = out$main,
+  perf_out <- evaPerf(results = out$main,
                       sInfo = out$sInfo)
 
-
   # Store
-  saveRDS(gg_shape,
+  saveRDS(perf_out$res,
           file = paste0("../output/",
                         gsub("unzipped",
                              "main_gg_shape",
+                             run_name),
+                        ".rds")
+  )
+
+  saveRDS(perf_out$full_res,
+          file = paste0("../output/",
+                        gsub("unzipped",
+                             "ciw_raw_gg_shape",
                              run_name),
                         ".rds")
   )

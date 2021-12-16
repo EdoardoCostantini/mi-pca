@@ -2,7 +2,7 @@
 # Objective: Plot bias for the PCA based methods
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2021-11-15
+# Modified:  2021-12-16
 
 # Clean environment:
 rm(list = ls())
@@ -14,6 +14,7 @@ source("./init.R")
 inDir <- "../output/"
 files <- grep("rds", list.files(inDir), value = TRUE)
 runName <- files[3]
+runName <- files[7]
 
 # Read output
 gg_shape <- readRDS(paste0(inDir, runName))
@@ -23,24 +24,33 @@ target_par <- c(
   Mean = "z1~1",
   Variance = "z1~~z1",
   Covariance = "z1~~z2",
-  Correlation = "z1rz2"
+  Correlation = "z1rz2",
+  Correlation = "z1rz3",
+  Correlation = "z2rz3"
 )
 
+# Change names of factors for plot
+levels(gg_shape$method) <- c("MI-PCR-ALL", "MI-PCR-ALL (oracle)",
+                             "MI-PCR-AUX", "MI-PCR-VBV",
+                             "MI-QP", "MI-OR", "MI-MI",
+                             "CC", "OG")
+
 # Inputs
-dat = gg_shape
-par_est = target_par[[4]]
-sel_meths = levels(gg_shape$method)[c(1:5)] # all
-plot_x_axis = "K"
-plot_y_axis = "bias"
-moderator = "npc"
-grid_x_axis = "pj"
-grid_y_axis = "method"
-x_axis_name = "Number of categories (K)"
-y_axis_name = "PRB"
-scales = NULL
-error_bar = FALSE
-filters = list(lv = TRUE)
-# filters = list()
+dat         <- gg_shape
+par_est     <- target_par[[4]]
+sel_meths   <- levels(gg_shape$method)[c(1, 3:6)] # all
+plot_x_axis <- "K"
+plot_y_axis <- "bias"
+moderator   <- "npc"
+grid_x_axis <- "method"
+grid_y_axis <- "pj"
+x_axis_name <- "Number of categories (K)"
+y_axis_name <- "PRB"
+scales      <- NULL
+filters     <- list(pj = c(0, 1),
+                    K = c(Inf, 5, 2),
+                    lv = TRUE)
+# filters     <- list()
 
   # Subset data
   dat_sub <- dat %>%
@@ -75,7 +85,7 @@ filters = list(lv = TRUE)
   # Grid
   plot_grid <- plot_main +
     facet_grid(reformulate(grid_x_axis, grid_y_axis),
-               labeller = label_both,
+               labeller = labeller(.rows = label_both, .cols = label_value),
                scales = "free",
                switch = "y")
 
@@ -85,12 +95,20 @@ filters = list(lv = TRUE)
           plot.title = element_text(hjust = 0.5),
           strip.text.y.left = element_text(angle = 0),
           legend.position = "left",
-          axis.title = element_text(size = 10)) +
-    labs(title = paste0("Bias for ", par_est),
-         x     = x_axis_name,
-         y     = y_axis_name) +
-    scale_y_continuous(position="right") + # y-axis labels on the right
+          axis.title = element_text(size = 10),
+          axis.title.y = element_blank()) +
+    labs(x     = x_axis_name) +
+    scale_y_continuous(position = "right") + # y-axis labels on the right
     coord_cartesian(ylim = c(0, 15))
 
   # Return final plot
   plot_themed
+
+# Save it
+ggsave("./plots/bias.pdf",
+  scale = 1,
+  width = 25,
+  height = 15,
+  units = "cm",
+  dpi = 300
+)

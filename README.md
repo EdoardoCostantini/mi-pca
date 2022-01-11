@@ -1,8 +1,10 @@
 # MI-PCR Comparison
-Describe project briefly.
+*Readme last update: 2022-01-11* 
+
+Here I describe the content of this repository and how to replicate the simulation study.
 
 # Contents
-This directory contains the following main subfolders:
+This directory contains the following main sub-folders:
 - code: the main software to run the study
   - checks
   - experiments
@@ -26,10 +28,13 @@ Lisa Cluster is a cluster computer system managed by SURFsara, a cooperative ass
 research institutions.
 Researchers at most dutch universities can request access to this cluster computer.
 
-- Open the `init.R` script and check that the fixed and experimental factors are set to the
-  desired values.
+- Open the initialization script `init.R` and check that:
+  - you have all the required packages installed;
+  - the parameter `parms$run_type` is set to 1 (this will deploy the conditions for the final run of the simulation
+    as opposed to the trial and convergence checks run). 
+  - the fixed parameters and experimental factor levels are set to the desired values.
 - Run on a personal computer the script `lisa_step0_time_est.R` to check how long it takes
-  to perform a single run across all the conditions in the simulation study.
+  to perform a single run across all the conditions with the chosen simulation study set up.
   This will create an R object called `wall_time`.
 - Open the script `lisa_js_normal.sh` and replace the wall time in the header with the value
   of `wall_time`.
@@ -83,8 +88,10 @@ Researchers at most dutch universities can request access to this cluster comput
   ```
   scp -r user@lisa.surfsara.nl:mipca_compare/output/folder path/to/local/project/output/folder
   ```
-- Finally, the script `lisa_step4_results.R` goes through the Lisa result folder, unzips tar.gz
+- The script `lisa_step4_results.R` goes through the Lisa result folder, unzips tar.gz
   packages and puts results together.
+- Finally, the script `combine_results.R` computes bias, CIC, and all the outcome measures. 
+  It also puts together the RDS objects that can be plotted with the functions stored in `./code/plots/`
 
 ## Running the simulation on a PC / Mac
 
@@ -93,9 +100,12 @@ You can also replicate the simulation on a personal computer by following these 
 - Open the initialization script `init.R` and check that:
   - you have all the required packages installed;
   - the parameter `parms$run_type` is set to 1 (this will deploy the conditions for the final run of the simulation
-    as opposed to the trial and convergence checks run).
-- Open the script `pc_run_simulation.R.R`
+    as opposed to the trial and convergence checks run). 
+  - the fixed parameters and experimental factor levels are set to the desired values.
+- Open the script `pc_run_simulation.R`
 - Define the number of desired repetitions by changing the parameter `reps`
 - Define the number of clusters for parallelization by changing the parameter `clus`
-- Run the script `pc_run_simulation.R.R`
-- results are then pooled by the `pooling.R` script.
+- Run the script `pc_run_simulation.R`
+- Run the script `pc_unzip.R` to unzip the results and create a single .rds file
+- Finally, the script `combine_results.R` computes bias, CIC, and all the outcome measures. 
+  It also puts together the RDS objects that can be plotted with the functions stored in `./code/plots/`

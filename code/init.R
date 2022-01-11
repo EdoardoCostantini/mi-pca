@@ -57,7 +57,7 @@
   # Run type
   parms$run_type <- c(final = 1,
                       convCheck = 2,
-                      trial = 3)[1]
+                      trial = 3)[3]
 
   # Data generation
   parms$N <- 500 # sample size

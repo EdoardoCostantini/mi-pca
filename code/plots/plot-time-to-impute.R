@@ -2,7 +2,7 @@
 # Objective: Plot time to impute
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2021-12-16
+# Modified:  2022-01-11
 
 # Clean environment:
 rm(list = ls())
@@ -12,8 +12,9 @@ source("./init.R")
 
 # Read results
 inDir <- "../output/"
-files <- grep("rds", list.files(inDir), value = TRUE)
-runName <- files[4]
+grep("rds", list.files(inDir), value = TRUE)
+runName <- "8447019_time_gg_shape.rds"
+runName <- "8469421_time_gg_shape.rds"
 
 # Read output
 res_time <- readRDS(paste0(inDir, runName))

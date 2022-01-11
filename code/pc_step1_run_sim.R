@@ -2,7 +2,7 @@
 # Objective: Run the simulation study
 # Author:    Edoardo Costantini
 # Created:   2021-08-24
-# Modified:  2021-10-16
+# Modified:  2022-01-11
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -21,12 +21,6 @@ source("./init.R")
   # Main Folder
   fs$outDir <- paste0("../output/", fs$start_time, "/")
   dir.create(fs$outDir)
-
-  # Subfolders for repetitions
-  outDir_rp <- paste0(fs$outDir, "rp", reps, "/")
-  names(outDir_rp) <- reps
-  fs$outDir_rp <- outDir_rp # append to file system
-  sapply(outDir_rp, dir.create)
 
   # File names
   fs$fileName_res <- fs$start_time

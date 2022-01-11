@@ -2,7 +2,7 @@
 # Objective: combine results from simulation study
 # Author:    Edoardo Costantini
 # Created:   2021-11-25
-# Modified:  2021-12-16
+# Modified:  2022-01-11
 # Note:      Works for both Lisa and PC results
 
 # Prep environment --------------------------------------------------------
@@ -13,11 +13,11 @@
 # Load Results ------------------------------------------------------------
 
   loaction <- "../output/"
-  run_name <- "8447019_unzipped"
-  run_name <- "8469421_unzipped"
-  out <- readRDS(paste0(loaction, run_name, ".rds")) # pc
+  run_name <- "20220111_165620_pc_unzipped" # toy run on pc
+  run_name <- "8447019_unzipped" # good run on lisa
+  run_name <- "8469421_unzipped" # final run on lisa
+  out <- readRDS(paste0(loaction, run_name, ".rds"))
 
-  fileNames <- out$fileNames
   sInfo <- out$sInfo
 
 # Restructure Results -----------------------------------------------------

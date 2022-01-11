@@ -2,12 +2,12 @@
 # Objective: Line plots for bias, CIC and CIW
 # Author:    Edoardo Costantini
 # Created:   2021-11-01
-# Modified:  2021-11-01
+# Modified:  2022-01-11
 
   # Read results
   inDir <- "../output/"
-  files <- grep("rds", list.files(inDir), value = TRUE)
-  runName <- files[3]
+  grep("rds", list.files(inDir), value = TRUE)
+  runName <- "8469421_main_gg_shape.rds"
 
   # Read output
   gg_shape <- readRDS(paste0(inDir, runName))

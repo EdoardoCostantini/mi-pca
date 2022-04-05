@@ -2,7 +2,7 @@
 # Objective: Plot the distribution of Confidence Interval Width across repetitions
 # Author:    Edoardo Costantini
 # Created:   2021-12-16
-# Modified:  2022-01-11
+# Modified:  2022-04-05
 
 # Clean environment:
 rm(list = ls())
@@ -155,7 +155,7 @@ y_axis_name <- "CIW"
 scales      <- NULL
 error_bar   <- FALSE
 filters     <-  list(pj = c(0, 1),
-                     K = c(Inf, 2),
+                     K = c(Inf, 5, 2),
                      npc = c(0:10),
                      lv = TRUE)
 # filters     <- list()
@@ -246,7 +246,7 @@ plot_themed
 # Save it
 ggsave("./plots/ciw2.pdf",
        scale = 2,
-       width = 15,
+       width = 22.5,
        height = 15,
        units = "cm",
        dpi = 300

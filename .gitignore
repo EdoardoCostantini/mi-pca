@@ -7,6 +7,7 @@
 # Data files
 *.RData
 *.soft.gz
+*.csv
 
 # Example code in package build process
 *-Ex.R

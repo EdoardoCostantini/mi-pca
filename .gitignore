@@ -14,6 +14,7 @@
 
 # Output files from R CMD build
 *.tar.gz
+!mice.pcr.sim_3.13.9.tar.gz
 
 # produced vignettes
 vignettes/*.html

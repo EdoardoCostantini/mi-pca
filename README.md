@@ -3,19 +3,6 @@
 
 Here I describe the content of this repository and how to replicate the simulation study.
 
-# Contents
-This directory contains the following main sub-folders:
-- code: the main software to run the study
-  - checks
-  - experiments
-  - functions
-  - helper
-  - plots
-  - subroutines
-- input
-- output: the folder where the results of scripts located in code are stored
-- lisa: used only to store content for lisa cluster runs
-
 # How to replicate results
 
 In the following guide, it is assumed that the machine on which the simulation is run 
@@ -109,3 +96,101 @@ You can also replicate the simulation on a personal computer by following these 
 - Run the script `pc_step2_unzip.R` to unzip the results and create a single .rds file
 - Finally, the script `combine_results.R` computes bias, CIC, and all the outcome measures. 
   It also puts together the RDS objects that can be plotted with the functions stored in `./code/plots/`
+
+# Repository structure
+Here is the project structure:
+```
+├── code
+│ ├── checks
+│ │ ├── check_WVS.R
+│ │ ├── check_convergence.R
+│ │ ├── check_dataGen.R
+│ │ ├── check_fmi.R
+│ │ ├── check_mior_trend.R
+│ │ ├── check_missingness.R
+│ │ └── check_pseudoR2.R
+│ ├── experiments
+│ │ ├── CFA_Dami.R
+│ │ ├── data_gen_experiment.R
+│ │ ├── show_CFA_attenuation.R
+│ │ └── show_CFA_attenuation_longer.R
+│ ├── functions
+│ │ ├── amputeMultivariate.R
+│ │ ├── amputePerVar.R
+│ │ ├── disData.R
+│ │ ├── evaPerf.R
+│ │ ├── fitSatModel.R
+│ │ ├── fitSingleData.R
+│ │ ├── genData.R
+│ │ ├── genDataLatent.R
+│ │ ├── genLavaanMod.R
+│ │ ├── imputeMICE.R
+│ │ ├── imputePCAall.R
+│ │ ├── imputePCAaux.R
+│ │ ├── imputePCAvbv.R
+│ │ ├── plotLine.R
+│ │ ├── poolCor.R
+│ │ ├── poolSatMod.R
+│ │ └── simMissingness.R
+│ ├── helper
+│ │ ├── fmi.R
+│ │ ├── miDf.R
+│ │ ├── readTarGz.R
+│ │ ├── riv.R
+│ │ └── writeTarGz.R
+│ ├── plots
+│ │ ├── bias.pdf
+│ │ ├── bias2.pdf
+│ │ ├── cic.pdf
+│ │ ├── ciw.pdf
+│ │ ├── ciw2.pdf
+│ │ ├── plot-all-vs-MI-line.R
+│ │ ├── plot-bias-line.R
+│ │ ├── plot-bias.R
+│ │ ├── plot-cic.R
+│ │ ├── plot-ciw.R
+│ │ ├── plot-lines.R
+│ │ └── plot-time-to-impute.R
+│ ├── subroutines
+│ │ ├── runCell.R
+│ │ └── runRep.R
+│ ├── combine_results.R
+│ ├── init.R
+│ ├── lisa_js_normal.sh
+│ ├── lisa_js_short.sh
+│ ├── lisa_prep.sh
+│ ├── lisa_step0_time_est.R
+│ ├── lisa_step1_write_repList.R
+│ ├── lisa_step2_storeInfo.R
+│ ├── lisa_step3_run_doRep.R
+│ ├── lisa_step4_unzip.R
+│ ├── pc_step1_run_sim.R
+│ └── pc_step2_unzip.R
+├── input
+│ ├── F00011055-WVS_7_Codebook_Variables_report.pdf
+│ ├── blade_pack_insta.R
+│ ├── mice.pcr.sim_3.13.9.tar.gz
+│ └── stopos_lines
+├── lisa
+├── output
+├── tests
+│ ├── testthat
+│ │ ├── test_dataGen.R
+│ │ └── test_dataStep.R
+│ └── testthat.R
+├── .gitignore
+└── README.md
+
+```
+
+Here is a brief description of the folders:
+- `code`: the main software to run the study
+  - `checks` folder contains some script to check a few details of the procedure are producing the expected results
+  - `experiments` folder contains some initial trial scripts
+  - `functions` folder with the main project specific functions
+  - `helper` folder with functions to address file management and other small internal tasks 
+  - `plots` folder containing some plotting scripts and pdfs
+  - `subroutines` folder with the generic functions to run the simulation study
+- `input` folder where all the input files (e.g., data) should be stored
+- `output` folder where the results of the simulation study will be stored
+- `test` folder containing unit testing files

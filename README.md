@@ -5,9 +5,9 @@ Here I describe the content of this repository and how to replicate the simulati
 
 # How to replicate results
 
-In the following guide, it is assumed that the machine on which the simulation is run 
-already has the packages that are required by the simulation.
-The script `init.R` contains the list of required packages.
+To replicate the study, you first need to make sure you have installed all the pacakges used.
+You can use the `./input/prep_machine.R` script to install them.
+In the following guide, it is assumed that the machine on which the simulation is run already has all packages installed.
 
 ## Running the simulation on Lisa
 

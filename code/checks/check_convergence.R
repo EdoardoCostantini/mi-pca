@@ -33,8 +33,8 @@ output$sInfo$conds %>%
 # Mids names
 mids_index <- grep("mids", output$file_names)
 output$file_names[mids_index]
-out_mids
 out_mids <- output$out[mids_index]
+out_mids
 names(out_mids) <- output$file_names[mids_index]
 
 # Decide which condition you want

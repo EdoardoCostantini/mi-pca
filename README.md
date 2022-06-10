@@ -97,6 +97,12 @@ You can also replicate the simulation on a personal computer by following these 
 - Finally, the script `combine_results.R` computes bias, CIC, and all the outcome measures. 
   It also puts together the RDS objects that can be plotted with the functions stored in `./code/plots/`
 
+# Output files
+
+Notes on what the output files are:
+- `lisa/8469421/` contains results reported in paper;
+- `20220607_175414.tar.gz` contains convergence checks
+
 # Repository structure
 Here is the project structure:
 ```

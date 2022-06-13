@@ -85,10 +85,9 @@ Researchers at most dutch universities can request access to this cluster comput
 You can also replicate the simulation on a personal computer by following these steps: 
 
 - Open the initialization script `init.R` and check that:
-  - you have all the required packages installed;
-  - the parameter `parms$run_type` is set to 1 (this will deploy the conditions for the final run of the simulation
-    as opposed to the trial and convergence checks run). 
-  - the fixed parameters and experimental factor levels are set to the desired values.
+  - you have all the required packages installed
+  - the fixed parameters and experimental factor levels are set to the desired values
+  - the parameter `parms$run_type` is set to 1 (this will deploy the conditions for the final run of the simulation as opposed to the trial and convergence checks run)
 - Open the script `pc_step1_sim.R`
 - Define the number of desired repetitions by changing the parameter `reps`
 - Define the number of clusters for parallelization by changing the parameter `clus`
@@ -96,6 +95,20 @@ You can also replicate the simulation on a personal computer by following these 
 - Run the script `pc_step2_unzip.R` to unzip the results and create a single .rds file
 - Finally, the script `combine_results.R` computes bias, CIC, and all the outcome measures. 
   It also puts together the RDS objects that can be plotted with the functions stored in `./code/plots/`
+  
+## Convergence checks
+
+To perform convergence checks:
+
+- Open the initialization script `init.R` and check that:
+  - you have all the required packages installed
+  - the fixed parameters and experimental factor levels are set to the desired values
+  - the parameter `parms$run_type` is set to 3 (this will deploy the conditions for convergence check
+- Open the script `pc_step1_sim.R`
+- Define the number of desired repetitions by changing the parameter `reps`
+- Define the number of clusters for parallelization by changing the parameter `clus`
+- Run the script `pc_step1_sim.R`
+- Open and run the script `checks/check_convergence.R` to obtain convergence plots for desired conditions and repetitions
 
 # Output files
 

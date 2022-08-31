@@ -15,6 +15,7 @@ genDataLatent <- function(parms, cond){
   p_junk <- cond$pj
   rho_high <- parms$cov_ta
   rho_junk <- parms$cov_junk
+  largeP <- parms$largeP
 
   # Latent Variables Covariance matrix --------------------------------------
 
@@ -61,6 +62,40 @@ genDataLatent <- function(parms, cond){
     vec[start:end] <- lambda[start:end]
     Lambda[, j] <- vec
     start <- end + 1
+  }
+
+  if(largeP == TRUE){
+
+    # How many items to add to each possible auxiliary latent variable
+    J_extra <- 31
+
+    # Update the total number of items
+    P <- parms$P + J_extra * (parms$L - 1)
+
+    # Create a new lamba vector
+    lambda <- rep(.85, P)
+
+    # Create a new Theta
+    Theta <- diag(1 - lambda^2, P)
+
+    # Store the first part of the Lambda matrix (first latent variable measured by 8 items) 
+    Lambda_pt1 <- matrix(0, nrow = J, ncol = L)
+    Lambda_pt1[, 1] <- lambda[1]
+    
+    # Store the second part of the Lambda matrix (all other latent variables measured by all other items)
+    Lambda_pt2 <- matrix(0, nrow = (P - J), ncol = L)
+    start <- 1
+    for (j in 2:L) {
+      print(paste0(start, "-", j))
+      end <- (start + J + J_extra) - 1
+      vec <- rep(0, (P - J))
+      vec[start:end] <- lambda[start:end]
+      Lambda_pt2[, j] <- vec
+      start <- end + 1
+    }
+
+    # Combine the two parts
+    Lambda <- rbind(Lambda_pt1, Lambda_pt2)
   }
 
   # Sample Scores -----------------------------------------------------------

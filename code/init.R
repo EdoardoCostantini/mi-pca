@@ -58,21 +58,17 @@
   parms$run_type <- c(final = 1,
                       convCheck = 2,
                       trial = 3,
-                      supHD = 4)[1]
+                      supHD = 4)[4]
 
   # Data generation
   parms$N <- 500 # sample size
-  parms$P <- list(
-    final     = 56,
-    convCheck = 56,
-    trial     = 56,
-    supHD     = 350
-  )[[parms$run_type]] # number of variables
-  parms$L <- list(
-    final     = 7,
-    convCheck = 7,
-    trial     = 7,
-    supHD     = 50
+  parms$L <- 7
+  parms$P <- 56 # number of variables
+  parms$largeP <- list( # add extra items?
+    final     = FALSE,
+    convCheck = FALSE,
+    trial     = FALSE,
+    supHD     = TRUE
   )[[parms$run_type]]
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
@@ -132,7 +128,7 @@
     final     = round(seq(0, 1, length.out = 4), 2),
     convCheck = c(0, 1),
     trial     = round(seq(0, 1, length.out = 3), 2),
-    supHD     = c(0, 1)
+    supHD     = round(seq(0, 1, length.out = 4), 2)
   )[[parms$run_type]]
 
   # Latent Structure
@@ -140,7 +136,7 @@
     final     = c(TRUE, FALSE),
     convCheck = c(TRUE, FALSE),
     trial     = c(TRUE, FALSE),
-    supHD = c(TRUE)
+    supHD     = c(TRUE)
   )[[parms$run_type]]
 
   # Number of components to extract

@@ -2,14 +2,14 @@
 # Objective: Function to generate data with a latent structure
 # Author:    Edoardo Costantini
 # Created:   2021-11-10
-# Modified:  2021-11-15
+# Modified:  2022-08-31
 
 genDataLatent <- function(parms, cond){
 
   # Define parameters -----------------------------------------------------
   N <- parms$N
   P <- parms$P
-  L <- 7
+  L <- parms$L
   J <- P / L
   n_aux <- L - 1
   p_junk <- cond$pj
@@ -21,9 +21,17 @@ genDataLatent <- function(parms, cond){
   # Base
   Phi <- toeplitz(c(1, rep(rho_high, L-1)))
 
-  # Distinguish between important variables and possible auxiliary
+  # Distinguish between important variables and possible auxiliary (latent)
   index_junk_aux <- tail(1:ncol(Phi),
                          round(n_aux * p_junk, 0))
+
+  # Distinguish between important variables and possible auxiliary (items)
+  if(p_junk > 0){
+    index_junk_aux_items <- (((min(index_junk_aux) - 1) * J) + 1):(max(index_junk_aux) * J)
+  } else {
+    index_junk_aux_items <- integer(0)
+  }
+
   # Change rho if needed values
   Phi[index_junk_aux, ] <- rho_junk # junk
   # Fix diagonal
@@ -80,7 +88,7 @@ genDataLatent <- function(parms, cond){
   # Return ------------------------------------------------------------------
   return(
     list(x = data.frame(x_cont),
-         index_junk_aux = index_junk_aux)
+         index_junk_aux = index_junk_aux_items)
   )
 
 }

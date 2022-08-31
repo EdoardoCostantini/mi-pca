@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2021-11-26
+# Modified:  2022-08-31
 
 # Packages ----------------------------------------------------------------
 
@@ -57,11 +57,23 @@
   # Run type
   parms$run_type <- c(final = 1,
                       convCheck = 2,
-                      trial = 3)[1]
+                      trial = 3,
+                      supHD = 4)[1]
 
   # Data generation
   parms$N <- 500 # sample size
-  parms$P <- 56 # number of variables (100 target)
+  parms$P <- list(
+    final     = 56,
+    convCheck = 56,
+    trial     = 56,
+    supHD     = 350
+  )[[parms$run_type]] # number of variables
+  parms$L <- list(
+    final     = 7,
+    convCheck = 7,
+    trial     = 7,
+    supHD     = 50
+  )[[parms$run_type]]
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
   parms$cov_mp <- .7 # for mar predictors
@@ -81,7 +93,8 @@
   parms$mice_iters <- list(
     final     = 20,
     convCheck = 100,
-    trial     = 10
+    trial     = 10,
+    supHD     = 20
   )[[parms$run_type]]
 
   parms$seed     <- 20210929
@@ -94,42 +107,48 @@
   K <- list(
     final     = c(Inf, 7, 5, 3, 2),
     convCheck = c(7, 2),
-    trial     = c(Inf, 2)
+    trial     = c(Inf, 2),
+    supHD = c(Inf, 5, 2)
   )[[parms$run_type]]
 
   # Proportion of discretized variables
   D <- list(
     final     = 1,
     convCheck = 1,
-    trial     = 1 # seq(1, 0, length.out = 5)
+    trial     = 1, # seq(1, 0, length.out = 5)
+    supHD = 1
   )[[parms$run_type]]
 
   # Intraval scale
   interval <- list(
     final     = TRUE,
     convCheck = TRUE,
-    trial     = TRUE
+    trial     = TRUE,
+    supHD = TRUE
   )[[parms$run_type]]
 
   # Proportion of junk variables
   pj <- list(
     final     = round(seq(0, 1, length.out = 4), 2),
     convCheck = c(0, 1),
-    trial     = round(seq(0, 1, length.out = 3), 2)
+    trial     = round(seq(0, 1, length.out = 3), 2),
+    supHD     = c(0, 1)
   )[[parms$run_type]]
 
   # Latent Structure
   lv <- list(
     final     = c(TRUE, FALSE),
     convCheck = c(TRUE, FALSE),
-    trial     = c(TRUE, FALSE)
+    trial     = c(TRUE, FALSE),
+    supHD = c(TRUE)
   )[[parms$run_type]]
 
   # Number of components to extract
   npc <- list(
     final     = c(1:10, 20, 25, "max"),
     convCheck = c(1, "max"),
-    trial     = c(1, 20, "max")
+    trial     = c(1, 20, "max"),
+    supHD     = c(1:10, 20, 25, "max")
   )[[parms$run_type]]
 
   # Methods
@@ -137,7 +156,8 @@
     # final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
     final     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
     convCheck = c("aux", "vbv", "MIOP", "MIOR", "MIMI"),
-    trial     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
+    trial     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
+    supHD     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
   )[[parms$run_type]]
 
   # Make Conditionsa

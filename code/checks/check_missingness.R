@@ -2,7 +2,7 @@
 ### Project:  MI-PCA study
 ### Author:   Edoardo Costantini
 ### Created:  2021-07-20
-### Modified: 2021-07-23
+### Modified: 2021-09-05
 
   ## Make sure we have a clean environment:
   rm(list = ls())
@@ -47,7 +47,7 @@
   store_noMAR <- NULL
   store_CC <- NULL
 
-  for (i in 1:1e3){
+  for (i in 1:1e2){
     print(i)
     ## Gen fully observed data
     dat_list <- genData(parms = parms, cond = cond)

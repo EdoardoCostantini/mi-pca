@@ -2,7 +2,7 @@
 # Objective: put results together from tar archive obtained with lisa run
 # Author:    Edoardo Costantini
 # Created:   2021-11-16
-# Modified:  2021-12-16
+# Modified:  2021-09-05
 
   rm(list = ls())
   source("./init.R")
@@ -10,10 +10,10 @@
 # Unzip results -----------------------------------------------------------
 
   # Job ID
-  idJob <- "8469421" # "8463508"
+  idJob <- "9950505" # "8463508"
   
   # Define location of results
-  input_dir <- paste0("../output/lisa/", idJob, "/")
+  input_dir <- paste0("../output/", idJob, "/")
   tar_names <- grep(".tar.gz", list.files(input_dir), value = TRUE)
 
   # Create empty dir to contain results

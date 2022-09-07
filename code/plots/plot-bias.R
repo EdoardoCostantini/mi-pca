@@ -56,7 +56,8 @@ filters     <- list(pj = c(0, 1),
   # Subset data
   dat_sub <- dat %>%
     filter(par == par_est) %>%
-    filter(method %in% sel_meths)
+    filter(method %in% sel_meths) %>%
+    filter(npc %in% c(0, 1))
 
   # Apply extra filters
   for (f in seq_along(filters)){

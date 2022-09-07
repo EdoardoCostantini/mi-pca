@@ -31,10 +31,10 @@ target_par <- c(
 dat = res_time
 sel_meths = levels(res_time$method)[-c(6, 7)] # all
 plot_x_axis = "K"
-plot_y_axis = "relative"
+plot_y_axis = "mean"
 moderator = "npc"
-grid_x_axis = "pj"
-grid_y_axis = "method"
+grid_x_axis = "method"
+grid_y_axis = "pj"
 x_axis_name = "Number of categories (K)"
 y_axis_name = "Scaling factor"
 scales = NULL

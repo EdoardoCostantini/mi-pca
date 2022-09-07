@@ -2,7 +2,7 @@
 # Objective: Analyse convergence checks
 # Author:    Edoardo Costantini
 # Created:   2021-10-12
-# Modified:  2022-06-10
+# Modified:  2022-09-07
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -12,7 +12,11 @@ source("./init.R")
 
 # Load Results -----------------------------------------------------------------
 
+# P = 56
 output <- readTarGz("20220607_175414.tar.gz")
+
+# P ~ 250
+output <- readTarGz("20220906_171917.tar.gz")
 
 # Restructure Results ----------------------------------------------------------
 # list of conditions containing results for every repetition
@@ -36,7 +40,7 @@ names(out_mids) <- output$file_names[mids_index]
 D <- "D1"
 method <- paste0("method",
                  unique(output$sInfo$conds$method)
-                  [4])
+                  [2])
 interval <- paste0("interval",
                    unique(output$sInfo$conds$interval)
                    [1])
@@ -48,7 +52,7 @@ pj <- paste0("pj",
              [2])
 npc <- paste0("npc",
               unique(output$sInfo$conds$npc)
-              [3])
+              [2])
 lv <- paste0("lv", c(TRUE, FALSE))[1]
 
 # Search for the condition
@@ -58,7 +62,7 @@ cond_selected <- grep(search_pattern, output$sInfo$conds$tag, value = TRUE)
 # Make plot --------------------------------------------------------------------
 
 # Condition to plot
-dat_rep <- 2 # data repetition
+dat_rep <- 1 # data repetition
 to_plot <- grep(cond_selected,
                 output$file_names[mids_index],
                 value = TRUE)[dat_rep]
@@ -66,6 +70,6 @@ plot_title <- paste(K, D, interval, pj, npc, method, lv)
 
 # Make plot
 plot(out_mids[[to_plot]],
-     xlim = c(0, 50),
+     xlim = c(0, 100),
      layout = c(2, 4),
      main = plot_title)

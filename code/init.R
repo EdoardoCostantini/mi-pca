@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2022-09-09
+# Modified:  2022-09-08
 
 # Packages ----------------------------------------------------------------
 
@@ -63,12 +63,13 @@
   # Data generation
   parms$N <- 500 # sample size
   parms$L <- 7
-  parms$P <- list( # number of total items
-    final     = parms$L * 8,
-    convCheck = parms$L * 8,
-    trial     = parms$L * 8,
-    supHD     = parms$L * 35
-  )[[parms$run_type]] # number of variables
+  parms$P <- 56 # number of variables
+  parms$largeP <- list( # add extra items?
+    final     = FALSE,
+    convCheck = FALSE,
+    trial     = FALSE,
+    supHD     = TRUE
+  )[[parms$run_type]]
   parms$pm <- .3 # proportion of missings level
   parms$cov_ta <- .7 # true latent cov for target variables
   parms$cov_mp <- .7 # for mar predictors

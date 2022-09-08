@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2021-10-08
+# Modified:  2022-09-08
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -11,7 +11,7 @@ runCell <- function(rp, cond, fs, parms) {
 
   # Example Internals -------------------------------------------------------
 
-  # cond = conds[688, ]
+  # cond = conds[2, ]
   # rp   = 1
   tryCatch({
     ### START TRYCATCH EXPRESSION
@@ -71,11 +71,8 @@ runCell <- function(rp, cond, fs, parms) {
                             preds = c(parms$vmap$ta,
                                       parms$vmap$mp,
                                       # auxiliaries that are not junk
-                                      parms$vmap$ax[
-                                        !parms$vmap$ax
-                                          %in%
-                                          dat$index_junk_aux
-                                      ]),
+                                      dat$index_good_aux
+                            ),
                             parms = parms)
     }
 

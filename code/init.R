@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2022-09-05
+# Modified:  2022-09-09
 
 # Packages ----------------------------------------------------------------
 
@@ -92,7 +92,7 @@
     supHD     = 20
   )[[parms$run_type]]
 
-  parms$seed     <- 20210929
+  parms$seed     <- 20220908
   parms$nStreams <- 1000
   parms$outDir   <- "../output/"
 
@@ -127,13 +127,13 @@
     final     = round(seq(0, 1, length.out = 4), 2),
     convCheck = c(0, 1),
     trial     = round(seq(0, 1, length.out = 3), 2),
-    supHD     = round(seq(0, 1, length.out = 4), 2)
+    supHD     = c(0, 1)
   )[[parms$run_type]]
 
   # Latent Structure
   lv <- list(
     final     = c(TRUE, FALSE),
-    convCheck = c(TRUE, FALSE),
+    convCheck = c(TRUE),
     trial     = c(TRUE, FALSE),
     supHD     = c(TRUE)
   )[[parms$run_type]]
@@ -150,7 +150,7 @@
   method <- list(
     # final     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
     final     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
-    convCheck = c("aux", "vbv", "MIOP", "MIOR", "MIMI"),
+    convCheck = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI"),
     trial     = c("all", "all_oracle", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG"),
     supHD     = c("all", "aux", "vbv", "MIOP", "MIOR", "MIMI", "CC", "OG")
   )[[parms$run_type]]

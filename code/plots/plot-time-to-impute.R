@@ -2,7 +2,7 @@
 # Objective: Plot time to impute
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2022-01-11
+# Modified:  2022-09-09
 
 # Clean environment:
 rm(list = ls())
@@ -14,7 +14,8 @@ source("./init.R")
 inDir <- "../output/"
 grep("rds", list.files(inDir), value = TRUE)
 runName <- "8447019_time_gg_shape.rds"
-runName <- "8469421_time_gg_shape.rds"
+runName <- "8469421_time_gg_shape.rds" # BRM 1st submission
+runName <- "9950505_time_gg_shape.rds" # Revision with correct MI-OP
 
 # Read output
 res_time <- readRDS(paste0(inDir, runName))
@@ -31,7 +32,7 @@ target_par <- c(
 dat = res_time
 sel_meths = levels(res_time$method)[-c(6, 7)] # all
 plot_x_axis = "K"
-plot_y_axis = "mean"
+plot_y_axis = c("mean", "relative")[2]
 moderator = "npc"
 grid_x_axis = "method"
 grid_y_axis = "pj"
@@ -39,7 +40,11 @@ x_axis_name = "Number of categories (K)"
 y_axis_name = "Scaling factor"
 scales = NULL
 error_bar = FALSE
-filters = list(lv = TRUE)
+filters <- list(
+  lv = TRUE,
+  npc = levels(dat$npc)[1:11],
+  K = levels(dat$K)[c(1, 5)]
+)
 # filters = list()
 
   # Subset data

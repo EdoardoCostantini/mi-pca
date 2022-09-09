@@ -113,8 +113,10 @@ To perform convergence checks:
 # Output files
 
 Notes on what the output files are:
-- `lisa/8469421/` contains results reported in paper;
 - `20220607_175414.tar.gz` contains convergence checks
+- `output/lisa/8469421/` contains results reported in 1st submission BRM paper;
+- `output/lisa/9950505/` contains results version of BRM paper results with correct MI-OP method;
+- `output/lisa/???????/` contains HD results requested by of BRM paper revision
 
 # Repository structure
 Here is the project structure:

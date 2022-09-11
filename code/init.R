@@ -2,7 +2,7 @@
 # Objective: initialization script
 # Author:    Edoardo Costantini
 # Created:   2021-06-23
-# Modified:  2022-09-08
+# Modified:  2022-09-11
 
 # Packages ----------------------------------------------------------------
 
@@ -93,7 +93,7 @@
     supHD     = 20
   )[[parms$run_type]]
 
-  parms$seed     <- 20220908
+  parms$seed     <- 20220911
   parms$nStreams <- 1000
   parms$outDir   <- "../output/"
 
@@ -128,7 +128,7 @@
     final     = round(seq(0, 1, length.out = 4), 2),
     convCheck = c(0, 1),
     trial     = round(seq(0, 1, length.out = 3), 2),
-    supHD     = c(0, 1)
+    supHD     = c(0, 1/3, 2/3, 1)
   )[[parms$run_type]]
 
   # Latent Structure
@@ -144,7 +144,7 @@
     final     = c(1:10, 20, 25, "max"),
     convCheck = c(1, "max"),
     trial     = c(1, 20, "max"),
-    supHD     = c(1:10, 20, 25, "max")
+    supHD     = c(1:10)
   )[[parms$run_type]]
 
   # Methods

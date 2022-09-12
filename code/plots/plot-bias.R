@@ -2,7 +2,7 @@
 # Objective: Plot bias for the PCA based methods
 # Author:    Edoardo Costantini
 # Created:   2021-10-27
-# Modified:  2022-01-11
+# Modified:  2022-09-12
 
 # Clean environment:
 rm(list = ls())
@@ -15,7 +15,11 @@ inDir <- "../output/"
 grep("rds", list.files(inDir), value = TRUE)
 runName <- "20220111_165620_pc_main_gg_shape.rds" # toy run with PC
 runName <- "8447019_main_gg_shape.rds" # good run with lisa
-runName <- "8469421_main_gg_shape.rds" # final run with lisa
+runName <- "8469421_main_gg_shape.rds" # 1st BRM submission
+runName <- "9950505_main_gg_shape.rds" # 1st BRM submission w/ correct MI-OP
+runName <- "9978614_main_gg_shape.rds" # HD version
+runName <- "9985893_main_gg_shape.rds" # HD version with full pj
+runName <- "9987321_main_gg_shape.rds" # HD version with full pj fix aux
 
 # Read output
 gg_shape <- readRDS(paste0(inDir, runName))
@@ -31,15 +35,15 @@ target_par <- c(
 )
 
 # Change names of factors for plot
-levels(gg_shape$method) <- c("MI-PCR-ALL", "MI-PCR-ALL (oracle)",
-                             "MI-PCR-AUX", "MI-PCR-VBV",
-                             "MI-QP", "MI-OR", "MI-MI",
-                             "CC", "OG")
+# levels(gg_shape$method) <- c("MI-PCR-ALL", "MI-PCR-ALL (oracle)",
+#                              "MI-PCR-AUX", "MI-PCR-VBV",
+#                              "MI-QP", "MI-OR", "MI-MI",
+#                              "CC", "OG")
 
 # Inputs
 dat         <- gg_shape
 par_est     <- target_par[[4]]
-sel_meths   <- levels(gg_shape$method)[c(1, 3:6)] # all
+sel_meths   <- levels(gg_shape$method)[-2] # all
 plot_x_axis <- "K"
 plot_y_axis <- "bias"
 moderator   <- "npc"
@@ -48,16 +52,19 @@ grid_y_axis <- "pj"
 x_axis_name <- "Number of categories (K)"
 y_axis_name <- "PRB"
 scales      <- NULL
-filters     <- list(pj = c(0, 1),
+filters     <- list(#pj = c(0, 1),
                     K = c(Inf, 5, 2),
+                    npc = 0:10,
                     lv = TRUE)
 # filters     <- list()
+
+  # Round pj
+  dat$pj <- round(dat$pj, 2)
 
   # Subset data
   dat_sub <- dat %>%
     filter(par == par_est) %>%
-    filter(method %in% sel_meths) %>%
-    filter(npc %in% c(0, 1))
+    filter(method %in% sel_meths)
 
   # Apply extra filters
   for (f in seq_along(filters)){

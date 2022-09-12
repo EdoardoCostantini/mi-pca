@@ -2,7 +2,7 @@
 # Objective: Plot the distribution of Confidence Interval Width across repetitions
 # Author:    Edoardo Costantini
 # Created:   2021-12-16
-# Modified:  2022-04-05
+# Modified:  2022-09-12
 
 # Clean environment:
 rm(list = ls())
@@ -18,6 +18,8 @@ grep("rds", list.files(inDir), value = TRUE)
 runName <- "20220111_165620_pc_main_gg_shape.rds" # toy run with PC
 runName <- "8447019_main_gg_shape.rds" # good run with lisa
 runName <- "8469421_main_gg_shape.rds" # final run with lisa
+runName <- "9985893_main_gg_shape.rds" # HD version with full pj
+runName <- "9987321_main_gg_shape.rds" # HD version with full pj fix aux
 
 # Read output
 ciw_raw <- readRDS(paste0(inDir, runName))
@@ -31,10 +33,10 @@ target_par <- c(
 )
 
 # Change names of factors for plot
-levels(ciw_raw$method) <- c("MI-PCR-ALL", "MI-PCR-ALL (oracle)",
-                            "MI-PCR-AUX", "MI-PCR-VBV",
-                            "MI-QP", "MI-OR", "MI-MI",
-                            "CC", "OG")
+# levels(ciw_raw$method) <- c("MI-PCR-ALL", "MI-PCR-ALL (oracle)",
+#                             "MI-PCR-AUX", "MI-PCR-VBV",
+#                             "MI-QP", "MI-OR", "MI-MI",
+#                             "CC", "OG")
 
 # Confidence Interval Width --------------------------------------------
 
@@ -54,7 +56,7 @@ error_bar   <- FALSE
 filters     <-  list(par = par_est,
                      method = sel_meths,
                      npc = c(0, 7),
-                     pj = c(0, 1),
+                    #  pj = c(0, 1),
                      K = c(Inf, 2),
                      lv = TRUE)
 # filters     <- list()

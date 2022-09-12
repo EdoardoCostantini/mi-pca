@@ -2,7 +2,7 @@
 # Objective: combine results from simulation study
 # Author:    Edoardo Costantini
 # Created:   2021-11-25
-# Modified:  2022-09-05
+# Modified:  2022-09-12
 # Note:      Works for both Lisa and PC results
 
 # Prep environment --------------------------------------------------------
@@ -17,6 +17,10 @@
   run_name <- "8447019_unzipped" # good run on lisa
   run_name <- "8469421_unzipped" # final run on lisa
   run_name <- "9950505_unzipped" # correct MI-OP run on lisa
+  # run_name <- "9978614_unzipped" # HD run
+  # run_name <- "9985893_unzipped" # HD version with full pj
+  run_name <- "9987321_unzipped" # HD version with full pj fix aux
+  
   out <- readRDS(paste0(loaction, run_name, ".rds"))
 
   sInfo <- out$sInfo

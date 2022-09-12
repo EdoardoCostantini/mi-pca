@@ -2,7 +2,7 @@
 # Objective: subroutine runCell to run a single condition for a single rep
 # Author:    Edoardo Costantini
 # Created:   2021-05-12
-# Modified:  2022-09-08
+# Modified:  2022-09-12
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -39,14 +39,14 @@ runCell <- function(rp, cond, fs, parms) {
     if(cond$method == "all"){
       imp_out <- imputePCAall(dat_miss,
                               imp_target = parms$vmap$ta,
-                              pcs_target = unlist(parms$vmap, use.names = FALSE),
+                              pcs_target = 1:ncol(dat_miss),
                               ncfs = cond$npc,
                               parms = parms)
     }
     if(cond$method == "all_oracle"){
       imp_out <- imputePCAall(Z = dat_miss,
                               imp_target = parms$vmap$ta,
-                              pcs_target = unlist(parms$vmap, use.names = FALSE),
+                              pcs_target = 1:ncol(dat_miss),
                               ncfs = cond$npc,
                               Z_ori = dat_ordi,
                               parms = parms)
@@ -54,7 +54,7 @@ runCell <- function(rp, cond, fs, parms) {
     if(cond$method == "aux") {
       imp_out <- imputePCAaux(dat_miss,
                               imp_target = parms$vmap$ta,
-                              pcs_target = c(parms$vmap$mp, parms$vmap$ax),
+                              pcs_target = (tail(parms$vmap$ta, 1)+1):ncol(dat_miss),
                               ncfs = cond$npc,
                               parms = parms)
     }

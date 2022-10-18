@@ -2,7 +2,7 @@
 # Objective: Analyse convergence checks
 # Author:    Edoardo Costantini
 # Created:   2021-10-12
-# Modified:  2022-09-07
+# Modified:  2022-10-18
 
 ## Make sure we have a clean environment:
 rm(list = ls())
@@ -49,10 +49,10 @@ K <- paste0("K",
              [2])
 pj <- paste0("pj",
              unique(output$sInfo$conds$pj)
-             [2])
+             [1])
 npc <- paste0("npc",
               unique(output$sInfo$conds$npc)
-              [2])
+              [1])
 lv <- paste0("lv", c(TRUE, FALSE))[1]
 
 # Search for the condition
@@ -70,6 +70,36 @@ plot_title <- paste(K, D, interval, pj, npc, method, lv)
 
 # Make plot
 plot(out_mids[[to_plot]],
-     xlim = c(0, 100),
+     # xlim = c(0, 100),
      layout = c(2, 4),
      main = plot_title)
+
+# Export some meaningful mids for paper ----------------------------------------
+# for the 242 condition
+
+# Which conditions?
+cond_sub <- output$sInfo$conds %>%
+  filter(
+    K == 2,
+    pj == 0,
+    method %in% levels(output$sInfo$conds$method)[-1],
+    npc %in% c(0, 1))
+
+# Define the names based on convention
+tokeep_names <- paste0("rep_", dat_rep, "_", cond_sub$tag, "_mids.rds")
+
+# Which repetition
+dat_rep <- 1 # data repetition
+
+# Extract
+tokeep_mids <- out_mids[output$file_names[mids_index] %in% tokeep_names]
+
+# Check them
+lapply(1:length(tokeep_mids), function(x) {
+  plot(tokeep_mids[[x]],
+     layout = c(2, 4),
+     main = names(tokeep_mids[x]))
+})
+
+# Save them
+saveRDS(tokeep_mids, "../output/convergence-sim2-p242.rds")

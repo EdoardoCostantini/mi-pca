@@ -1,17 +1,17 @@
-### Title:    Check MAR based on predictors
-### Project:  MI-PCA study
-### Author:   Edoardo Costantini
-### Created:  2021-07-20
-### Modified: 2021-09-05
+# Title:    Check MAR based on predictors
+# Project:  MI-PCA study
+# Author:   Edoardo Costantini
+# Created:  2021-07-20
+# Modified: 2022-10-15
 
-  ## Make sure we have a clean environment:
+  # Make sure we have a clean environment:
   rm(list = ls())
 
-  ## Initialize the environment:
+  # Initialize the environment:
   source("./init.R")
   source("./functions/amputeMultivariate.R")
 
-  ## Select a condition
+  # Select a condition
   cond <- conds[46, ]
 
 # MAR Predictors ----------------------------------------------------------

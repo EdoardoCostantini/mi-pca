@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7529273.svg)](https://doi.org/10.5281/zenodo.7529273)
+
 # MI-PCR Comparison
 
 Here I describe the content of this repository and how to replicate the simulation study.

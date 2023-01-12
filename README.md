@@ -1,5 +1,4 @@
 # MI-PCR Comparison
-*Readme last update: 2022-01-11* 
 
 Here I describe the content of this repository and how to replicate the simulation study.
 
@@ -118,91 +117,7 @@ Notes on what the output files are:
 - `output/lisa/9950505/` contains results version of BRM paper results with correct MI-OP method;
 - `output/lisa/???????/` contains HD results requested by of BRM paper revision
 
-# Repository structure
-Here is the project structure:
-```
-├── code
-│ ├── checks
-│ │ ├── check_WVS.R
-│ │ ├── check_convergence.R
-│ │ ├── check_dataGen.R
-│ │ ├── check_fmi.R
-│ │ ├── check_mior_trend.R
-│ │ ├── check_missingness.R
-│ │ └── check_pseudoR2.R
-│ ├── experiments
-│ │ ├── CFA_Dami.R
-│ │ ├── data_gen_experiment.R
-│ │ ├── show_CFA_attenuation.R
-│ │ └── show_CFA_attenuation_longer.R
-│ ├── functions
-│ │ ├── amputeMultivariate.R
-│ │ ├── amputePerVar.R
-│ │ ├── disData.R
-│ │ ├── evaPerf.R
-│ │ ├── fitSatModel.R
-│ │ ├── fitSingleData.R
-│ │ ├── genData.R
-│ │ ├── genDataLatent.R
-│ │ ├── genLavaanMod.R
-│ │ ├── imputeMICE.R
-│ │ ├── imputePCAall.R
-│ │ ├── imputePCAaux.R
-│ │ ├── imputePCAvbv.R
-│ │ ├── plotLine.R
-│ │ ├── poolCor.R
-│ │ ├── poolSatMod.R
-│ │ └── simMissingness.R
-│ ├── helper
-│ │ ├── fmi.R
-│ │ ├── miDf.R
-│ │ ├── readTarGz.R
-│ │ ├── riv.R
-│ │ └── writeTarGz.R
-│ ├── plots
-│ │ ├── bias.pdf
-│ │ ├── bias2.pdf
-│ │ ├── cic.pdf
-│ │ ├── ciw.pdf
-│ │ ├── ciw2.pdf
-│ │ ├── plot-all-vs-MI-line.R
-│ │ ├── plot-bias-line.R
-│ │ ├── plot-bias.R
-│ │ ├── plot-cic.R
-│ │ ├── plot-ciw.R
-│ │ ├── plot-lines.R
-│ │ └── plot-time-to-impute.R
-│ ├── subroutines
-│ │ ├── runCell.R
-│ │ └── runRep.R
-│ ├── combine_results.R
-│ ├── init.R
-│ ├── lisa_js_normal.sh
-│ ├── lisa_js_short.sh
-│ ├── lisa_prep.sh
-│ ├── lisa_step0_time_est.R
-│ ├── lisa_step1_write_repList.R
-│ ├── lisa_step2_storeInfo.R
-│ ├── lisa_step3_run_doRep.R
-│ ├── lisa_step4_unzip.R
-│ ├── pc_step1_run_sim.R
-│ └── pc_step2_unzip.R
-├── input
-│ ├── F00011055-WVS_7_Codebook_Variables_report.pdf
-│ ├── blade_pack_insta.R
-│ ├── mice.pcr.sim_3.13.9.tar.gz
-│ └── stopos_lines
-├── lisa
-├── output
-├── tests
-│ ├── testthat
-│ │ ├── test_dataGen.R
-│ │ └── test_dataStep.R
-│ └── testthat.R
-├── .gitignore
-└── README.md
-
-```
+# Repository content
 
 Here is a brief description of the folders:
 - `code`: the main software to run the study

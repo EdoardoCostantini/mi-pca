@@ -10,7 +10,8 @@
   source("./init_extra_ngdr.R") # only for support functions
 
 # Load Results ------------------------------------------------------------
-  output <- readTarGz(target_tar)
+
+  output <- readTarGz("20230302_145539.tar.gz")
 
   # Collect main results
   rds_main <- do.call(rbind, output$out)

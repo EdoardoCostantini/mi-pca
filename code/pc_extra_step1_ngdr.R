@@ -14,7 +14,7 @@ source("./init_extra_ngdr.R")
 library(parabar)
 
 # Run specs
-reps <- 1:5     # define repetitions
+reps <- 1:20     # define repetitions
 clusters <- 5   # define clusters
 
 # File System
@@ -45,26 +45,27 @@ cat(
     append = TRUE
 )
 
-# Start a synchronous backend
-backend <- makeCluster(clusters)
-# backend <- start_backend(
-#     cores = clusters,
-#     cluster_type = "psock",
-#     backend_type = "sync"
-# )
+# Enable progress tracking
+set_option("progress_track", TRUE)
+
+# Start an asynchronous backend
+backend <- start_backend(
+    cores = clusters,
+    cluster_type = "psock",
+    backend_type = "async"
+)
 
 # Export global env to worker nodes
-# export(backend, variables = ls(), environment = .GlobalEnv)
-clusterExport(cl = backend, varlist = "fs", envir = .GlobalEnv)
-clusterEvalQ(cl = backend, expr = source("./init_extra_ngdr.R"))
+export(backend, variables = ls(), environment = .GlobalEnv)
+evaluate(backend, expression = source("./init_extra_ngdr.R"))
 
 # Store the time stamp at the beginning of the simulation
 sim_start <- Sys.time()
 
 # Run the computations in parallel on the 'clus' object:
-out <- parLapply(
+out <- par_sapply(
     backend,
-    X = reps,
+    x = reps,
     fun = runRep.extra.ngdr,
     conds = conds,
     parms = parms,
@@ -72,8 +73,7 @@ out <- parLapply(
 )
 
 # Kill the cluster:
-# stop_backend(backend)
-stopCluster(backend)
+stop_backend(backend)
 
 # Store the time stamp at the end of the simulation
 sim_ends <- Sys.time()

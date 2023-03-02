@@ -6,25 +6,25 @@
 
 # Prep environment --------------------------------------------------------
 
-  rm(list = ls()) # to clean up
-  source("./init_extra_ngdr.R") # only for support functions
+rm(list = ls()) # to clean up
+source("./init_extra_ngdr.R") # only for support functions
 
 # Load Results ------------------------------------------------------------
 
-    inDir <- "../output/"
-    target_tar <- "20230302_153750.tar.gz"
-    output <- readTarGz(target_tar)
+inDir <- "../output/"
+target_tar <- "20230302_153750.tar.gz"
+output <- readTarGz(target_tar)
 
-  # Collect main results
-  rds_main <- do.call(rbind, output$out[-grep("ERROR", output$file_names)])
+# Collect main results
+rds_main <- do.call(rbind, output$out[-grep("ERROR", output$file_names)])
 
-  # Read error results
-  rds_error_names <- grep("ERROR", output$file_names)
-  if(length(rds_error_names) != 0){
+# Read error results
+rds_error_names <- grep("ERROR", output$file_names)
+if (length(rds_error_names) != 0) {
     rds_error <- do.call(rbind, output$out[rds_error_names])
-  } else {
+} else {
     rds_error <- NULL
-  }
+}
 
 # Process results --------------------------------------------------------------
 

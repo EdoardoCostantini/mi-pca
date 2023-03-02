@@ -14,7 +14,7 @@ source("./init_extra_ngdr.R")
 library(parabar)
 
 # Run specs
-reps <- 1:20     # define repetitions
+reps <- 1:100     # define repetitions
 clusters <- 5   # define clusters
 
 # File System

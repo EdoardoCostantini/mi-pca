@@ -1,8 +1,8 @@
 # Project:   mipca_compare
 # Objective: subroutine runCellNgdr to run a single condition for non-graphical decision rule check
 # Author:    Edoardo Costantini
-# Created:   2021-05-12
-# Modified:  2022-09-12
+# Created:   2023-03-02
+# Modified:  2023-03-02
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -12,7 +12,14 @@
 runCell.extra.ngdr <- function(rp, cond, fs, parms) {
     # Example Internals --------------------------------------------------------
 
-    # cond = conds[2, ]
+    # cond = conds[41, ]
+    # cond <- conds %>%
+    #     filter(
+    #         lv == FALSE,
+    #         K == Inf,
+    #         pj == 1,
+    #         P == 56
+    #     )
     # rp   = 1
     tryCatch(
         {

@@ -12,7 +12,7 @@ source("./init_extra_ngdr.R") # only for support functions
 # Load Results ------------------------------------------------------------
 
 inDir <- "../output/"
-target_tar <- "20230302_153750.tar.gz"
+target_tar <- "20230303_154402.tar.gz"
 output <- readTarGz(target_tar)
 
 # Collect main results
@@ -38,7 +38,7 @@ rds_main$method <- factor(
     levels = c("noc", "naf", "nkaiser", "nparallel"),
     labels = c("noc", "naf", "nk", "np")
     )
-rds_main$data <- factor(rds_main$data, levels = c("og", "na"), labels = c("Original data", "Complete cases"))
+rds_main$data <- factor(rds_main$data, levels = c("og", "na"), labels = c("Fully observed", "Complete cases"))
 rds_main$K <- factor(rds_main$K, levels = rev(unique(rds_main$K)))
 
 # Store the rds results

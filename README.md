@@ -118,6 +118,7 @@ Notes on what the output files are:
 - `output/lisa/8469421/` contains results reported in 1st submission BRM paper;
 - `output/lisa/9950505/` contains results version of BRM paper results with correct MI-OP method;
 - `output/lisa/???????/` contains HD results requested by of BRM paper revision
+- `20230303_154402.tar.gz` contains results for the non-graphical decision rules checks
 
 # Repository content
 

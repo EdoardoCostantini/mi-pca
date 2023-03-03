@@ -2,7 +2,7 @@
 # Objective: subroutine runCellNgdr to run a single condition for non-graphical decision rule check
 # Author:    Edoardo Costantini
 # Created:   2023-03-02
-# Modified:  2023-03-02
+# Modified:  2023-03-03
 # Note:      A "cell" is a cycle through the set of conditions.
 #            The function in this script generates 1 data set, performs
 #            imputations for every condition in the set.
@@ -15,9 +15,9 @@ runCell.extra.ngdr <- function(rp, cond, fs, parms) {
     # cond = conds[41, ]
     # cond <- conds %>%
     #     filter(
-    #         lv == FALSE,
+    #         lv == TRUE,
     #         K == Inf,
-    #         pj == 1,
+    #         pj == 0,
     #         P == 56
     #     )
     # rp   = 1
@@ -54,9 +54,13 @@ runCell.extra.ngdr <- function(rp, cond, fs, parms) {
 
             # Process the number of components ---------------------------------
 
-            # Compute non graphical solutions
-            ngdr_miss <- nScree(na.omit(dat_miss))$Components
-            ngdr_orig <- nScree(dat_ordi)$Components
+            # Compute the correlation matrices
+            dat_ordi_corr <- cor(dat_ordi)
+            dat_miss_corr <- cor(na.omit(dat_miss))
+
+            # Compute non-graphical solutions
+            ngdr_miss <- nScree(dat_miss_corr)$Components
+            ngdr_orig <- nScree(dat_ordi_corr)$Components
 
             # Append the data type
             ngdr_miss <- rbind(data = "na", value = ngdr_miss)

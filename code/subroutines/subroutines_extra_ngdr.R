@@ -81,7 +81,7 @@ runCell.extra.ngdr <- function(rp, cond, fs, parms) {
             # Append repetition name
             res <- cbind(rep = rp, res)
 
-            # Save the results 
+            # Save the results
             saveRDS(res,
                 file = paste0(
                     fs$outDir,

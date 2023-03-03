@@ -2,7 +2,7 @@
 # Objective: Run the small simulation study to check non-graphical solutions
 # Author:    Edoardo Costantini
 # Created:   2023-03-02
-# Modified:  2023-03-02
+# Modified:  2023-03-03
 
 # Make sure we have a clean environment:
 rm(list = ls())
@@ -14,8 +14,8 @@ source("./init_extra_ngdr.R")
 library(parabar)
 
 # Run specs
-reps <- 1:100     # define repetitions
-clusters <- 5   # define clusters
+reps <- 1:500 # define repetitions
+clusters <- 5 # define clusters
 
 # File System
 fs <- list()
